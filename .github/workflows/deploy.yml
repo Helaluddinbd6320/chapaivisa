@@ -1,5 +1,6 @@
 name: Deploy Laravel to Namecheap
 
+# Workflow trigger: push করলে main branch এ deploy হবে
 on:
   push:
     branches:
@@ -9,16 +10,23 @@ jobs:
   ftp-deploy:
     name: Deploy via FTP
     runs-on: ubuntu-latest
+
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Upload Laravel public folder to Namecheap
+      # Step 2: Upload Laravel public folder to Namecheap
+      - name: Upload Laravel public folder
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
-          local-dir: public
+          local-dir: public/                # <-- শেষের / গুরুত্বপূর্ণ
           server-dir: /public_html/chapaivisa.com
+          # Optional settings
+          protocol: ftp
+          dry-run: false
+          git-ftp-args: --insecure
