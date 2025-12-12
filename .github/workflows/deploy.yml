@@ -10,19 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: 🛒 Checkout Repository
         uses: actions/checkout@v3
 
-      # Step 2: Upload all Laravel files
       - name: 📤 Deploy All Files to Namecheap
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ${{ secrets.FTP_HOST }}
+          server: ${{ secrets.FTP_HOST }}       # <-- Hostname ঠিক দিতে হবে
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}
+          port: ${{ secrets.FTP_PORT }}         # 21
           protocol: ftp
-          local-dir: ./                      # পুরো প্রজেক্ট ফোল্ডার
-          server-dir: /public_html/chapaivisa.com/  # <-- শেষের / গুরুত্বপূর্ণ
+          local-dir: ./
+          server-dir: /public_html/chapaivisa.com/
           dry-run: false
