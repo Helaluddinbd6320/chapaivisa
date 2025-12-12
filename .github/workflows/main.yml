@@ -9,45 +9,47 @@ jobs:
   ftp-deploy:
     runs-on: ubuntu-latest
     
-    steps:
-      - name: 🛒 Checkout Repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # সব history নিয়ে আসে
+    # Step 1: সঠিক PHP ভার্সন সেট করুন
+    - name: 🐘 Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.4'  # অথবা আপনার প্রজেক্টে যে ভার্সন চাই সেটা
+        tools: composer:v2
+        
+    # Step 2: রিপোজিটরি চেকআউট
+    - name: 🛒 Checkout Repository
+      uses: actions/checkout@v3
 
-      # প্রথমে Laravel-specific files setup করুন
-      - name: 📦 Setup Laravel Environment
-        run: |
-          cp .env.example .env  # যদি .env না থাকে
-          composer install --no-dev --optimize-autoloader
-          php artisan key:generate
-          
-      # Upload করার আগে files চেক করুন
-      - name: 🔍 Debug - List Files
-        run: |
-          echo "Files in current directory:"
-          find . -type f -name "*.php" | head -20
-          echo "Total files:"
-          find . -type f | wc -l
+    # Step 3: কম্পোজার ডিপেন্ডেন্সি ইনস্টল করুন
+    - name: 📦 Install Composer Dependencies
+      run: |
+        composer install --no-dev --optimize-autoloader --no-interaction
+        # যদি এরর হয়, তাহলে এইটা চেষ্টা করুন:
+        # composer update --no-dev --optimize-autoloader --no-interaction
 
-      - name: 📤 Deploy to Namecheap FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}
-          protocol: ftp
-          local-dir: ./
-          server-dir: ./public_html/chapaivisa.com/
-          exclude: |
-            **/.git*
-            **/.github*
-            **/.env
-            **/.env.example
-            **/node_modules/*
-            **/storage/*
-            **/tests/*
-            **/*.log
-          dangerous-clean-slate: false  # সাবধান! true করলে সব delete হয়ে যাবে
-          dry-run: false  # true করে প্রথমে test করুন
+    # Step 4: লারাভেল সেটআপ করুন (যদি প্রয়োজন হয়)
+    - name: 🔧 Laravel Setup
+      run: |
+        cp .env.example .env  # শুধু যদি .env না থাকে
+        php artisan key:generate --force
+
+    # Step 5: FTP তে ডেপ্লয় করুন
+    - name: 📤 Deploy to Namecheap FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ftp.stutips.com
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        port: 21
+        protocol: ftp
+        local-dir: ./
+        server-dir: ./public_html/chapaivisa.com/
+        exclude: |
+          **/.git*
+          **/.github*
+          **/.env*
+          **/node_modules/**
+          **/vendor/**
+          storage/**
+          tests/**
+        dry-run: false  # true করে প্রথমে টেস্ট করুন
