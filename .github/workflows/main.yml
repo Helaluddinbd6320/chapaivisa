@@ -1,4 +1,4 @@
-name: 🚀 Full Laravel FTP Deploy
+name: 🚀 Laravel FTP Deploy
 
 on:
   push:
@@ -8,21 +8,46 @@ on:
 jobs:
   ftp-deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
-      # Step 1: Checkout the repository
       - name: 🛒 Checkout Repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # সব history নিয়ে আসে
 
-      # Step 2: Upload all Laravel files to Namecheap
-      - name: 📤 Deploy All Files to Namecheap
+      # প্রথমে Laravel-specific files setup করুন
+      - name: 📦 Setup Laravel Environment
+        run: |
+          cp .env.example .env  # যদি .env না থাকে
+          composer install --no-dev --optimize-autoloader
+          php artisan key:generate
+          
+      # Upload করার আগে files চেক করুন
+      - name: 🔍 Debug - List Files
+        run: |
+          echo "Files in current directory:"
+          find . -type f -name "*.php" | head -20
+          echo "Total files:"
+          find . -type f | wc -l
+
+      - name: 📤 Deploy to Namecheap FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ${{ secrets.FTP_HOST }}        # ftp.stutips.com
-          username: ${{ secrets.FTP_USERNAME }}  # chapaiftp@chapaivisa.com
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}          # 21
+          port: ${{ secrets.FTP_PORT }}
           protocol: ftp
-          local-dir: ./                          # পুরো project ফোল্ডার
-          server-dir: /public_html/chapaivisa.com/   # <-- শেষের / গুরুত্বপূর্ণ
-          dry-run: false
+          local-dir: ./
+          server-dir: ./public_html/chapaivisa.com/
+          exclude: |
+            **/.git*
+            **/.github*
+            **/.env
+            **/.env.example
+            **/node_modules/*
+            **/storage/*
+            **/tests/*
+            **/*.log
+          dangerous-clean-slate: false  # সাবধান! true করলে সব delete হয়ে যাবে
+          dry-run: false  # true করে প্রথমে test করুন
