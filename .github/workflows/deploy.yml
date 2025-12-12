@@ -1,26 +1,16 @@
-name: 🚀 Full Laravel FTP Deploy
+name: FTP সমস্যা টেস্ট
 
-on:
-  push:
-    branches:
-      - main
+on: workflow_dispatch  # ম্যানুয়ালি রান করতে পারবেন
 
 jobs:
-  ftp-deploy:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: 🛒 Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: 📤 Deploy All Files to Namecheap
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.FTP_HOST }}       # <-- Hostname ঠিক দিতে হবে
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}         # 21
-          protocol: ftp
-          local-dir: ./
-          server-dir: /public_html/chapaivisa.com/
-          dry-run: false
+      - name: FTP হোস্ট চেক করুন
+        run: |
+          echo "১. DNS রিসল্ভ টেস্ট:"
+          nslookup ftp.stutips.com || echo "❌ DNS ফেইল!"
+          
+          echo ""
+          echo "২. পোর্ট 21 খোলা আছে কিনা:"
+          timeout 3 bash -c "</dev/tcp/ftp.stutips.com/21" && echo "✅ পোর্ট খোলা" || echo "❌ পোর্ট বন্ধ"
