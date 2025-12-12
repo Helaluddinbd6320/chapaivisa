@@ -1,4 +1,4 @@
-name: Deploy Laravel to Namecheap
+name: 🚀 Full Laravel FTP Deploy
 
 on:
   push:
@@ -7,18 +7,23 @@ on:
 
 jobs:
   ftp-deploy:
-    name: Deploy via FTP
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Repository
+      # Step 1: Checkout the repository
+      - name: 🛒 Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Upload Laravel public folder to Namecheap
-        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      # Step 2: Upload all Laravel files
+      - name: 📤 Deploy All Files to Namecheap
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
-          local-dir: public
+          local-dir: ./                # <-- পুরো প্রজেক্ট ফোল্ডার
           server-dir: /public_html/chapaivisa.com
+          protocol: ftp
+          dry-run: false
+          git-ftp-args: --insecure
