@@ -14,16 +14,15 @@ jobs:
       - name: 🛒 Checkout Repository
         uses: actions/checkout@v3
 
-      # Step 2: Upload all Laravel files
+      # Step 2: Upload all Laravel files to Namecheap
       - name: 📤 Deploy All Files to Namecheap
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
+          server: ${{ secrets.FTP_HOST }}        # ftp.stutips.com
+          username: ${{ secrets.FTP_USERNAME }}  # chapaiftp@chapaivisa.com
           password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}
-          local-dir: ./                # <-- পুরো প্রজেক্ট ফোল্ডার
-          server-dir: /public_html/chapaivisa.com
+          port: ${{ secrets.FTP_PORT }}          # 21
           protocol: ftp
+          local-dir: ./                          # পুরো project ফোল্ডার
+          server-dir: /public_html/chapaivisa.com/   # <-- শেষের / গুরুত্বপূর্ণ
           dry-run: false
-          git-ftp-args: --insecure
