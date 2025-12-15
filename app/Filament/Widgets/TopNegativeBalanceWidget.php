@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -49,10 +50,12 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->label('Phone')
                     ->searchable()
                     ->formatStateUsing(function ($state) {
-                        if (!$state) return 'N/A';
-                        
+                        if (! $state) {
+                            return 'N/A';
+                        }
+
                         $cleanPhone = preg_replace('/[^0-9]/', '', $state);
-                        
+
                         return <<<HTML
 <div class="flex flex-col gap-1">
     <span class="font-medium text-gray-700">{$state}</span>
@@ -76,10 +79,10 @@ HTML;
                     ->formatStateUsing(function ($state) {
                         $formattedBalance = number_format(abs($state), 0);
                         $isNegative = $state < 0;
-                        
+
                         $colorClass = $isNegative ? 'text-red-600' : 'text-green-600';
                         $icon = $isNegative ? '⬇️' : '⬆️';
-                        
+
                         return <<<HTML
 <div class="flex items-center gap-2">
     <span class="text-lg {$colorClass} font-bold">{$icon} {$formattedBalance} ৳</span>
@@ -95,8 +98,8 @@ HTML;
                             ->where('transaction_type', 'deposit')
                             ->sum('amount');
                         $visas = $record->visas->sum('visa_cost');
-                        
-                        return 'Deposits: ৳' . number_format($deposits) . ' | Visa: -৳' . number_format($visas);
+
+                        return 'Deposits: ৳'.number_format($deposits).' | Visa: -৳'.number_format($visas);
                     }),
 
                 // WhatsApp Action Column
@@ -104,16 +107,16 @@ HTML;
                     ->label('Send Reminder')
                     ->formatStateUsing(function ($state, $record) {
                         if (empty($record->phone1) || $record->calculated_balance >= 0) {
-                            return <<<HTML
+                            return <<<'HTML'
 <div class="text-center">
     <span class="text-xs text-gray-400 italic">No action needed</span>
 </div>
 HTML;
                         }
-                        
+
                         $cleanPhone = preg_replace('/[^0-9]/', '', $record->phone1);
                         $formattedBalance = number_format(abs($record->calculated_balance), 0);
-                        
+
                         // Professional WhatsApp message template
                         $message = <<<MSG
 *🏢 Visa Office Chapai International*
@@ -144,9 +147,9 @@ Best regards,
 *Visa Office Chapai International*
 *Official WhatsApp*
 MSG;
-                        
-                        $whatsappUrl = "https://wa.me/{$cleanPhone}?text=" . urlencode($message);
-                        
+
+                        $whatsappUrl = "https://wa.me/{$cleanPhone}?text=".urlencode($message);
+
                         return <<<HTML
 <div class="flex flex-col items-center gap-2">
     <a href="{$whatsappUrl}" 
