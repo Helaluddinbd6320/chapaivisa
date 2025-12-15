@@ -12,6 +12,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Storage;
 use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ViewAction;
 
 class AccountsTable
 {
