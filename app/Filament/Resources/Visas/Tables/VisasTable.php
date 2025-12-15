@@ -185,7 +185,7 @@ class VisasTable
             ])
 
             ->recordActions([
-                ViewAction::make(),
+                // ViewAction::make(),
                 EditAction::make(),
                 ForceDeleteAction::make(),
                 
