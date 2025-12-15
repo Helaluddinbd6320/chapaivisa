@@ -7,7 +7,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Support\Facades\Auth;
-use Filament\Support\RawJs;
 
 class TopNegativeBalanceWidget extends BaseWidget
 {
@@ -70,61 +69,10 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->color(fn ($state) => $state < 0 ? 'danger' : 'success')
                     ->size('sm'),
 
-                // Action Column ব্যবহার করুন
-                Tables\Columns\IconColumn::make('whatsapp_action')
-    ->label('📲 Send Reminder')
-    ->icon('heroicon-o-chat-bubble-bottom-center-text')
-    ->color('success')
-    ->size('lg')
-    ->tooltip('Send WhatsApp reminder')
-    ->action(function ($record) {
-        if (empty($record->phone1) || $record->calculated_balance >= 0) {
-            return;
-        }
-        
-        $phone = preg_replace('/[^0-9]/', '', $record->phone1);
-        $name = $record->name;
-        $balance = number_format(abs($record->calculated_balance), 0);
-        
-        $message = "🌟 *Visa Office Chapai International* 🌟
-
-📋 *BALANCE REMINDER NOTIFICATION*
-
-Dear *{$name}*,
-
-Your account has an outstanding balance:
-
-💰 *Amount Due:* -{$balance}৳
-📊 *Status:* Payment Required
-📅 *Date:* " . now()->format('d/m/Y') . "
-
-━━━━━━━━━━━━━━━━━━━━
-💳 *PAYMENT OPTIONS:*
-• Cash payment at our office
-• Bank transfer
-• Mobile banking (bKash, Nagad, Rocket)
-
-🏢 *OFFICE INFORMATION:*
-Visa Office Chapai International
-[Your Office Address]
-[Office Phone Number]
-
-━━━━━━━━━━━━━━━━━━━━
-Please clear your dues at the earliest to avoid any inconvenience.
-
-Thank you for your cooperation.
-
-Best regards,
-*Visa Office Chapai International*";
-        
-        $url = "https://wa.me/{$phone}?text=" . urlencode($message);
-        
-        $this->js(<<<JS
-            window.open('{$url}', '_blank', 'noopener,noreferrer');
-        JS);
-    })
-    ->visible(fn ($record) => !empty($record->phone1) && $record->calculated_balance < 0)
-    ->extraAttributes(['class' => 'cursor-pointer hover:text-green-600']),
+                // View Column ব্যবহার করুন
+                Tables\Columns\ViewColumn::make('whatsapp_action')
+                    ->label('📲 Send Reminder')
+                    ->view('filament.tables.columns.whatsapp-button')
             ])
             ->heading('📊 Top 10 Negative Balance Users')
             ->description('Users with outstanding dues • Click WhatsApp to send reminder')
