@@ -120,9 +120,19 @@ class VisaForm
                             ->label('Visa Date')
                             ->displayFormat('d/m/Y'),
 
-                        TextInput::make('visa_condition')
+                        
+
+                        Select::make('visa_condition')
                             ->label('Visa Condition')
-                            ->maxLength(255),
+                            ->options([
+                                'only_visa'        => 'Only Visa',
+                                'visa_processing'  => 'Visa + Processing',
+                                'only_processing' => 'Only Processing',
+                                'full_package'    => 'Full Package',
+                            ])
+                            ->default('only_visa')
+                            ->native(false)
+                            ->required(false),
 
                         TextInput::make('mofa_number')
                             ->label('MOFA Number')
