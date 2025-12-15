@@ -3,71 +3,74 @@
 namespace App\Filament\Widgets;
 
 use App\Models\User;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables;
+use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class TopNegativeBalanceWidget extends BaseWidget
 {
-    protected static ?int $sort = 2; // প্রথমে দেখাবে
+    protected static ?int $sort = 2;
+    
+    protected int | string | array $columnSpan = 'full';
 
-    protected int|string|array $columnSpan = 'full';
-
-    /**
-     * ✅ Only these roles can see the widget
-     */
     public static function canView(): bool
     {
-        $user = Auth::user();
-
-        return $user && $user->hasAnyRole([
-            'super_admin',
-            'admin',
-            'manager',
-        ]);
+        return Auth::user()?->hasAnyRole(['super_admin', 'admin', 'manager']);
     }
 
-    protected function getTableQuery(): \Illuminate\Database\Eloquent\Builder
+    public function table(Table $table): Table
     {
-        $currentUser = Auth::user();
+        $totalNegative = User::where('current_balance', '<', 0)->sum('current_balance');
+        $negativeCount = User::where('current_balance', '<', 0)->count();
 
-        $query = User::query()->with(['visas', 'accounts']);
-
-        if ($currentUser->hasRole('user')) {
-            $query->whereRaw('1=0'); // Empty for normal users
-        }
-
-        return $query;
-    }
-
-    protected function getTableColumns(): array
-    {
-        return [
-            TextColumn::make('name')
-                ->label('Name')
-                ->searchable()
-                ->url(fn ($record): ?string => $record->id
-                        ? \App\Filament\Resources\Users\Pages\UserProfile::getUrl([
-                            'record' => $record->id,
-                        ])
-                        : null
-                )
-                ->color('primary')
-                ->tooltip('View user profile'),
-
-            TextColumn::make('current_balance')
-                ->label('Balance')
-                ->formatStateUsing(fn ($state) => number_format($state).' ৳')
-                ->color(fn ($state) => $state < 0 ? 'danger' : 'success')
-                ->disabledClick(),
-        ];
-    }
-
-    protected function getTableQueryModifiers($query)
-    {
-        // Only top 10 negative balances
-        return $query->get()
-            ->filter(fn ($user) => $user->current_balance < 0)
-            ->take(10);
+        return $table
+            ->query(
+                User::query()
+                    ->where('current_balance', '<', 0)
+                    ->orderBy('current_balance')
+                    ->limit(10)
+            )
+            ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Name')
+                    ->searchable()
+                    ->sortable(),
+                    
+                Tables\Columns\TextColumn::make('phone')
+                    ->label('Phone')
+                    ->searchable(),
+                    
+                Tables\Columns\TextColumn::make('current_balance')
+                    ->label('Balance')
+                    ->formatStateUsing(fn ($state) => number_format($state, 0) . ' ৳')
+                    ->color('danger')
+                    ->sortable()
+                    ->description(fn ($record) => 
+                        $record->accounts->count() . ' transactions'
+                    ),
+            ])
+            ->headerActions([
+                Tables\Actions\Action::make('stats')
+                    ->label(fn () => "Negative: " . number_format(abs($totalNegative)) . ' ৳')
+                    ->color('danger')
+                    ->outlined()
+                    ->disabled(),
+                    
+                Tables\Actions\Action::make('count')
+                    ->label(fn () => "Users: {$negativeCount}")
+                    ->color('warning')
+                    ->outlined()
+                    ->disabled(),
+            ])
+            ->heading('Top 10 Negative Balance Users')
+            ->description('Most negative balances first')
+            ->emptyStateHeading('No negative balance found')
+            ->emptyStateIcon('heroicon-o-currency-dollar')
+            ->emptyStateDescription('All users have positive balance!')
+            ->deferLoading()
+            ->striped()
+            ->paginated(false);
     }
 }
