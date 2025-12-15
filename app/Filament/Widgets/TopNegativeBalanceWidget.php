@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -103,7 +104,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->color(fn ($state) => $state < 0 ? 'danger' : 'success'),
 
                 // WhatsApp Action Column - Filament v4 style
-                Tables\Columns\Actions::make('actions')
+                Tables\Columns\ActionsColumn::make('actions')
                     ->label('Actions')
                     ->actions([
                         Tables\Actions\Action::make('whatsapp')
