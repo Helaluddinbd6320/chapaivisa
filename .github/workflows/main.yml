@@ -1,54 +1,23 @@
-name: 🚀 Laravel FTP Deploy
+name: 🚀 FTP Deploy
 
 on:
   push:
     branches:
-      - main
+      - main  # আপনি অন্য ব্রাঞ্চ ব্যবহার করলে এখানে সেট করুন
+      
 
 jobs:
   ftp-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
-      # Step 1: সঠিক PHP ভার্সন সেট করুন
-      - name: 🐘 Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'  # Namecheap সার্ভারের সাথে মিলবে
-          tools: composer:v2
-          
-      # Step 2: রিপোজিটরি চেকআউট
       - name: 🛒 Checkout Repository
         uses: actions/checkout@v3
 
-      # Step 3: কম্পোজার ডিপেন্ডেন্সি ইনস্টল
-      - name: 📦 Install Composer Dependencies
-        run: |
-          composer install --no-dev --optimize-autoloader --no-interaction
-
-      # Step 4: লারাভেল সেটআপ
-      - name: 🔧 Laravel Setup
-        run: |
-          cp .env.example .env || true
-          php artisan key:generate --force || true
-
-      # Step 5: FTP ডেপ্লয়
-      - name: 📤 Deploy to Namecheap FTP
+      - name: 📤 Deploy to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ftp.stutips.com
+          server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftp
-          local-dir: ./
-          server-dir: ./public_html/chapaivisa.com/
-          exclude: |
-            **/.git*
-            **/.github*
-            **/.env*
-            **/node_modules/**
-            **/vendor/**
-            storage/**
-            tests/**
-          dry-run: false
+          
