@@ -70,18 +70,13 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->label('💰 Balance')
                     ->formatStateUsing(function ($state) {
                         $formattedBalance = number_format(abs($state), 0);
-                        $isNegative = $state < 0;
-                        
-                        $badgeColor = $isNegative ? 'danger' : 'success';
-                        $icon = $isNegative ? 'heroicon-o-arrow-trending-down' : 'heroicon-o-arrow-trending-up';
-                        
-                        return $isNegative ? 
+                        return $state < 0 ? 
                             "⚠️ -{$formattedBalance} ৳" : 
                             "✅ {$formattedBalance} ৳";
                     })
                     ->color(fn ($state) => $state < 0 ? 'danger' : 'success')
                     ->badge(fn ($state) => $state < 0)
-                    ->badgeColor(fn ($state) => $state < 0 ? 'danger' : 'success')
+                    ->color(fn ($state) => $state < 0 ? 'danger' : 'success')
                     ->icon(fn ($state) => $state < 0 ? 'heroicon-o-exclamation-triangle' : 'heroicon-o-check-circle')
                     ->iconColor(fn ($state) => $state < 0 ? 'danger' : 'success')
                     ->size('sm')
@@ -132,7 +127,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->iconColor('success')
                     ->alignCenter()
                     ->badge()
-                    ->badgeColor('success')
+                    ->color('success')
                     ->tooltip('Click to send WhatsApp reminder')
                     ->extraAttributes(['class' => 'hover:bg-green-50 hover:shadow-sm transition-all duration-200 px-3 py-2 rounded-lg']),
             ])
@@ -141,7 +136,6 @@ class TopNegativeBalanceWidget extends BaseWidget
             ->emptyStateHeading('🎉 Congratulations!')
             ->emptyStateDescription('All users have cleared their balances. No dues found.')
             ->emptyStateIcon('heroicon-o-check-circle')
-            ->emptyStateIconColor('success')
             ->striped()
             ->deferLoading()
             ->paginated(false)
