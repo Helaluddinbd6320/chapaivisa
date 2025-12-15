@@ -37,7 +37,15 @@ class TopNegativeBalanceWidget extends BaseWidget
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
-                    ->searchable(),
+                    ->searchable()
+            ->url(fn ($record): ?string => $record->id
+                        ? \App\Filament\Resources\Users\Pages\UserProfile::getUrl([
+                            'record' => $record->id,
+                        ])
+                        : null
+                )
+                ->color('primary')
+                ->tooltip('View user profile'),
                     
                 Tables\Columns\TextColumn::make('phone1')
                     ->label('Phone')
