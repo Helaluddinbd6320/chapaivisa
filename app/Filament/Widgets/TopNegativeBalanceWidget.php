@@ -49,20 +49,19 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->label('📱 Phone')
                     ->searchable()
                     ->formatStateUsing(fn ($state) => $state ?: '-')
-                    ->size('sm')
-                    ->copyable(),
+                    ->size('sm'),
 
                 Tables\Columns\TextColumn::make('calculated_balance')
                     ->label('💰 Balance')
                     ->formatStateUsing(function ($state) {
                         $formattedBalance = number_format(abs($state), 0);
-                        $colorClass = $state < 0 ? 'text-red-600' : 'text-green-600';
-                        $icon = $state < 0 ? '🔻' : '🔺';
-                        
-                        return "<div class='flex items-center gap-1'>
-                            <span class='{$colorClass} font-bold'>{$icon} {$formattedBalance} ৳</span>
-                            " . ($state < 0 ? '<span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full">DUE</span>' : '') . "
-                        </div>";
+                        if ($state < 0) {
+                            return "<div class='flex items-center gap-2'>
+                                <span class='text-red-600 font-bold'>-{$formattedBalance} ৳</span>
+                                <span class='text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full font-medium'>DUE</span>
+                            </div>";
+                        }
+                        return "<span class='text-green-600 font-bold'>{$formattedBalance} ৳</span>";
                     })
                     ->html()
                     ->badge()
@@ -74,41 +73,68 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->label('📲 Send Reminder')
                     ->formatStateUsing(function ($record) {
                         if (empty($record->phone1)) {
-                            return '<div class="text-center py-1">
-                                <span class="text-gray-400 text-xs">No phone</span>
-                            </div>';
+                            return '<span class="text-gray-400 text-sm">-</span>';
                         }
                         
                         if ($record->calculated_balance >= 0) {
-                            return '<div class="text-center py-1">
-                                <span class="text-green-500 text-xs font-medium">✅ Cleared</span>
-                            </div>';
+                            return '<span class="text-green-500 text-sm font-medium">✅ Cleared</span>';
                         }
                         
+                        $cleanPhone = preg_replace('/[^0-9]/', '', $record->phone1);
                         $formattedBalance = number_format(abs($record->calculated_balance), 0);
                         
-                        return <<<HTML
-<div class="flex flex-col items-center gap-1 py-1">
-    <a href="#" 
-       class="whatsapp-btn inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow hover:shadow-lg transform hover:-translate-y-0.5 gap-2 w-full max-w-[160px]"
-       data-phone="{$record->phone1}"
-       data-name="{$record->name}"
-       data-balance="{$formattedBalance}"
-       title="Send WhatsApp reminder for -{$formattedBalance}৳">
-        
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.67-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-        </svg>
-        <span>Send Reminder</span>
-    </a>
-    <span class="text-xs text-red-600 font-medium">-{$formattedBalance}৳ Due</span>
-</div>
-HTML;
+                        // Professional WhatsApp message
+                        $message = "🌟 *Visa Office Chapai International* 🌟\n" .
+                                   "━━━━━━━━━━━━━━━━━━━━\n" .
+                                   "📋 *BALANCE REMINDER NOTIFICATION*\n\n" .
+                                   "Dear *{$record->name}*,\n\n" .
+                                   "Your account has an outstanding balance:\n\n" .
+                                   "💰 *Amount Due:* -{$formattedBalance}৳\n" .
+                                   "📊 *Status:* Payment Required\n" .
+                                   "📅 *Date:* Today\n\n" .
+                                   "━━━━━━━━━━━━━━━━━━━━\n" .
+                                   "💳 *PAYMENT OPTIONS:*\n" .
+                                   "• Cash payment at our office\n" .
+                                   "• Bank transfer\n" .
+                                   "• Mobile banking (bKash, Nagad, Rocket)\n\n" .
+                                   "🏢 *OFFICE INFORMATION:*\n" .
+                                   "Visa Office Chapai International\n" .
+                                   "[Your Office Address]\n" .
+                                   "[Office Phone Number]\n\n" .
+                                   "━━━━━━━━━━━━━━━━━━━━\n" .
+                                   "Please clear your dues at the earliest to avoid any inconvenience.\n\n" .
+                                   "Thank you for your cooperation.\n\n" .
+                                   "Best regards,\n" .
+                                   "*Visa Office Chapai International*";
+                        
+                        $whatsappUrl = "https://wa.me/{$cleanPhone}?text=" . urlencode($message);
+                        
+                        // Using concatenated string to avoid indentation issues
+                        $html = '<div class="flex flex-col items-center gap-1">';
+                        $html .= '<a href="' . $whatsappUrl . '" ';
+                        $html .= 'target="_blank" ';
+                        $html .= 'class="whatsapp-btn inline-flex items-center justify-center px-4 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 gap-2 w-full max-w-[160px] group" ';
+                        $html .= 'title="Send WhatsApp reminder">';
+                        $html .= '<div class="flex items-center gap-2">';
+                        $html .= '<div class="relative">';
+                        $html .= '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">';
+                        $html .= '<path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.67-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>';
+                        $html .= '</svg>';
+                        $html .= '<div class="absolute -top-1 -right-1 w-2 h-2 bg-green-300 rounded-full animate-ping"></div>';
+                        $html .= '</div>';
+                        $html .= '<span>Send WhatsApp</span>';
+                        $html .= '</div>';
+                        $html .= '</a>';
+                        $html .= '<div class="text-xs text-gray-600 font-medium bg-amber-50 px-2 py-0.5 rounded-full">';
+                        $html .= 'Due: -' . $formattedBalance . '৳';
+                        $html .= '</div>';
+                        $html .= '</div>';
+                        
+                        return $html;
                     })
                     ->html()
                     ->alignCenter()
-                    ->extraAttributes(['class' => 'min-w-[180px]'])
-                    ->view('filament.tables.columns.whatsapp-button'),
+                    ->extraAttributes(['class' => 'min-w-[180px]']),
             ])
             ->heading('📊 Top 10 Negative Balance Users')
             ->description('Users with outstanding dues • Click WhatsApp to send reminder')
@@ -116,59 +142,7 @@ HTML;
             ->emptyStateDescription('No negative balances found.')
             ->emptyStateIcon('heroicon-o-check-circle')
             ->striped()
-            ->paginated(false)
-            ->extend(function ($table) {
-                return $table->registerListeners([
-                    'whatsapp::send' => [
-                        'click' => <<<JS
-                            function (event) {
-                                event.preventDefault();
-                                const button = event.target.closest('.whatsapp-btn');
-                                if (!button) return;
-                                
-                                const phone = button.dataset.phone.replace(/[^0-9]/g, '');
-                                const name = button.dataset.name;
-                                const balance = button.dataset.balance;
-                                
-                                // Professional WhatsApp message format
-                                const message = `🌟 *Visa Office Chapai International* 🌟
-━━━━━━━━━━━━━━━━━━━━
-📋 *BALANCE REMINDER NOTIFICATION*
-
-Dear *${name}*,
-
-Your account has an outstanding balance:
-
-💰 *Amount Due:* -${balance}৳
-📊 *Status:* Payment Required
-📅 *Date:* ${new Date().toLocaleDateString('en-GB')}
-
-━━━━━━━━━━━━━━━━━━━━
-💳 *PAYMENT OPTIONS:*
-• Cash payment at our office
-• Bank transfer
-• Mobile banking (bKash, Nagad, Rocket)
-
-🏢 *OFFICE INFORMATION:*
-Visa Office Chapai International
-[Your Office Address]
-[Office Phone Number]
-
-━━━━━━━━━━━━━━━━━━━━
-Please clear your dues at the earliest to avoid any inconvenience.
-
-Thank you for your cooperation.
-
-Best regards,
-*Visa Office Chapai International*`;
-                                
-                                const whatsappUrl = \`https://wa.me/\${phone}?text=\${encodeURIComponent(message)}\`;
-                                window.open(whatsappUrl, '_blank');
-                            }
-                        JS,
-                    ],
-                ]);
-            });
+            ->paginated(false);
     }
 
     private function getBalanceSubquery(): string
