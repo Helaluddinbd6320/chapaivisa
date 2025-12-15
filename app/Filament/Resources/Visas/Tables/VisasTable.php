@@ -17,6 +17,7 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
+use Filament\Actions\ForceDeleteAction;
 
 class VisasTable
 {
@@ -184,8 +185,10 @@ class VisasTable
             ])
 
             ->recordActions([
-                EditAction::make(),
                 ViewAction::make(),
+                EditAction::make(),
+                ForceDeleteAction::make(),
+                
             ])
 
             ->toolbarActions([
