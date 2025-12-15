@@ -141,7 +141,7 @@ class TopNegativeBalanceWidget extends BaseWidget
             ->emptyStateHeading('🎉 Congratulations!')
             ->emptyStateDescription('All users have cleared their balances. No dues found.')
             ->emptyStateIcon('heroicon-o-check-circle')
-            ->emptyStateIconColor('success')
+            // ->emptyStateIconColor('success')
             ->striped()
             ->deferLoading()
             ->paginated(false)
