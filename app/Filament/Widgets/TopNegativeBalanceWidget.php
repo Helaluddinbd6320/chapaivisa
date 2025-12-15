@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\User;
+use Filament\Actions\Action as BaseAction;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -107,12 +108,6 @@ class TopNegativeBalanceWidget extends BaseWidget
                         'class' => 'px-4 py-2 rounded-lg hover:shadow-sm transition-all',
                         'style' => 'background-color: #f0fdf4; border: 1px solid #bbf7d0; min-width: 140px;'
                     ]),
-            ])
-            ->headerActions([
-                Tables\Actions\Action::make('export')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->label('Export')
-                    ->color('gray'),
             ])
             ->heading('📊 Top 10 Negative Balance Users')
             ->description('Users with outstanding dues • Click WhatsApp to send reminder')
