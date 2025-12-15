@@ -3,11 +3,13 @@
 namespace App\Filament\Widgets;
 
 use App\Models\User;
+use App\Models\Account;
+use App\Models\Visa;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TopNegativeBalanceWidget extends BaseWidget
 {
@@ -22,55 +24,70 @@ class TopNegativeBalanceWidget extends BaseWidget
 
     public function table(Table $table): Table
     {
-        $totalNegative = User::where('current_balance', '<', 0)->sum('current_balance');
-        $negativeCount = User::where('current_balance', '<', 0)->count();
-
         return $table
             ->query(
                 User::query()
-                    ->where('current_balance', '<', 0)
-                    ->orderBy('current_balance')
+                    ->with(['accounts', 'visas'])
+                    ->select(['users.*'])
+                    ->selectSub($this->getBalanceSubquery(), 'calculated_balance')
+                    ->having('calculated_balance', '<', 0)
+                    ->orderBy('calculated_balance')
                     ->limit(10)
             )
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
                     
                 Tables\Columns\TextColumn::make('phone')
                     ->label('Phone')
                     ->searchable(),
                     
-                Tables\Columns\TextColumn::make('current_balance')
-                    ->label('Balance')
-                    ->formatStateUsing(fn ($state) => number_format($state, 0) . ' ৳')
-                    ->color('danger')
-                    ->sortable()
-                    ->description(fn ($record) => 
-                        $record->accounts->count() . ' transactions'
-                    ),
-            ])
-            ->headerActions([
-                Tables\Actions\Action::make('stats')
-                    ->label(fn () => "Negative: " . number_format(abs($totalNegative)) . ' ৳')
-                    ->color('danger')
-                    ->outlined()
-                    ->disabled(),
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable(),
                     
-                Tables\Actions\Action::make('count')
-                    ->label(fn () => "Users: {$negativeCount}")
-                    ->color('warning')
-                    ->outlined()
-                    ->disabled(),
+                Tables\Columns\TextColumn::make('calculated_balance')
+                    ->label('Balance')
+                    ->formatStateUsing(fn ($state) => 
+                        number_format($state, 0) . ' ৳'
+                    )
+                    ->color(fn ($state) => $state < 0 ? 'danger' : 'success')
+                    ->sortable(),
             ])
             ->heading('Top 10 Negative Balance Users')
-            ->description('Most negative balances first')
             ->emptyStateHeading('No negative balance found')
-            ->emptyStateIcon('heroicon-o-currency-dollar')
-            ->emptyStateDescription('All users have positive balance!')
-            ->deferLoading()
+            ->emptyStateDescription('All users have positive balance.')
             ->striped()
             ->paginated(false);
+    }
+
+    private function getBalanceSubquery(): string
+    {
+        return "
+            COALESCE((
+                SELECT SUM(amount) 
+                FROM accounts 
+                WHERE user_id = users.id 
+                AND transaction_type = 'deposit'
+            ), 0) 
+            - COALESCE((
+                SELECT SUM(visa_cost) 
+                FROM visas 
+                WHERE user_id = users.id
+            ), 0)
+            - COALESCE((
+                SELECT SUM(amount) 
+                FROM accounts 
+                WHERE user_id = users.id 
+                AND transaction_type = 'withdrawal'
+            ), 0)
+            - COALESCE((
+                SELECT SUM(amount) 
+                FROM accounts 
+                WHERE user_id = users.id 
+                AND transaction_type = 'refund'
+            ), 0)
+        ";
     }
 }
