@@ -172,8 +172,8 @@ class VisaForm
 
                         Select::make('takamul')
                             ->label('Takamul')
-                            ->options(['yes' => '✅ Yes', 'no' => '❌ No'])
-                            ->default('no')
+                            ->options(['yes' => '✅ Yes', 'no' => '❌ No', 'na'  => '➖ Not Required'])
+                            ->default('na')
                             ->columnSpan(1),
 
                         Select::make('takamul_category')
