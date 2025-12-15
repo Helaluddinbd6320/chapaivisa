@@ -47,30 +47,24 @@ class TopNegativeBalanceWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('phone1')
                     ->label('Phone')
                     ->searchable()
-                    ->formatStateUsing(function ($state, $record) {
-                        // Format phone number and add WhatsApp button
-                        $formattedPhone = $state ?: 'N/A';
-                        $balance = $record->calculated_balance;
-                        $formattedBalance = number_format(abs($balance), 0);
+                    ->formatStateUsing(function ($state) {
+                        if (! $state) {
+                            return 'N/A';
+                        }
 
-                        $whatsappUrl = $state ?
-                            'https://wa.me/'.preg_replace('/[^0-9]/', '', $state).
-                            '?text='.urlencode("Dear {$record->name}, your current balance is -{$formattedBalance}৳. Please clear your due as soon as possible. Thank you.") :
-                            '#';
+                        // Clean phone number for WhatsApp link
+                        $cleanPhone = preg_replace('/[^0-9]/', '', $state);
 
-                        $whatsappBtn = $state ?
-                            "<a href='{$whatsappUrl}' target='_blank' class='inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-green-600 rounded hover:bg-green-700'>
+                        return "<div class='flex items-center gap-2'>
+                            <span>{$state}</span>
+                            <a href='https://wa.me/{$cleanPhone}' 
+                               target='_blank' 
+                               class='inline-flex items-center px-2 py-1 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors'>
                                 <svg class='w-3 h-3 mr-1' fill='currentColor' viewBox='0 0 24 24'>
                                     <path d='M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.67-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z'/>
-                                    <path d='M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm6.958 17.963c-.188.545-.94.993-1.539 1.113-.409.081-.939.125-1.739-.133-.445-.145-1.004-.375-1.761-.775-.995-.523-1.828-1.197-2.558-2.058-2.357-2.387-3.156-5.183-2.987-6.99.076-.817.428-1.512.939-1.973.538-.487 1.213-.735 1.938-.735.272 0 .544.025.817.075.445.081.891.335 1.138.694.248.36.322.798.272 1.238-.074.644-.495 1.438-.57 1.587-.074.149-.074.248.05.372.124.124.272.272.396.421.124.149.248.298.347.421.099.124.149.272.025.446-.124.174-.223.298-.446.521-.223.223-.446.447-.669.644-.173.149-.347.322-.149.644.198.322.891 1.438 2.094 2.08.471.248.818.347 1.089.397.272.05.446.025.57-.05.124-.074.272-.223.347-.644.074-.421.272-.818.47-1.139.173-.298.421-.322.67-.223.248.099 1.564.792 1.836.938.272.149.446.223.52.347.075.124.075.694-.114 1.239z'/>
                                 </svg>
-                                Send
-                            </a>" :
-                            '';
-
-                        return "<div class='flex flex-col gap-1'>
-                            <span>{$formattedPhone}</span>
-                            {$whatsappBtn}
+                                WhatsApp
+                            </a>
                         </div>";
                     })
                     ->html(),
@@ -81,32 +75,36 @@ class TopNegativeBalanceWidget extends BaseWidget
 
                 Tables\Columns\TextColumn::make('calculated_balance')
                     ->label('Balance')
-                    ->formatStateUsing(fn ($state) => number_format($state, 0).' ৳'
-                    )
-                    ->color(fn ($state) => $state < 0 ? 'danger' : 'success')
-                    ->description(function ($record) {
-                        // Additional balance breakdown
-                        $deposits = $record->accounts
-                            ->where('transaction_type', 'deposit')
-                            ->sum('amount');
-                        $visas = $record->visas->sum('visa_cost');
-                        $withdrawals = $record->accounts
-                            ->where('transaction_type', 'withdrawal')
-                            ->sum('amount');
-                        $refunds = $record->accounts
-                            ->where('transaction_type', 'refund')
-                            ->sum('amount');
+                    ->formatStateUsing(function ($state, $record) {
+                        $formattedBalance = number_format($state, 0);
 
-                        return 'D: '.number_format($deposits).
-                               ' | V: -'.number_format($visas).
-                               ' | W: -'.number_format($withdrawals).
-                               ' | R: -'.number_format($refunds);
-                    }, position: 'above')
-                    ->tooltip('D=Deposits, V=Visa, W=Withdrawal, R=Refund'),
+                        if (! $record->phone1 || $state >= 0) {
+                            return "{$formattedBalance} ৳";
+                        }
 
-                // WhatsApp Action Column
-                Tables\Columns\ActionColumn::make('actions')
-                    ->label('Message')
+                        $cleanPhone = preg_replace('/[^0-9]/', '', $record->phone1);
+                        $message = "Dear {$record->name}, your current balance is -{$formattedBalance}৳. Please clear your due as soon as possible. Thank you.";
+                        $whatsappUrl = "https://wa.me/{$cleanPhone}?text=".urlencode($message);
+
+                        return "<div class='flex items-center gap-2'>
+                            <span class='font-bold text-red-600'>-{$formattedBalance} ৳</span>
+                            <a href='{$whatsappUrl}' 
+                               target='_blank' 
+                               class='inline-flex items-center px-2 py-1 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors'
+                               title='Send balance reminder'>
+                                <svg class='w-3 h-3 mr-1' fill='currentColor' viewBox='0 0 24 24'>
+                                    <path d='M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.67-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z'/>
+                                </svg>
+                                Remind
+                            </a>
+                        </div>";
+                    })
+                    ->html()
+                    ->color(fn ($state) => $state < 0 ? 'danger' : 'success'),
+
+                // WhatsApp Action Column - Filament v4 style
+                Tables\Columns\ActionsColumn::make('actions')
+                    ->label('Actions')
                     ->actions([
                         Tables\Actions\Action::make('whatsapp')
                             ->label('WhatsApp')
@@ -121,16 +119,29 @@ class TopNegativeBalanceWidget extends BaseWidget
                                 $balance = $record->calculated_balance;
                                 $formattedBalance = number_format(abs($balance), 0);
 
-                                $message = "Dear {$record->name}, your current balance is -{$formattedBalance}৳. ";
-                                $message .= 'Please clear your due as soon as possible. Thank you.';
+                                $message = "Dear {$record->name},\n\n";
+                                $message .= "📊 *Balance Reminder*\n";
+                                $message .= "——————\n";
+                                $message .= "💰 *Due Amount:* -{$formattedBalance}৳\n";
+                                $message .= "——————\n";
+                                $message .= "Please make the payment at your earliest convenience.\n\n";
+                                $message .= "Thank you,\n";
+                                $message .= '*Visa Office Chapai International*';
 
                                 return "https://wa.me/{$phone}?text=".urlencode($message);
                             })
                             ->openUrlInNewTab()
+                            ->visible(fn ($record) => ! empty($record->phone1) && $record->calculated_balance < 0)
+                            ->tooltip('Send WhatsApp reminder about due balance'),
+
+                        Tables\Actions\Action::make('call')
+                            ->label('Call')
+                            ->icon('heroicon-o-phone')
+                            ->color('primary')
+                            ->url(fn ($record) => $record->phone1 ? "tel:{$record->phone1}" : null)
                             ->visible(fn ($record) => ! empty($record->phone1))
-                            ->tooltip('Send WhatsApp message about balance'),
-                    ])
-                    ->width('100px'),
+                            ->tooltip('Make a phone call'),
+                    ]),
             ])
             ->heading('Top 10 Negative Balance Users')
             ->emptyStateHeading('No negative balance found')
