@@ -18,47 +18,44 @@
     }
     
     $formattedBalance = number_format(abs($balance), 0);
+    $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
 @endphp
 
 <div class="flex flex-col items-center gap-1 py-1" x-data>
     <button type="button"
         @click="
-            const phone = '{{ preg_replace('/[^0-9]/', '', $phone) }}';
             const name = '{{ addslashes($name) }}';
             const balance = '{{ $formattedBalance }}';
+            const cleanPhone = '{{ $cleanPhone }}';
             
-            const message = `🌟 *Visa Office Chapai International* 🌟
+            // Message তৈরি করুন
+            const message = '🌟 *Visa Office Chapai International* 🌟\\n\\n' +
+                '📋 *BALANCE REMINDER NOTIFICATION*\\n\\n' +
+                'Dear *' + name + '*,\\n\\n' +
+                'Your account has an outstanding balance:\\n\\n' +
+                '💰 *Amount Due:* -' + balance + '৳\\n' +
+                '📊 *Status:* Payment Required\\n' +
+                '📅 *Date:* ' + new Date().toLocaleDateString('en-GB') + '\\n\\n' +
+                '━━━━━━━━━━━━━━━━━━━━\\n' +
+                '💳 *PAYMENT OPTIONS:*\\n' +
+                '• Cash payment at our office\\n' +
+                '• Bank transfer\\n' +
+                '• Mobile banking (bKash, Nagad, Rocket)\\n\\n' +
+                '🏢 *OFFICE INFORMATION:*\\n' +
+                'Visa Office Chapai International\\n' +
+                '[Your Office Address]\\n' +
+                '[Office Phone Number]\\n\\n' +
+                '━━━━━━━━━━━━━━━━━━━━\\n' +
+                'Please clear your dues at the earliest to avoid any inconvenience.\\n\\n' +
+                'Thank you for your cooperation.\\n\\n' +
+                'Best regards,\\n' +
+                '*Visa Office Chapai International*';
             
-📋 *BALANCE REMINDER NOTIFICATION*
-
-Dear *\${name}*,
-
-Your account has an outstanding balance:
-
-💰 *Amount Due:* -\${balance}৳
-📊 *Status:* Payment Required
-📅 *Date:* ${new Date().toLocaleDateString('en-GB')}
-
-━━━━━━━━━━━━━━━━━━━━
-💳 *PAYMENT OPTIONS:*
-• Cash payment at our office
-• Bank transfer
-• Mobile banking (bKash, Nagad, Rocket)
-
-🏢 *OFFICE INFORMATION:*
-Visa Office Chapai International
-[Your Office Address]
-[Office Phone Number]
-
-━━━━━━━━━━━━━━━━━━━━
-Please clear your dues at the earliest to avoid any inconvenience.
-
-Thank you for your cooperation.
-
-Best regards,
-*Visa Office Chapai International*`;
+            // URL এনকোড করুন
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = 'https://wa.me/' + cleanPhone + '?text=' + encodedMessage;
             
-            const whatsappUrl = `https://wa.me/\${phone}?text=\${encodeURIComponent(message)}`;
+            // নতুন উইন্ডোতে ওপেন করুন
             window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
         "
         class="whatsapp-btn inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow hover:shadow-lg transform hover:-translate-y-0.5 gap-2 w-full max-w-[160px] cursor-pointer"
