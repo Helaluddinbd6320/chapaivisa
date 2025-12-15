@@ -1,19 +1,20 @@
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // WhatsApp button click handler
-        document.addEventListener('click', function(event) {
-            const button = event.target.closest('.whatsapp-btn');
-            if (!button) return;
-
-            event.preventDefault();
-
-            const phone = button.dataset.phone.replace(/[^0-9]/g, '');
-            const name = button.dataset.name;
-            const balance = button.dataset.balance;
-
-            // Professional WhatsApp message format
-            const message = `🌟 *Visa Office Chapai International* 🌟
-        
+<div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // WhatsApp button click handler
+            document.addEventListener('click', function(event) {
+                const button = event.target.closest('.whatsapp-btn');
+                if (!button) return;
+                
+                event.preventDefault();
+                
+                const phone = button.dataset.phone.replace(/[^0-9]/g, '');
+                const name = button.dataset.name;
+                const balance = button.dataset.balance;
+                
+                // Professional WhatsApp message format
+                const message = `🌟 *Visa Office Chapai International* 🌟
+                
 📋 *BALANCE REMINDER NOTIFICATION*
 
 Dear *${name}*,
@@ -42,9 +43,10 @@ Thank you for your cooperation.
 
 Best regards,
 *Visa Office Chapai International*`;
-
-            const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, '_blank');
+                
+                const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+            });
         });
-    });
-</script>
+    </script>
+</div>

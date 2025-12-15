@@ -86,7 +86,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                         
                         $formattedBalance = number_format(abs($record->calculated_balance), 0);
                         
-                        return <<<HTML
+                        $html = <<<HTML
 <div class="flex flex-col items-center gap-1 py-1">
     <a href="#" 
        class="whatsapp-btn inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow hover:shadow-lg transform hover:-translate-y-0.5 gap-2 w-full max-w-[160px]"
@@ -103,6 +103,7 @@ class TopNegativeBalanceWidget extends BaseWidget
     <span class="text-xs text-red-600 font-medium">-{$formattedBalance}৳ Due</span>
 </div>
 HTML;
+                        return $html;
                     })
                     ->html()
                     ->alignCenter()
@@ -117,18 +118,10 @@ HTML;
             ->paginated(false);
     }
 
-    protected function getTableActions(): array
+    public function getFooter(): ?\Illuminate\Contracts\View\View
     {
-        return [
-            // আপনি চাইলে এখানে অ্যাকশন যোগ করতে পারেন
-        ];
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            // আপনি চাইলে এখানে হেডার অ্যাকশন যোগ করতে পারেন
-        ];
+        // WhatsApp JavaScript ফুটারে যোগ করুন
+        return view('filament.widgets.whatsapp-script');
     }
 
     private function getBalanceSubquery(): string
@@ -158,11 +151,5 @@ HTML;
                 AND transaction_type = 'refund'
             ), 0)
         ";
-    }
-
-    public function getFooter(): ?\Illuminate\Contracts\View\View
-    {
-        // WhatsApp JavaScript এখানে যোগ করুন
-        return view('filament.widgets.whatsapp-script');
     }
 }
