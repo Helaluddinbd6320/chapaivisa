@@ -44,7 +44,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->color('primary')
                     ->weight('bold')
                     ->size('sm')
-                    ->description(fn ($record) => 'ID: ' . $record->id)
+                    ->description(fn ($record) => 'ID: '.$record->id)
                     ->tooltip('View user profile'),
 
                 Tables\Columns\TextColumn::make('phone1')
@@ -54,7 +54,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->icon('heroicon-o-phone')
                     ->iconColor('blue')
                     ->size('sm')
-                    ->description(fn ($record) => $record->phone2 ? 'Secondary: ' . $record->phone2 : null)
+                    ->description(fn ($record) => $record->phone2 ? 'Secondary: '.$record->phone2 : null)
                     ->tooltip('Primary phone number'),
 
                 Tables\Columns\TextColumn::make('email')
@@ -70,13 +70,18 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->label('💰 Balance')
                     ->formatStateUsing(function ($state) {
                         $formattedBalance = number_format(abs($state), 0);
-                        return $state < 0 ? 
-                            "⚠️ -{$formattedBalance} ৳" : 
+                        $isNegative = $state < 0;
+
+                        $badgeColor = $isNegative ? 'danger' : 'success';
+                        $icon = $isNegative ? 'heroicon-o-arrow-trending-down' : 'heroicon-o-arrow-trending-up';
+
+                        return $isNegative ?
+                            "⚠️ -{$formattedBalance} ৳" :
                             "✅ {$formattedBalance} ৳";
                     })
                     ->color(fn ($state) => $state < 0 ? 'danger' : 'success')
                     ->badge(fn ($state) => $state < 0)
-                    ->color(fn ($state) => $state < 0 ? 'danger' : 'success')
+                    // ->badgeColor(fn ($state) => $state < 0 ? 'danger' : 'success')
                     ->icon(fn ($state) => $state < 0 ? 'heroicon-o-exclamation-triangle' : 'heroicon-o-check-circle')
                     ->iconColor(fn ($state) => $state < 0 ? 'danger' : 'success')
                     ->size('sm')
@@ -90,7 +95,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                         if (empty($record->phone1) || $record->calculated_balance >= 0) {
                             return '✅ Cleared';
                         }
-                        
+
                         return 'Send Message';
                     })
                     ->color('success')
@@ -100,10 +105,10 @@ class TopNegativeBalanceWidget extends BaseWidget
                         if (empty($record->phone1) || $record->calculated_balance >= 0) {
                             return null;
                         }
-                        
+
                         $cleanPhone = preg_replace('/[^0-9]/', '', $record->phone1);
                         $formattedBalance = number_format(abs($record->calculated_balance), 0);
-                        
+
                         // Professional WhatsApp message
                         $message = "🔔 *Balance Reminder*\n";
                         $message .= "————————————\n";
@@ -117,9 +122,9 @@ class TopNegativeBalanceWidget extends BaseWidget
                         $message .= "• Bank Transfer\n";
                         $message .= "• Mobile Banking\n\n";
                         $message .= "Thank you,\n";
-                        $message .= "*Visa Office Chapai International*";
-                        
-                        return "https://wa.me/{$cleanPhone}?text=" . urlencode($message);
+                        $message .= '*Visa Office Chapai International*';
+
+                        return "https://wa.me/{$cleanPhone}?text=".urlencode($message);
                     })
                     ->openUrlInNewTab()
                     ->icon('heroicon-o-chat-bubble-left-right')
@@ -127,7 +132,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->iconColor('success')
                     ->alignCenter()
                     ->badge()
-                    ->color('success')
+                    ->badgeColor('success')
                     ->tooltip('Click to send WhatsApp reminder')
                     ->extraAttributes(['class' => 'hover:bg-green-50 hover:shadow-sm transition-all duration-200 px-3 py-2 rounded-lg']),
             ])
@@ -136,6 +141,7 @@ class TopNegativeBalanceWidget extends BaseWidget
             ->emptyStateHeading('🎉 Congratulations!')
             ->emptyStateDescription('All users have cleared their balances. No dues found.')
             ->emptyStateIcon('heroicon-o-check-circle')
+            ->emptyStateIconColor('success')
             ->striped()
             ->deferLoading()
             ->paginated(false)
@@ -151,7 +157,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                         : null
                     )
                     ->tooltip('View user profile'),
-                    
+
                 Tables\Actions\Action::make('send_sms')
                     ->icon('heroicon-o-chat-bubble-left-right')
                     ->color('success')
@@ -160,15 +166,16 @@ class TopNegativeBalanceWidget extends BaseWidget
                         if (empty($record->phone1)) {
                             return null;
                         }
-                        
+
                         $cleanPhone = preg_replace('/[^0-9]/', '', $record->phone1);
                         $formattedBalance = number_format(abs($record->calculated_balance), 0);
-                        
+
                         $message = "Dear {$record->name}, your current balance is -{$formattedBalance}৳. Please clear your due.";
-                        return "https://wa.me/{$cleanPhone}?text=" . urlencode($message);
+
+                        return "https://wa.me/{$cleanPhone}?text=".urlencode($message);
                     })
                     ->openUrlInNewTab()
-                    ->visible(fn ($record) => !empty($record->phone1))
+                    ->visible(fn ($record) => ! empty($record->phone1))
                     ->tooltip('Send WhatsApp message'),
             ]);
     }
