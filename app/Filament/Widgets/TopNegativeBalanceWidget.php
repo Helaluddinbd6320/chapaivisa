@@ -89,7 +89,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                         }
                         
                         // Create WhatsApp message
-                        $message = $this->createBalanceReminderMessage($name, $formattedBalance);
+                        $message = $this->createWhatsAppMessage($name, $formattedBalance);
                         
                         // Generate WhatsApp URL
                         $whatsappUrl = $this->getWhatsAppUrl($phone, $message);
@@ -118,25 +118,59 @@ class TopNegativeBalanceWidget extends BaseWidget
     }
 
     /**
-     * Create WhatsApp message with proper format
+     * Create WhatsApp message without invisible characters
      */
-    private function createBalanceReminderMessage(string $name, string $formattedBalance): string
+    private function createWhatsAppMessage(string $name, string $formattedBalance): string
     {
         $currentDate = now()->format('d/m/Y');
         
-        $message = "🏢 *Visa Office Chapai International*\n\n";
-        $message .= "🔔 *BALANCE REMINDER NOTIFICATION*\n\n";
+        // Create message WITHOUT invisible characters (U+2060)
+        $message = "🏢 Visa Office Chapai International\n\n";
+        $message .= "🔔 BALANCE REMINDER NOTIFICATION\n\n";
+        $message .= "Dear {$name},\n\n";
+        $message .= "Your account has an outstanding balance:\n\n";
+        $message .= "💰 Amount Due: -{$formattedBalance}৳\n";
+        $message .= "⚠️ Status: Payment Required\n";
+        $message .= "📅 Date: {$currentDate}\n\n";
+        $message .= "━━━━━━━━━━━━━━━━━━━━\n";
+        $message .= "💳 PAYMENT OPTIONS:\n";
+        $message .= "• Cash payment at our office\n";
+        $message .= "• Bank transfer\n";
+        $message .= "• Mobile banking (bKash, Nagad, Rocket)\n\n";
+        $message .= "🏛️ OFFICE INFORMATION:\n";
+        $message .= "Visa Office Chapai International\n";
+        $message .= "[Your Office Address]\n";
+        $message .= "[Office Phone Number]\n\n";
+        $message .= "━━━━━━━━━━━━━━━━━━━━\n";
+        $message .= "Please clear your dues at the earliest to avoid any inconvenience.\n\n";
+        $message .= "Thank you for your cooperation.\n\n";
+        $message .= "Best regards,\n";
+        $message .= "Visa Office Chapai International";
+        
+        return $message;
+    }
+
+    /**
+     * Alternative: Message with WhatsApp formatting
+     */
+    private function createWhatsAppMessageFormatted(string $name, string $formattedBalance): string
+    {
+        $currentDate = now()->format('d/m/Y');
+        
+        // Using * for bold and _ for italic in WhatsApp
+        $message = "*🏢 Visa Office Chapai International*\n\n";
+        $message .= "*🔔 BALANCE REMINDER NOTIFICATION*\n\n";
         $message .= "Dear *{$name}*,\n\n";
         $message .= "Your account has an outstanding balance:\n\n";
         $message .= "💰 *Amount Due:* -{$formattedBalance}৳\n";
         $message .= "⚠️ *Status:* Payment Required\n";
         $message .= "📅 *Date:* {$currentDate}\n\n";
         $message .= "━━━━━━━━━━━━━━━━━━━━\n";
-        $message .= "💳 *PAYMENT OPTIONS:*\n";
+        $message .= "*💳 PAYMENT OPTIONS:*\n";
         $message .= "• Cash payment at our office\n";
         $message .= "• Bank transfer\n";
         $message .= "• Mobile banking (bKash, Nagad, Rocket)\n\n";
-        $message .= "🏛️ *OFFICE INFORMATION:*\n";
+        $message .= "*🏛️ OFFICE INFORMATION:*\n";
         $message .= "Visa Office Chapai International\n";
         $message .= "[Your Office Address]\n";
         $message .= "[Office Phone Number]\n\n";
@@ -157,65 +191,100 @@ class TopNegativeBalanceWidget extends BaseWidget
         // Clean phone number
         $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
         
-        // Ensure UTF-8 encoding for emojis
-        if (!mb_check_encoding($message, 'UTF-8')) {
-            $message = mb_convert_encoding($message, 'UTF-8');
-        }
+        // Clean message - remove any invisible characters
+        $message = $this->cleanInvisibleCharacters($message);
         
-        // Proper URL encoding
-        $encodedMessage = rawurlencode($message);
-        
-        // Fix any encoding issues for special characters
-        $encodedMessage = str_replace(
-            ['%0A', '%20', '%2A', '%5F', '%7E'], 
-            ["%0A", '%20', '*', '_', '~'], 
-            $encodedMessage
-        );
+        // Encode for URL - using a custom function to preserve emojis
+        $encodedMessage = $this->encodeForWhatsApp($message);
         
         return "https://wa.me/{$cleanPhone}?text={$encodedMessage}";
     }
 
     /**
-     * Alternative: Simple encoding method that preserves emojis
+     * Remove invisible characters (U+2060 WORD JOINER and others)
      */
-    private function encodeMessageForWhatsApp(string $message): string
+    private function cleanInvisibleCharacters(string $text): string
     {
-        // Convert message to UTF-8 if needed
-        $encoding = mb_detect_encoding($message, ['UTF-8', 'ISO-8859-1', 'ASCII'], true);
-        if ($encoding !== 'UTF-8') {
-            $message = mb_convert_encoding($message, 'UTF-8', $encoding);
+        // Remove invisible Unicode characters
+        $invisibleChars = [
+            "\u{2060}", // WORD JOINER (the problematic character in your example)
+            "\u{200B}", // ZERO WIDTH SPACE
+            "\u{200C}", // ZERO WIDTH NON-JOINER
+            "\u{200D}", // ZERO WIDTH JOINER
+            "\u{FEFF}", // ZERO WIDTH NO-BREAK SPACE
+        ];
+        
+        foreach ($invisibleChars as $char) {
+            $text = str_replace($char, '', $text);
         }
         
-        // Encode character by character to preserve emojis
-        $encoded = '';
-        $length = mb_strlen($message, 'UTF-8');
+        // Also replace multiple spaces with single space
+        $text = preg_replace('/\s+/', ' ', $text);
+        
+        return $text;
+    }
+
+    /**
+     * Custom encoding for WhatsApp that preserves emojis
+     */
+    private function encodeForWhatsApp(string $text): string
+    {
+        // Ensure UTF-8 encoding
+        if (!mb_check_encoding($text, 'UTF-8')) {
+            $text = mb_convert_encoding($text, 'UTF-8');
+        }
+        
+        // URL encode while preserving emojis
+        $parts = [];
+        $length = mb_strlen($text, 'UTF-8');
         
         for ($i = 0; $i < $length; $i++) {
-            $char = mb_substr($message, $i, 1, 'UTF-8');
+            $char = mb_substr($text, $i, 1, 'UTF-8');
             $ord = mb_ord($char, 'UTF-8');
             
-            if ($ord > 127) {
-                // For Unicode characters (emojis), use rawurlencode
-                $encoded .= rawurlencode($char);
+            if ($char === "\n") {
+                $parts[] = '%0A';
+            } elseif ($char === ' ') {
+                $parts[] = '%20';
+            } elseif ($ord > 127) {
+                // For Unicode characters (emojis, Bengali, etc.)
+                $parts[] = rawurlencode($char);
             } else {
-                // For ASCII characters, preserve spaces and newlines
-                if ($char === "\n") {
-                    $encoded .= '%0A';
-                } elseif ($char === ' ') {
-                    $encoded .= '%20';
-                } elseif ($char === '*') {
-                    $encoded .= '*';
-                } elseif ($char === '_') {
-                    $encoded .= '_';
-                } elseif ($char === '~') {
-                    $encoded .= '~';
-                } else {
-                    $encoded .= rawurlencode($char);
-                }
+                // For ASCII characters
+                $parts[] = rawurlencode($char);
             }
         }
         
+        $encoded = implode('', $parts);
+        
+        // Fix common issues
+        $encoded = str_replace(
+            ['%2A', '%5F', '%7E'], // *, _, ~
+            ['*', '_', '~'],
+            $encoded
+        );
+        
         return $encoded;
+    }
+
+    /**
+     * SIMPLEST SOLUTION: Use this method if above doesn't work
+     */
+    private function getWhatsAppUrlSimple(string $phone, string $message): string
+    {
+        // Clean phone number
+        $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
+        
+        // Simple encoding - removes all problematic characters
+        $message = $this->cleanInvisibleCharacters($message);
+        
+        // Replace Bengali Taka symbol with text if needed
+        $message = str_replace('৳', 'BDT', $message);
+        
+        // URL encode
+        $encodedMessage = urlencode($message);
+        
+        return "https://wa.me/{$cleanPhone}?text={$encodedMessage}";
     }
 
     private function getBalanceSubquery(): string
