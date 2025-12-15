@@ -98,7 +98,6 @@ class VisaForm
                                 table: 'visas',
                                 column: 'visa_number',
                                 ignorable: fn ($record) => $record,
-                                ignoreBlank: true, // ⬅ empty হলে unique check করবে না
                             ),
 
                         TextInput::make('visa_id_number')
