@@ -30,7 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('Visa Office Chapai')
+            ->brandName('Visa Office Chapai International')
             ->colors([
                 'primary' => Color::Amber,
             ])
