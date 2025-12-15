@@ -20,39 +20,31 @@
     $formattedBalance = number_format(abs($balance), 0);
     $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
     
-    // PHP তে Message তৈরি করুন
-    $message = "🌟 *Visa Office Chapai International* 🌟
-
-📋 *BALANCE REMINDER NOTIFICATION*
-
-Dear *{$name}*,
-
-Your account has an outstanding balance:
-
-💰 *Amount Due:* -{$formattedBalance}৳
-📊 *Status:* Payment Required
-📅 *Date:* " . date('d/m/Y') . "
-
-━━━━━━━━━━━━━━━━━━━━
-💳 *PAYMENT OPTIONS:*
-• Cash payment at our office
-• Bank transfer
-• Mobile banking (bKash, Nagad, Rocket)
-
-🏢 *OFFICE INFORMATION:*
-Visa Office Chapai International
-[Your Office Address]
-[Office Phone Number]
-
-━━━━━━━━━━━━━━━━━━━━
-Please clear your dues at the earliest to avoid any inconvenience.
-
-Thank you for your cooperation.
-
-Best regards,
-*Visa Office Chapai International*";
+    // Emojis as UTF-8 characters
+    $message = "🌟 *Visa Office Chapai International* 🌟" . "\n\n" .
+               "📋 *BALANCE REMINDER NOTIFICATION*" . "\n\n" .
+               "Dear *{$name}*," . "\n\n" .
+               "Your account has an outstanding balance:" . "\n\n" .
+               "💰 *Amount Due:* -{$formattedBalance}৳" . "\n" .
+               "📊 *Status:* Payment Required" . "\n" .
+               "📅 *Date:* " . date('d/m/Y') . "\n\n" .
+               "━━━━━━━━━━━━━━━━━━━━" . "\n" .
+               "💳 *PAYMENT OPTIONS:*" . "\n" .
+               "• Cash payment at our office" . "\n" .
+               "• Bank transfer" . "\n" .
+               "• Mobile banking (bKash, Nagad, Rocket)" . "\n\n" .
+               "🏢 *OFFICE INFORMATION:*" . "\n" .
+               "Visa Office Chapai International" . "\n" .
+               "[Your Office Address]" . "\n" .
+               "[Office Phone Number]" . "\n\n" .
+               "━━━━━━━━━━━━━━━━━━━━" . "\n" .
+               "Please clear your dues at the earliest to avoid any inconvenience." . "\n\n" .
+               "Thank you for your cooperation." . "\n\n" .
+               "Best regards," . "\n" .
+               "*Visa Office Chapai International*";
     
-    $encodedMessage = urlencode($message);
+    // URL encode properly
+    $encodedMessage = rawurlencode($message);
     $whatsappUrl = "https://wa.me/{$cleanPhone}?text={$encodedMessage}";
 @endphp
 
