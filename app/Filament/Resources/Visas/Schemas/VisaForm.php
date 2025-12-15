@@ -37,8 +37,7 @@ class VisaForm
                             ->tel()
                             ->required()
                             ->maxLength(20)
-                            ->regex('/^(\+?88)?\s?-?0?1[3-9]\d{2}-?\d{6}$/')
-                            ->helperText('Accepted formats: 018xxxxxxxx, +88018xxxxxxxx, 88018xxxxxxxx'), 
+                            ->regex('/^(\+?88)?\s?-?0?1[3-9]\d{2}-?\d{6}$/'), 
 
                         TextInput::make('phone_2')
                             ->label('Secondary Phone')
