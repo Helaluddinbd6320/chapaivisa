@@ -103,7 +103,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->color(fn ($state) => $state < 0 ? 'danger' : 'success'),
 
                 // WhatsApp Action Column - Filament v4 style
-                Tables\Columns\ActionsColumn::make('actions')
+                Actions::make('actions')
                     ->label('Actions')
                     ->actions([
                         Tables\Actions\Action::make('whatsapp')
