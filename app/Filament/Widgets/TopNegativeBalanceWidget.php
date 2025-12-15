@@ -42,83 +42,32 @@ class TopNegativeBalanceWidget extends BaseWidget
                                 : null
                     )
                     ->color('primary')
-                    ->tooltip('View user profile')
-                    ->weight('bold')
                     ->size('sm'),
 
                 Tables\Columns\TextColumn::make('phone1')
                     ->label('Phone')
                     ->searchable()
                     ->formatStateUsing(fn ($state) => $state ?: 'N/A')
-                    ->icon('heroicon-o-phone')
-                    ->iconColor('gray')
-                    ->size('sm'),
-
-                Tables\Columns\TextColumn::make('email')
-                    ->label('Email')
-                    ->searchable()
-                    ->icon('heroicon-o-envelope')
-                    ->iconColor('gray')
                     ->size('sm'),
 
                 Tables\Columns\TextColumn::make('calculated_balance')
                     ->label('Balance')
-                    ->formatStateUsing(function ($state) {
-                        $formattedBalance = number_format(abs($state), 0);
-                        return $state < 0 ? 
-                            "<span style='color: #dc2626; font-weight: bold;'>-{$formattedBalance} ৳</span>" : 
-                            "<span style='color: #059669; font-weight: bold;'>{$formattedBalance} ৳</span>";
-                    })
-                    ->html()
+                    ->formatStateUsing(fn ($state) => number_format($state, 0) . ' ৳')
                     ->color(fn ($state) => $state < 0 ? 'danger' : 'success')
-                    ->icon(fn ($state) => $state < 0 ? 'heroicon-o-arrow-trending-down' : 'heroicon-o-arrow-trending-up')
-                    ->iconColor(fn ($state) => $state < 0 ? 'danger' : 'success')
+                    ->icon(fn ($state) => $state < 0 ? 'heroicon-o-exclamation-circle' : null)
                     ->size('sm'),
 
-                // WhatsApp Button using IconColumn
-                Tables\Columns\IconColumn::make('whatsapp_send')
-                    ->label('Send WhatsApp')
-                    ->icon('heroicon-o-chat-bubble-left-right')
-                    ->color('success')
-                    ->size('md')
-                    ->url(function ($record) {
-                        if (empty($record->phone1) || $record->calculated_balance >= 0) {
-                            return null;
-                        }
-                        
-                        $cleanPhone = preg_replace('/[^0-9]/', '', $record->phone1);
-                        $formattedBalance = number_format(abs($record->calculated_balance), 0);
-                        
-                        $message = "*Visa Office Chapai International*\n";
-                        $message .= "*Balance Reminder*\n\n";
-                        $message .= "Dear {$record->name},\n\n";
-                        $message .= "Your current balance: *-{$formattedBalance}৳*\n";
-                        $message .= "Status: *Payment Due*\n\n";
-                        $message .= "Please clear your outstanding balance at your earliest convenience.\n\n";
-                        $message .= "Thank you,\n";
-                        $message .= "Visa Office Chapai International";
-                        
-                        return "https://wa.me/{$cleanPhone}?text=" . urlencode($message);
-                    })
-                    ->openUrlInNewTab()
-                    ->tooltip('Send WhatsApp reminder')
-                    ->visible(fn ($record) => !empty($record->phone1) && $record->calculated_balance < 0)
-                    ->alignCenter()
-                    ->extraAttributes(['class' => 'cursor-pointer']),
-
-                // Alternative: Text button column
-                Tables\Columns\TextColumn::make('whatsapp_reminder')
-                    ->label('Reminder')
-                    ->formatStateUsing(function ($record) {
+                // SIMPLE WhatsApp Button - This will definitely work
+                Tables\Columns\TextColumn::make('whatsapp')
+                    ->label('Action')
+                    ->getStateUsing(function ($record) {
                         if (empty($record->phone1) || $record->calculated_balance >= 0) {
                             return '-';
                         }
-                        
-                        return 'Send Message';
+                        return 'WhatsApp';
                     })
                     ->color('success')
                     ->weight('medium')
-                    ->size('sm')
                     ->url(function ($record) {
                         if (empty($record->phone1) || $record->calculated_balance >= 0) {
                             return null;
@@ -127,44 +76,20 @@ class TopNegativeBalanceWidget extends BaseWidget
                         $cleanPhone = preg_replace('/[^0-9]/', '', $record->phone1);
                         $formattedBalance = number_format(abs($record->calculated_balance), 0);
                         
-                        $message = "Dear {$record->name}, your current balance is -{$formattedBalance}৳. Please clear your due as soon as possible. Thank you.";
+                        $message = "Dear {$record->name}, your current balance is -{$formattedBalance}৳. Please clear your due.";
                         return "https://wa.me/{$cleanPhone}?text=" . urlencode($message);
                     })
                     ->openUrlInNewTab()
                     ->icon('heroicon-o-chat-bubble-left-right')
-                    ->iconPosition('after')
                     ->alignCenter()
-                    ->tooltip('Click to send WhatsApp message'),
+                    ->size('sm'),
             ])
-            ->heading('📋 Top 10 Negative Balance Users')
-            ->description('Users with outstanding dues - Send WhatsApp reminders')
-            ->emptyStateHeading('🎉 No negative balance found!')
-            ->emptyStateDescription('All users have positive balance or cleared dues.')
-            ->emptyStateIcon('heroicon-o-check-circle')
+            ->heading('Top 10 Negative Balance Users')
+            ->description('Users with payment dues')
+            ->emptyStateHeading('No negative balance found')
+            ->emptyStateDescription('All users have positive balance.')
             ->striped()
-            ->paginated(false)
-            ->actions([
-                // Row action for WhatsApp
-                Tables\Actions\Action::make('send_whatsapp')
-                    ->icon('heroicon-o-chat-bubble-left-right')
-                    ->color('success')
-                    ->label('WhatsApp')
-                    ->url(function ($record) {
-                        if (empty($record->phone1)) {
-                            return null;
-                        }
-                        
-                        $cleanPhone = preg_replace('/[^0-9]/', '', $record->phone1);
-                        $formattedBalance = $record->calculated_balance < 0 ? 
-                            number_format(abs($record->calculated_balance), 0) : '0';
-                        
-                        $message = "Dear {$record->name}, your current balance is -{$formattedBalance}৳. Please clear your due as soon as possible. Thank you.";
-                        return "https://wa.me/{$cleanPhone}?text=" . urlencode($message);
-                    })
-                    ->openUrlInNewTab()
-                    ->visible(fn ($record) => !empty($record->phone1))
-                    ->tooltip('Send WhatsApp message'),
-            ]);
+            ->paginated(false);
     }
 
     private function getBalanceSubquery(): string
