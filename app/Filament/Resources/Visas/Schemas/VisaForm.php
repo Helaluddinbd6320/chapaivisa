@@ -137,11 +137,13 @@ class VisaForm
                         TextInput::make('mofa_number')
                             ->label('MOFA Number')
                             ->columnSpan(1)
-                            ->maxLength(100),
+                            ->maxLength(100)
+                            ->unique(ignoreRecord: true),
                         TextInput::make('iqama')
                             ->label('Iqama Number')
                             ->maxLength(100)
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->unique(ignoreRecord: true),
 
                     ])
                     ->columns(3),
