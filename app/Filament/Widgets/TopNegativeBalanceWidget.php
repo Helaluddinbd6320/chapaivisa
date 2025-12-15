@@ -39,7 +39,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->label('Name')
                     ->searchable(),
                     
-                Tables\Columns\TextColumn::make('phone')
+                Tables\Columns\TextColumn::make('phone1')
                     ->label('Phone')
                     ->searchable(),
                     
@@ -52,8 +52,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->formatStateUsing(fn ($state) => 
                         number_format($state, 0) . ' ৳'
                     )
-                    ->color(fn ($state) => $state < 0 ? 'danger' : 'success')
-                    ->sortable(),
+                    ->color(fn ($state) => $state < 0 ? 'danger' : 'success'),
             ])
             ->heading('Top 10 Negative Balance Users')
             ->emptyStateHeading('No negative balance found')
