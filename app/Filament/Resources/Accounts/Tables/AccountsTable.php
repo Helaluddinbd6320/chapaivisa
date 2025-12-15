@@ -11,6 +11,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Storage;
+use Filament\Actions\ForceDeleteAction;
 
 class AccountsTable
 {
@@ -167,7 +168,10 @@ class AccountsTable
             ])
             ->filters([])
             ->recordActions([
+                 ViewAction::make(),
                 EditAction::make(),
+                ForceDeleteAction::make()
+                ->visible(fn () => auth()->user()?->hasAnyRole(['super_admin', 'admin'])),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
