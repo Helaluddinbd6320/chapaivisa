@@ -132,6 +132,7 @@ class VisaForm
                             ])
                             ->default('only_visa')
                             ->native(false)
+                            ->columnSpan(2)
                             ->required(false),
 
                         TextInput::make('mofa_number')
