@@ -117,4 +117,12 @@ return [
 
     'system_route_prefix' => 'filament',
 
+//     'brand' => [
+//     'logo' => [
+//         'dark' => asset('storage/logo-dark.png'),
+//         'light' => asset('storage/logo-light.png'),
+//     ],
+// ],
+
+
 ];

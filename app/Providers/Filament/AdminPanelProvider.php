@@ -31,6 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandName('Visa Office Chapai International')
+            ->favicon(asset('favicon.ico')) // এখানে favicon যোগ করুন
             ->colors([
                 'primary' => Color::Amber,
             ])
