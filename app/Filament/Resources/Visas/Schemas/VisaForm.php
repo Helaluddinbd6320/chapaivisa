@@ -36,7 +36,9 @@ class VisaForm
                             ->label('Primary Phone')
                             ->tel()
                             ->required()
-                            ->maxLength(20),
+                            ->maxLength(20)
+                            ->regex('/^(\+?88)?\s?-?0?1[3-9]\d{2}-?\d{6}$/')
+                            ->helperText('Accepted formats: 018xxxxxxxx, +88018xxxxxxxx, 88018xxxxxxxx'), 
 
                         TextInput::make('phone_2')
                             ->label('Secondary Phone')
@@ -91,15 +93,29 @@ class VisaForm
                     ->schema([
                         TextInput::make('visa_number')
                             ->label('Visa Number')
-                            ->maxLength(100),
+                            ->maxLength(100)
+                            ->unique(
+                                table: 'visas',
+                                column: 'visa_number',
+                                ignorable: fn ($record) => $record,
+                                ignoreBlank: true, // ⬅ empty হলে unique check করবে না
+                            ),
 
                         TextInput::make('visa_id_number')
                             ->label('Visa ID Number')
                             ->maxLength(100),
 
-                        TextInput::make('visa_type')
+                    
+
+                        Select::make('visa_type')
                             ->label('Visa Type')
-                            ->maxLength(100),
+                            ->options([
+                                '03_months' => '03 Months',
+                                '15_months' => '15 Months',
+                            ])
+                            ->default('03_months')
+                            ->native(false)
+                            ->required(false),
 
                         DatePicker::make('visa_date')
                             ->label('Visa Date')
