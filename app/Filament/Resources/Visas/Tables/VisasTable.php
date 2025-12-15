@@ -79,14 +79,21 @@ class VisasTable
                 TextColumn::make('pc_ref')->disabledClick()->searchable(),
 
                 // Status columns with badges
-                TextColumn::make('takamul')
-                    ->formatStateUsing(fn ($state) => match (strtolower($state ?? '')) {
-                        'yes' => '✅', 'no' => '❌', default => '⏳'
-                    })
-                    ->badge()
-                    ->color(fn ($state) => match (strtolower($state ?? '')) {
-                        'yes' => 'success', 'no' => 'danger', default => 'gray'
-                    }),
+               TextColumn::make('takamul')
+                        ->label('Takamul')
+                        ->formatStateUsing(fn ($state) => match (strtolower($state ?? '')) {
+                            'yes' => '✅ Completed',
+                            'no'  => '❌ Not Completed',
+                            'na'  => '➖ Not Required',
+                            default => '⏳',
+                        })
+                        ->badge()
+                        ->color(fn ($state) => match (strtolower($state ?? '')) {
+                            'yes' => 'success',
+                            'no'  => 'danger',
+                            'na'  => 'gray',
+                            default => 'secondary',
+                        }), 
                 TextColumn::make('tasheer')
                     ->formatStateUsing(fn ($state) => match (strtolower($state ?? '')) {
                         'yes' => '✅', 'no' => '❌', default => '⏳'
