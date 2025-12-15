@@ -187,13 +187,13 @@ class VisasTable
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
-                ForceDeleteAction::make(),
+                ForceDeleteAction::make()
+                ->visible(fn () => auth()->user()?->hasAnyRole(['super_admin', 'admin'])),
                 
             ])
 
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                 ]),
