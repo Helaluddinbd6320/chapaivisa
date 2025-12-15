@@ -1,24 +1,23 @@
-name: Deploy Laravel to Namecheap
+name: 🚀 FTP Deploy
 
 on:
   push:
     branches:
-      - main
+      - main  # আপনি অন্য ব্রাঞ্চ ব্যবহার করলে এখানে সেট করুন
+      
 
 jobs:
   ftp-deploy:
-    name: Deploy via FTP
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Repository
+      - name: 🛒 Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Upload Laravel public folder to Namecheap
-        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      - name: 📤 Deploy to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}
-          local-dir: public
-          server-dir: /public_html/chapaivisa.com
+          
