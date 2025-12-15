@@ -132,7 +132,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->iconColor('success')
                     ->alignCenter()
                     ->badge()
-                    ->badgeColor('success')
+                    // ->badgeColor('success')
                     ->tooltip('Click to send WhatsApp reminder')
                     ->extraAttributes(['class' => 'hover:bg-green-50 hover:shadow-sm transition-all duration-200 px-3 py-2 rounded-lg']),
             ])
