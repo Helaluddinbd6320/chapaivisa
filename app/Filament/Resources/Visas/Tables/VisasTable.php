@@ -128,7 +128,15 @@ class VisasTable
                 TextColumn::make('visa_number')->copyable()->searchable()->disabledClick(),
                 TextColumn::make('visa_id_number')->copyable()->searchable()->disabledClick(),
                 TextColumn::make('visa_date')->disabledClick()->date(),
-                TextColumn::make('visa_condition')->disabledClick(),
+                TextColumn::make('visa_condition')->disabledClick()
+                                        ->label('Visa Condition')
+                            ->formatStateUsing(fn ($state) => match ($state) {
+                                'only_visa'        => 'Only Visa',
+                                'visa_processing'  => 'Visa + Processing',
+                                'only_processing' => 'Only Processing',
+                                'full_package'    => 'Full Package',
+                                default            => '-',
+                            }),
 
                 ImageColumn::make('passport_image')
                     ->disk('public')
