@@ -71,22 +71,21 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->size('sm'),
 
                 // Action Column ব্যবহার করুন
-                Tables\Columns\IconColumn::make('whatsapp_action')
-    ->label('📲 Send Reminder')
-    ->icon('heroicon-o-chat-bubble-bottom-center-text')
-    ->color('success')
-    ->size('lg')
-    ->tooltip('Send WhatsApp reminder')
-    ->action(function ($record) {
-        if (empty($record->phone1) || $record->calculated_balance >= 0) {
-            return;
-        }
-        
-        $phone = preg_replace('/[^0-9]/', '', $record->phone1);
-        $name = $record->name;
-        $balance = number_format(abs($record->calculated_balance), 0);
-        
-        $message = "🌟 *Visa Office Chapai International* 🌟
+                Tables\Columns\ActionsColumn::make('actions')
+                    ->label('📲 Send Reminder')
+                    ->actions([
+                        Tables\Actions\Action::make('sendWhatsApp')
+                            ->label('Send Reminder')
+                            ->icon('heroicon-o-chat-bubble-bottom-center-text')
+                            ->color('success')
+                            ->size('sm')
+                            ->visible(fn ($record) => !empty($record->phone1) && $record->calculated_balance < 0)
+                            ->action(function ($record) {
+                                $phone = preg_replace('/[^0-9]/', '', $record->phone1);
+                                $name = $record->name;
+                                $balance = number_format(abs($record->calculated_balance), 0);
+                                
+                                $message = "🌟 *Visa Office Chapai International* 🌟
 
 📋 *BALANCE REMINDER NOTIFICATION*
 
@@ -116,15 +115,21 @@ Thank you for your cooperation.
 
 Best regards,
 *Visa Office Chapai International*";
-        
-        $url = "https://wa.me/{$phone}?text=" . urlencode($message);
-        
-        $this->js(<<<JS
-            window.open('{$url}', '_blank', 'noopener,noreferrer');
-        JS);
-    })
-    ->visible(fn ($record) => !empty($record->phone1) && $record->calculated_balance < 0)
-    ->extraAttributes(['class' => 'cursor-pointer hover:text-green-600']),
+                                
+                                $url = "https://wa.me/{$phone}?text=" . urlencode($message);
+                                
+                                // Filament v4-এ নতুন উইন্ডো ওপেন করার উপায়
+                                $js = <<<JS
+                                    window.open('{$url}', '_blank', 'noopener,noreferrer');
+                                JS;
+                                
+                                $this->js($js);
+                            })
+                            ->extraAttributes([
+                                'class' => 'bg-green-500 hover:bg-green-600 text-white',
+                            ])
+                    ])
+                    ->extraAttributes(['class' => 'min-w-[180px]']),
             ])
             ->heading('📊 Top 10 Negative Balance Users')
             ->description('Users with outstanding dues • Click WhatsApp to send reminder')
