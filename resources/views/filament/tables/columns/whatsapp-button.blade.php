@@ -19,52 +19,54 @@
     
     $formattedBalance = number_format(abs($balance), 0);
     $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
+    
+    // PHP তে Message তৈরি করুন
+    $message = "🌟 *Visa Office Chapai International* 🌟
+
+📋 *BALANCE REMINDER NOTIFICATION*
+
+Dear *{$name}*,
+
+Your account has an outstanding balance:
+
+💰 *Amount Due:* -{$formattedBalance}৳
+📊 *Status:* Payment Required
+📅 *Date:* " . date('d/m/Y') . "
+
+━━━━━━━━━━━━━━━━━━━━
+💳 *PAYMENT OPTIONS:*
+• Cash payment at our office
+• Bank transfer
+• Mobile banking (bKash, Nagad, Rocket)
+
+🏢 *OFFICE INFORMATION:*
+Visa Office Chapai International
+[Your Office Address]
+[Office Phone Number]
+
+━━━━━━━━━━━━━━━━━━━━
+Please clear your dues at the earliest to avoid any inconvenience.
+
+Thank you for your cooperation.
+
+Best regards,
+*Visa Office Chapai International*";
+    
+    $encodedMessage = urlencode($message);
+    $whatsappUrl = "https://wa.me/{$cleanPhone}?text={$encodedMessage}";
 @endphp
 
-<div class="flex flex-col items-center gap-1 py-1" x-data>
-    <button type="button"
-        @click="
-            const name = '{{ addslashes($name) }}';
-            const balance = '{{ $formattedBalance }}';
-            const cleanPhone = '{{ $cleanPhone }}';
-            
-            // Message তৈরি করুন
-            const message = '🌟 *Visa Office Chapai International* 🌟\\n\\n' +
-                '📋 *BALANCE REMINDER NOTIFICATION*\\n\\n' +
-                'Dear *' + name + '*,\\n\\n' +
-                'Your account has an outstanding balance:\\n\\n' +
-                '💰 *Amount Due:* -' + balance + '৳\\n' +
-                '📊 *Status:* Payment Required\\n' +
-                '📅 *Date:* ' + new Date().toLocaleDateString('en-GB') + '\\n\\n' +
-                '━━━━━━━━━━━━━━━━━━━━\\n' +
-                '💳 *PAYMENT OPTIONS:*\\n' +
-                '• Cash payment at our office\\n' +
-                '• Bank transfer\\n' +
-                '• Mobile banking (bKash, Nagad, Rocket)\\n\\n' +
-                '🏢 *OFFICE INFORMATION:*\\n' +
-                'Visa Office Chapai International\\n' +
-                '[Your Office Address]\\n' +
-                '[Office Phone Number]\\n\\n' +
-                '━━━━━━━━━━━━━━━━━━━━\\n' +
-                'Please clear your dues at the earliest to avoid any inconvenience.\\n\\n' +
-                'Thank you for your cooperation.\\n\\n' +
-                'Best regards,\\n' +
-                '*Visa Office Chapai International*';
-            
-            // URL এনকোড করুন
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappUrl = 'https://wa.me/' + cleanPhone + '?text=' + encodedMessage;
-            
-            // নতুন উইন্ডোতে ওপেন করুন
-            window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
-        "
-        class="whatsapp-btn inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow hover:shadow-lg transform hover:-translate-y-0.5 gap-2 w-full max-w-[160px] cursor-pointer"
-        title="Send WhatsApp reminder for -{{ $formattedBalance }}৳">
+<div class="flex flex-col items-center gap-1 py-1">
+    <a href="{{ $whatsappUrl }}"
+       target="_blank"
+       rel="noopener noreferrer"
+       class="whatsapp-btn inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow hover:shadow-lg transform hover:-translate-y-0.5 gap-2 w-full max-w-[160px]"
+       title="Send WhatsApp reminder for -{{ $formattedBalance }}৳">
         
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.67-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
         </svg>
         <span>Send Reminder</span>
-    </button>
+    </a>
     <span class="text-xs text-red-600 font-medium">-{{ $formattedBalance }}৳ Due</span>
 </div>
