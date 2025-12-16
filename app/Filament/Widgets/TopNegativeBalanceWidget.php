@@ -111,7 +111,7 @@ HTML;
             ->emptyStateDescription('No negative balances found.')
             ->emptyStateIcon('heroicon-o-check-circle')
             ->striped()
-            ->bordered()
+            // ->bordered()
             ->paginated(false);
     }
 
