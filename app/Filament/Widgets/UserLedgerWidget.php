@@ -4,6 +4,8 @@ namespace App\Filament\Widgets;
 
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Visa;
+use App\Models\Account;
 
 class UserLedgerWidget extends Widget
 {
@@ -38,69 +40,87 @@ class UserLedgerWidget extends Widget
 
         $entries = [];
 
-        // ✅ Visas → Debit (সর্বশেষ তথ্য উপরে)
-        foreach ($user->visas()->latest()->get() as $visa) {
-            $entries[] = [
-                'date' => $visa->created_at->format('Y-m-d H:i'),
-                'display_date' => $visa->created_at->format('d M, Y'),
-                'type' => 'Visa',
-                'description' => $this->getVisaDescription($visa),
-                'debit' => $visa->visa_cost ?? 0,
-                'credit' => 0,
-                'color' => 'danger',
-                'icon' => 'heroicon-o-document-text',
-            ];
-        }
+        try {
+            // ✅ Visa ডাটা লোড করুন - user_id এর উপর ভিত্তি করে
+            $visas = Visa::where('user_id', $user->id)
+                        ->whereNotNull('visa_cost')
+                        ->where('visa_cost', '>', 0)
+                        ->latest()
+                        ->get();
 
-        // ✅ Accounts → Debit / Credit (সর্বশেষ তথ্য উপরে)
-        foreach ($user->accounts()->latest()->get() as $acc) {
-            $desc = $this->getAccountDescription($acc);
-            
-            if ($acc->transaction_type === 'deposit') {
-                $debit = 0;
-                $credit = $acc->amount ?? 0;
-                $color = 'success';
-                $icon = 'heroicon-o-arrow-down-circle';
-            } else {
-                $debit = $acc->amount ?? 0;
-                $credit = 0;
-                $color = 'danger';
-                $icon = 'heroicon-o-arrow-up-circle';
+            foreach ($visas as $visa) {
+                $entries[] = [
+                    'date' => $visa->created_at->format('Y-m-d H:i'),
+                    'display_date' => $visa->created_at->format('d M, Y'),
+                    'type' => 'Visa',
+                    'description' => $this->getVisaDescription($visa),
+                    'debit' => (float) $visa->visa_cost,
+                    'credit' => 0,
+                    'color' => 'danger',
+                    'icon' => 'heroicon-m-document-text',
+                ];
             }
 
-            $entries[] = [
-                'date' => $acc->created_at->format('Y-m-d H:i'),
-                'display_date' => $acc->created_at->format('d M, Y'),
-                'type' => 'Account',
-                'description' => $desc,
-                'debit' => $debit,
-                'credit' => $credit,
-                'color' => $color,
-                'icon' => $icon,
-                'status' => $acc->status ?? 'pending',
-            ];
+            // ✅ Account ডাটা লোড করুন - user_id এর উপর ভিত্তি করে
+            $accounts = Account::where('user_id', $user->id)
+                            ->whereNotNull('amount')
+                            ->where('amount', '>', 0)
+                            ->latest()
+                            ->get();
+
+            foreach ($accounts as $acc) {
+                $desc = $this->getAccountDescription($acc);
+                
+                if ($acc->transaction_type === 'deposit') {
+                    $debit = 0;
+                    $credit = (float) $acc->amount;
+                    $color = 'success';
+                    $icon = 'heroicon-m-arrow-down-circle';
+                } else {
+                    $debit = (float) $acc->amount;
+                    $credit = 0;
+                    $color = 'danger';
+                    $icon = 'heroicon-m-arrow-up-circle';
+                }
+
+                $entries[] = [
+                    'date' => $acc->created_at->format('Y-m-d H:i'),
+                    'display_date' => $acc->created_at->format('d M, Y'),
+                    'type' => 'Account',
+                    'description' => $desc,
+                    'debit' => $debit,
+                    'credit' => $credit,
+                    'color' => $color,
+                    'icon' => $icon,
+                    'status' => $acc->status ?? 'pending',
+                ];
+            }
+
+            // ✅ তারিখের উপর ভিত্তি করে ডিসেন্ডিং অর্ডারে সর্ট (নতুন ডাটা উপরে)
+            usort($entries, fn ($a, $b) => strtotime($b['date']) <=> strtotime($a['date']));
+
+            // ✅ Running balance এবং টোটাল ক্যালকুলেশন
+            $balance = 0;
+            $totalDebit = 0;
+            $totalCredit = 0;
+            
+            foreach ($entries as &$entry) {
+                $totalDebit += $entry['debit'];
+                $totalCredit += $entry['credit'];
+                $balance += $entry['credit'] - $entry['debit'];
+                $entry['balance'] = $balance;
+                $entry['balance_color'] = $balance >= 0 ? 'success' : 'danger';
+            }
+
+            $this->ledgerEntries = $entries;
+            $this->totalDebit = $totalDebit;
+            $this->totalCredit = $totalCredit;
+            $this->currentBalance = $balance;
+
+        } catch (\Exception $e) {
+            \Log::error('Ledger Widget Error: ' . $e->getMessage());
+            $this->ledgerEntries = [];
         }
-
-        // ✅ তারিখের উপর ভিত্তি করে ডিসেন্ডিং অর্ডারে সর্ট (নতুন ডাটা উপরে)
-        usort($entries, fn ($a, $b) => strtotime($b['date']) <=> strtotime($a['date']));
-
-        // ✅ Running balance এবং টোটাল ক্যালকুলেশন
-        $balance = 0;
-        $totalDebit = 0;
-        $totalCredit = 0;
-        
-        foreach ($entries as &$entry) {
-            $totalDebit += $entry['debit'];
-            $totalCredit += $entry['credit'];
-            $balance += $entry['credit'] - $entry['debit'];
-            $entry['balance'] = $balance;
-            $entry['balance_color'] = $balance >= 0 ? 'success' : 'danger';
-        }
-
-        $this->ledgerEntries = $entries;
-        $this->totalDebit = $totalDebit;
-        $this->totalCredit = $totalCredit;
-        $this->currentBalance = $balance;
     }
 
     /**
@@ -108,14 +128,25 @@ class UserLedgerWidget extends Widget
      */
     private function getVisaDescription($visa): string
     {
-        $description = "Visa #" . ($visa->id ?? 'N/A');
+        $description = "Visa";
         
-        if ($visa->passport ?? false) {
-            $description .= " - Passport: " . $visa->passport;
+        if (!empty($visa->name)) {
+            $description .= " - " . $visa->name;
         }
         
-        if ($visa->visa_condition ?? false) {
-            $description .= " ({$visa->visa_condition})";
+        if (!empty($visa->passport)) {
+            $description .= " (Passport: " . $visa->passport . ")";
+        }
+        
+        if (!empty($visa->visa_condition)) {
+            $condition = match ($visa->visa_condition) {
+                'only_visa' => 'Only Visa',
+                'visa_processing' => 'Visa + Processing',
+                'only_processing' => 'Only Processing',
+                'full_package' => 'Full Package',
+                default => $visa->visa_condition,
+            };
+            $description .= " - " . $condition;
         }
         
         return $description;
@@ -135,90 +166,25 @@ class UserLedgerWidget extends Widget
 
         $description = "{$type}";
         
-        if ($account->transaction_id ?? false) {
-            $description .= " #" . $account->transaction_id;
+        if (!empty($account->transaction_id)) {
+            $description .= " #" . substr($account->transaction_id, 0, 8);
         }
         
-        if ($account->payment_method ?? false) {
-            $description .= " via " . ucfirst($account->payment_method);
+        if (!empty($account->payment_method)) {
+            $method = match ($account->payment_method) {
+                'cash' => 'Cash',
+                'bank' => 'Bank',
+                'mobile_banking' => 'Mobile Banking',
+                'card' => 'Card',
+                default => ucfirst($account->payment_method),
+            };
+            $description .= " via " . $method;
         }
         
-        if ($account->receipt_number ?? false) {
-            $description .= " (Receipt: {$account->receipt_number})";
+        if (!empty($account->status) && $account->status !== 'verified') {
+            $description .= " [" . ucfirst($account->status) . "]";
         }
 
         return $description;
-    }
-
-    /**
-     * টেবিলের জন্য কলাম ডেফিনিশন
-     */
-    public function getTableColumns(): array
-    {
-        return [
-            [
-                'name' => 'date',
-                'label' => 'Date',
-                'sortable' => true,
-            ],
-            [
-                'name' => 'type',
-                'label' => 'Type',
-                'badge' => true,
-                'colors' => [
-                    'Visa' => 'warning',
-                    'Account' => 'info',
-                ],
-            ],
-            [
-                'name' => 'description',
-                'label' => 'Description',
-            ],
-            [
-                'name' => 'debit',
-                'label' => 'Debit (৳)',
-                'format' => 'currency',
-                'color' => 'danger',
-            ],
-            [
-                'name' => 'credit',
-                'label' => 'Credit (৳)',
-                'format' => 'currency',
-                'color' => 'success',
-            ],
-            [
-                'name' => 'balance',
-                'label' => 'Balance (৳)',
-                'format' => 'currency',
-                'color' => fn($record) => $record['balance'] >= 0 ? 'success' : 'danger',
-            ],
-        ];
-    }
-
-    /**
-     * সামারি তথ্য
-     */
-    public function getSummary(): array
-    {
-        return [
-            'total_debit' => [
-                'label' => 'Total Debit',
-                'value' => $this->totalDebit,
-                'color' => 'danger',
-                'icon' => 'heroicon-o-arrow-up-circle',
-            ],
-            'total_credit' => [
-                'label' => 'Total Credit',
-                'value' => $this->totalCredit,
-                'color' => 'success',
-                'icon' => 'heroicon-o-arrow-down-circle',
-            ],
-            'current_balance' => [
-                'label' => 'Current Balance',
-                'value' => $this->currentBalance,
-                'color' => $this->currentBalance >= 0 ? 'success' : 'danger',
-                'icon' => $this->currentBalance >= 0 ? 'heroicon-o-check-circle' : 'heroicon-o-x-circle',
-            ],
-        ];
     }
 }
