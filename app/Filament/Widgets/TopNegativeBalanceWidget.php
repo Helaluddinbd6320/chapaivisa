@@ -77,7 +77,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                         $icon = $state < 0 ? '🔻' : '🔺';
 
                         return "<div class='flex items-center gap-1'>
-                            <span class='{$colorClass} font-bold'>{$icon} {$formattedBalance} ৳</span>
+                            <span class='{$colorClass} font-bold'>{$icon} {-$formattedBalance} ৳</span>
                             ".($state < 0 ? '<span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full">DUE</span>' : '').'
                         </div>';
                     })
