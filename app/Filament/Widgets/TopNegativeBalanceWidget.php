@@ -96,7 +96,7 @@ class TopNegativeBalanceWidget extends BaseWidget
 <a href="'.htmlspecialchars($whatsappUrl, ENT_QUOTES, 'UTF-8').'" 
    target="_blank"
    title="Send WhatsApp reminder"
-   class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-green-600 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-sm hover:shadow-md">
+   class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-lg hover:bg-green-50 transition-all duration-200">
     WhatsApp Remind
 </a>';
                     })
