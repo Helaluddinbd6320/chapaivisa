@@ -4,19 +4,18 @@ namespace App\Filament\Resources\Accounts\Tables;
 
 use App\Filament\Resources\Users\Pages\UserProfile;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Illuminate\Support\Facades\Storage;
-use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Filters\Filter;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 
 class AccountsTable
 {
@@ -25,7 +24,7 @@ class AccountsTable
         return $table
             // ✅ নতুন ট্রানজ্যাকশন ওপরে দেখাবে
             ->defaultSort('created_at', 'desc')
-            
+
             ->modifyQueryUsing(function ($query) {
                 $user = auth()->user();
 
@@ -42,8 +41,10 @@ class AccountsTable
                     ->label('Created')
                     ->sortable()
                     ->formatStateUsing(function ($state) {
-                        if (!$state) return 'N/A';
-                        
+                        if (! $state) {
+                            return 'N/A';
+                        }
+
                         $date = \Carbon\Carbon::parse($state);
                         $now = \Carbon\Carbon::now();
 
@@ -122,7 +123,7 @@ class AccountsTable
                     ->disk('public')
                     ->label('Receipt')
                     ->url(fn ($record) => $record && $record->receipt_image ? Storage::url($record->receipt_image) : null)
-                    ->disabledClick(fn ($record) => !($record && $record->receipt_image))
+                    ->disabledClick(fn ($record) => ! ($record && $record->receipt_image))
                     ->openUrlInNewTab()
                     ->tooltip('View Receipt'),
 
@@ -220,15 +221,15 @@ class AccountsTable
                     ->disabledClick()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            
+
             // ✅ Filters
             ->filters([
                 TrashedFilter::make(),
-                
+
                 Filter::make('recent')
                     ->label('Recent (Last 7 Days)')
                     ->query(fn (Builder $query) => $query->where('created_at', '>=', now()->subDays(7))),
-                
+
                 SelectFilter::make('transaction_type')
                     ->label('Transaction Type')
                     ->options([
@@ -236,7 +237,7 @@ class AccountsTable
                         'withdrawal' => 'Withdrawal',
                         'refund' => 'Refund',
                     ]),
-                
+
                 SelectFilter::make('payment_method')
                     ->label('Payment Method')
                     ->options([
@@ -245,7 +246,7 @@ class AccountsTable
                         'mobile_banking' => 'Mobile Banking',
                         'card' => 'Card',
                     ]),
-                
+
                 SelectFilter::make('status')
                     ->label('Status')
                     ->options([
@@ -254,28 +255,29 @@ class AccountsTable
                         'cancelled' => 'Cancelled',
                         'rejected' => 'Rejected',
                     ]),
-                
+
                 Filter::make('pending_verification')
                     ->label('Pending Verification')
                     ->query(fn (Builder $query) => $query->where('status', 'pending')),
             ])
-            
+
             ->recordActions([
                 ViewAction::make()
                     ->icon('heroicon-m-eye'),
-                
+
                 EditAction::make()
                     ->icon('heroicon-m-pencil'),
-                
+
                 ForceDeleteAction::make()
                     ->icon('heroicon-m-trash')
                     ->visible(fn () => auth()->user()?->hasAnyRole(['super_admin', 'admin'])),
             ])
-            
+
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->icon('heroicon-m-trash'),
+                    ForceDeleteBulkAction::make()
+                        ->icon('heroicon-m-trash')
+                        ->visible(fn () => auth()->user()?->hasAnyRole(['super_admin', 'admin'])),
                 ]),
             ]);
     }
