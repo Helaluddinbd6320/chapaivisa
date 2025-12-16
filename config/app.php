@@ -105,11 +105,7 @@ return [
         ),
     ],
 
-    'providers' => [
-        // ...
-        App\Providers\SettingServiceProvider::class,
-    ],
-
+    
     /*
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver

@@ -1,12 +1,27 @@
 <?php
 
+use App\Models\Setting;
+
 if (! function_exists('setting')) {
     function setting($key = null, $default = null)
     {
-        if (is_null($key)) {
-            return app('settings');
+        static $settings = null;
+
+        if (is_null($settings)) {
+            $settings = Setting::first();
         }
 
-        return app('settings')->get($key, $default);
+        if (is_null($key)) {
+            return $settings;
+        }
+
+        return $settings->{$key} ?? $default;
+    }
+}
+
+if (! function_exists('app_settings')) {
+    function app_settings()
+    {
+        return Setting::first();
     }
 }
