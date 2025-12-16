@@ -25,9 +25,17 @@
                     <!-- Compact Stats Cards -->
                     @if (!empty($this->ledgerEntries))
                         @php
-                            $totalDebit = array_sum(array_column($this->ledgerEntries, 'debit'));
-                            $totalCredit = array_sum(array_column($this->ledgerEntries, 'credit'));
-                            $netBalance = end($this->ledgerEntries)['balance'] ?? 0;
+                            // লেজার এন্ট্রিগুলো নিচ থেকে ওপরে আছে, তাই প্রথম এন্ট্রির ব্যালেন্স হবে নেট ব্যালেন্স
+                            $firstEntry = $this->ledgerEntries[0] ?? null;
+                            $netBalance = $firstEntry['balance'] ?? 0;
+                            
+                            // টোটাল ডেবিট/ক্রেডিট হিসাব
+                            $totalDebit = 0;
+                            $totalCredit = 0;
+                            foreach ($this->ledgerEntries as $entry) {
+                                $totalDebit += $entry['debit'];
+                                $totalCredit += $entry['credit'];
+                            }
                         @endphp
 
                         <div class="stats-cards-row">
@@ -124,6 +132,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {{-- ডাটাগুলো এখন নতুন থেকে পুরনো দেখাবে --}}
                                     @foreach ($this->ledgerEntries as $row)
                                         <tr class="transaction-row">
                                             <td class="date-cell">
@@ -163,12 +172,10 @@
                                             <td class="amount-cell">
                                                 @if ($row['debit'] > 0)
                                                     <div class="amount-badge debit-badge">
-
                                                         -{{ number_format($row['debit'], 0) }} ৳
                                                     </div>
                                                 @elseif($row['credit'] > 0)
                                                     <div class="amount-badge credit-badge">
-
                                                         +{{ number_format($row['credit'], 0) }} ৳
                                                     </div>
                                                 @endif

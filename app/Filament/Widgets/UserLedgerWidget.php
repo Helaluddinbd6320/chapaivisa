@@ -43,6 +43,7 @@ class UserLedgerWidget extends Widget
         foreach ($user->visas as $visa) {
             $entries[] = [
                 'date' => $visa->created_at->format('Y-m-d'),
+                'datetime' => $visa->created_at, // সময় সহ ডেটা রাখছি সাজানোর জন্য
                 'type' => 'Visa',
                 'description' => $visa->visa_condition,
                 'debit' => $visa->visa_cost,
@@ -69,6 +70,7 @@ class UserLedgerWidget extends Widget
 
             $entries[] = [
                 'date' => $acc->created_at->format('Y-m-d'),
+                'datetime' => $acc->created_at, // সময় সহ ডেটা রাখছি সাজানোর জন্য
                 'type' => 'Account',
                 'description' => $desc,
                 'debit' => $debit,
@@ -76,15 +78,20 @@ class UserLedgerWidget extends Widget
             ];
         }
 
-        // Sort by date ascending
-        usort($entries, fn ($a, $b) => strtotime($a['date']) <=> strtotime($b['date']));
+        // প্রথমে তারিখ ও সময় অনুসারে পুরনো থেকে নতুন (ascending) সাজানো
+        usort($entries, function ($a, $b) {
+            return $a['datetime'] <=> $b['datetime'];
+        });
 
-        // Running balance
+        // পুরনো থেকে নতুন করে ব্যালেন্স কালকুলেট
         $balance = 0;
         foreach ($entries as &$entry) {
             $balance += $entry['credit'] - $entry['debit'];
             $entry['balance'] = $balance;
         }
+
+        // এখন উল্টো করে সাজানো (নতুন থেকে পুরনো)
+        $entries = array_reverse($entries);
 
         $this->ledgerEntries = $entries;
     }
