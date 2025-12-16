@@ -24,7 +24,7 @@ class VisasTable
     public static function configure(Table $table): Table
     {
         return $table
-            // ✅ নতুন ডাটা ওপরে দেখাবে
+            // ✅ নতুন ডাটা ওপরে দেখাবে - টেবিল লেভেলে সর্ট সেট করুন
             ->defaultSort('created_at', 'desc')
             
             // ✅ Role-based visibility logic
@@ -43,8 +43,7 @@ class VisasTable
                 // ✅ Created at column - প্রথমে দেখাবে এবং নতুন ডাটা উপরে
                 TextColumn::make('created_at')
                     ->label('Created')
-                    ->sortable()
-                    ->defaultSort('desc')
+                    ->sortable() // শুধু sortable() দিন
                     ->formatStateUsing(function ($state) {
                         $date = \Carbon\Carbon::parse($state);
                         $now = \Carbon\Carbon::now();
