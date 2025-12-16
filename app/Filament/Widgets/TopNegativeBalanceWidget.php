@@ -196,23 +196,9 @@ class TopNegativeBalanceWidget extends BaseWidget
             ->emptyStateHeading('🎉 All Clear!')
             ->emptyStateDescription('No users with negative balances found.')
             ->emptyStateIcon('heroicon-o-check-circle')
-            ->emptyStateActions([
-                Tables\Actions\Action::make('refresh')
-                    ->label('Refresh')
-                    ->button()
-                    ->icon('heroicon-o-arrow-path')
-                    ->action(fn () => $this->refreshTableData()),
-            ])
             ->striped()
             ->deferLoading()
             ->paginated(false)
-            ->headerActions([
-                Tables\Actions\Action::make('export')
-                    ->label('Export')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->color('gray')
-                    ->action(fn () => $this->exportData()),
-            ])
             ->recordUrl(null)
             ->recordAction(null);
     }
@@ -343,21 +329,5 @@ class TopNegativeBalanceWidget extends BaseWidget
                 AND transaction_type = 'refund'
             ), 0)
         ";
-    }
-
-    /**
-     * Refresh table data
-     */
-    private function refreshTableData(): void
-    {
-        $this->refresh();
-    }
-
-    /**
-     * Export data
-     */
-    private function exportData(): void
-    {
-        // Export functionality
     }
 }
