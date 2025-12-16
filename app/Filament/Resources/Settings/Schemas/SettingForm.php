@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Settings\Schemas;
 
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
@@ -101,8 +101,6 @@ class SettingForm
                     ->columnSpanFull(),
                 TimePicker::make('email_marketing_schedule_time'),
                 TextInput::make('email_daily_limit')
-                    ->email()
-                    ->required()
                     ->numeric()
                     ->default(500),
                 Toggle::make('email_tracking')
