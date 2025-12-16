@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('s_m_s_marketings', function (Blueprint $table) {
+        Schema::create('s_m_s_campaigns', function (Blueprint $table) {
             $table->id();
             $table->string('campaign_name')->nullable();
             $table->text('message')->nullable();
@@ -34,6 +34,7 @@ return new class extends Migration
             $table->index('status')->nullable();
             $table->index('scheduled_at')->nullable();
             $table->index('sent_at')->nullable();
+
         });
     }
 
@@ -42,6 +43,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('s_m_s_marketings');
+        Schema::dropIfExists('s_m_s_campaigns');
     }
 };
