@@ -140,12 +140,21 @@ class TopNegativeBalanceWidget extends BaseWidget
     private function createWhatsAppMessage(string $name, string $formattedBalance): string
     {
         $currentDate = now()->format('d/m/Y');
+        
+        // Get settings data
+        $settings = app('settings');
+        $appName = $settings->get('app_name', 'Visa Office Chapai International');
+        $officeAddress = $settings->get('office_address', '[Your Office Address]');
+        $officePhone = $settings->get('office_phone', '[Office Phone Number]');
+        $officePhone2 = $settings->get('office_phone2');
+        $whatsappNumber = $settings->get('whatsapp_number');
+        $currencySymbol = $settings->get('currency_symbol', '৳');
 
-        $message = "🏢 *Visa Office Chapai International*\n\n";
+        $message = "🏢 *{$appName}*\n\n";
         $message .= "🔔 *BALANCE REMINDER NOTIFICATION*\n\n";
         $message .= "Dear *{$name}*,\n\n";
         $message .= "Your account has an outstanding balance:\n\n";
-        $message .= "💰 *Amount Due:* -{$formattedBalance}৳\n";
+        $message .= "💰 *Amount Due:* -{$formattedBalance}{$currencySymbol}\n";
         $message .= "⚠️ *Status:* Payment Required\n";
         $message .= "📅 *Date:* {$currentDate}\n\n";
         $message .= "━━━━━━━━━━━━━━━━━━━━\n";
@@ -154,14 +163,23 @@ class TopNegativeBalanceWidget extends BaseWidget
         $message .= "• Bank transfer\n";
         $message .= "• Mobile banking (bKash, Nagad, Rocket)\n\n";
         $message .= "🏛️ *OFFICE INFORMATION:*\n";
-        $message .= "Visa Office Chapai International\n";
-        $message .= "[Your Office Address]\n";
-        $message .= "[Office Phone Number]\n\n";
-        $message .= "━━━━━━━━━━━━━━━━━━━━\n";
+        $message .= "{$appName}\n";
+        $message .= "{$officeAddress}\n";
+        $message .= "Phone: {$officePhone}\n";
+        
+        if ($officePhone2) {
+            $message .= "Alt. Phone: {$officePhone2}\n";
+        }
+        
+        if ($whatsappNumber) {
+            $message .= "WhatsApp: {$whatsappNumber}\n";
+        }
+        
+        $message .= "\n━━━━━━━━━━━━━━━━━━━━\n";
         $message .= "Please clear your dues at the earliest to avoid any inconvenience.\n\n";
         $message .= "Thank you for your cooperation.\n\n";
         $message .= "Best regards,\n";
-        $message .= '*Visa Office Chapai International*';
+        $message .= "*{$appName}*";
 
         return $message;
     }
