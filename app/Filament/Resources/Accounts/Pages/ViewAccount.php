@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Accounts\Pages;
 
-use App\Filament\Resources\Visas\AccountResource;
+use App\Filament\Resources\Accounts\AccountResource;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
