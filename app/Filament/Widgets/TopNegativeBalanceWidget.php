@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Models\User;
 use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Support\Facades\Auth;
@@ -32,6 +33,22 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->limit(10)
             )
             ->columns([
+                ImageColumn::make('photo')
+                    ->label('Photo')
+                    ->circular()
+                    ->size(40)
+                    ->disk('public')
+                    ->defaultImageUrl(function ($record) {
+                        return 'https://ui-avatars.com/api/?name='.urlencode($record->name).
+                               '&color=FFFFFF&background='.(self::getAvatarColor($record->id)).
+                               '&bold=true';
+                    })
+
+                    ->disabledClick()
+                    ->url(fn ($record) => $record->photo ? Storage::url($record->photo) : null)
+                    ->disabledClick(fn ($record) => ! $record->photo) // ডাটা না থাকলে disable
+                    ->openUrlInNewTab(),
+
                 Tables\Columns\TextColumn::make('name')
                     ->label('👤 Name')
                     ->searchable()
