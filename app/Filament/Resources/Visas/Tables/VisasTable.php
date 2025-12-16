@@ -24,6 +24,9 @@ class VisasTable
     public static function configure(Table $table): Table
     {
         return $table
+            // ✅ নতুন ডাটা ওপরে দেখাবে
+            ->defaultSort('created_at', 'desc')
+            
             // ✅ Role-based visibility logic
             ->modifyQueryUsing(function ($query) {
                 $user = auth()->user();
@@ -37,9 +40,11 @@ class VisasTable
 
             // ✅ Columns
             ->columns([
-
+                // ✅ Created at column - প্রথমে দেখাবে এবং নতুন ডাটা উপরে
                 TextColumn::make('created_at')
                     ->label('Created')
+                    ->sortable()
+                    ->defaultSort('desc')
                     ->formatStateUsing(function ($state) {
                         $date = \Carbon\Carbon::parse($state);
                         $now = \Carbon\Carbon::now();
@@ -47,7 +52,9 @@ class VisasTable
                         $diff = $date->diff($now);
 
                         return "{$diff->y} বছর {$diff->m} মাস {$diff->d} দিন";
-                    }),
+                    })
+                    ->description(fn ($record) => $record->created_at->format('d M, Y h:i A'))
+                    ->weight('bold'),
 
                 TextColumn::make('name')
                     ->searchable()
@@ -79,7 +86,7 @@ class VisasTable
                 TextColumn::make('pc_ref')->disabledClick()->searchable(),
 
                 // Status columns with badges
-               TextColumn::make('takamul')
+                TextColumn::make('takamul')
                         ->label('Takamul')
                         ->formatStateUsing(fn ($state) => match (strtolower($state ?? '')) {
                             'yes' => '✅ Completed',
@@ -197,6 +204,11 @@ class VisasTable
                 Filter::make('ttc_no')->label('TTC No')->query(fn (Builder $query) => $query->where('ttc', 'no')),
                 Filter::make('embassy_no')->label('Embassy No')->query(fn (Builder $query) => $query->where('embassy', 'no')),
                 Filter::make('bmet_no')->label('BMET No')->query(fn (Builder $query) => $query->where('bmet', 'no')),
+                
+                // ✅ নতুন ডাটাগুলো ফিল্টার করার অপশন
+                Filter::make('recent')
+                    ->label('Recent (Last 7 Days)')
+                    ->query(fn (Builder $query) => $query->where('created_at', '>=', now()->subDays(7))),
             ])
 
             ->recordActions([
