@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('email_campaign_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
-            $table->string('recipient_email')->nullable();
+            $table->string('recipient_email');
             $table->string('recipient_name')->nullable();
-            $table->string('subject')->nullable();
-            $table->longText('content')->nullable();
+            $table->string('subject');
+            $table->longText('content');
             $table->string('message_id')->nullable();
-            $table->string('status')->default('pending'); // pending, sent, delivered, opened, clicked, bounced, failed
+            $table->string('status', 50)->default('pending'); // <-- 50 characters max
             $table->text('error_message')->nullable();
             $table->timestamp('sent_at')->nullable();
             $table->timestamp('delivered_at')->nullable();
@@ -34,11 +34,12 @@ return new class extends Migration
             $table->boolean('unsubscribed')->default(false);
             $table->timestamps();
 
-            $table->index('status')->nullable();
-            $table->index('recipient_email')->nullable();
-            $table->index('sent_at')->nullable();
-            $table->index(['email_campaign_id', 'status'])->nullable();
-            $table->index('unsubscribe_token')->nullable();
+            // কমপোজিট ইন্ডেক্সের জন্য আলাদা আলাদা ইন্ডেক্স ব্যবহার করুন
+            $table->index('email_campaign_id');
+            $table->index('status');
+            $table->index('recipient_email');
+            $table->index('sent_at');
+            $table->index('unsubscribe_token');
         });
     }
 
