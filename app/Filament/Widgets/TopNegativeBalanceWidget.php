@@ -36,21 +36,21 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->label('👤 Name')
                     ->searchable()
                     ->url(fn ($record): ?string => $record->id
-                                ? \App\Filament\Resources\Users\Pages\UserProfile::getUrl([
-                                    'record' => $record->id,
-                                ])
-                                : null
+                        ? \App\Filament\Resources\Users\Pages\UserProfile::getUrl(['record' => $record->id])
+                        : null
                     )
                     ->color('primary')
                     ->weight('bold')
-                    ->size('sm'),
+                    ->size('sm')
+                    ->extraAttributes(['class' => 'hover:underline cursor-pointer']),
 
                 Tables\Columns\TextColumn::make('phone1')
                     ->label('📱 Phone')
                     ->searchable()
                     ->formatStateUsing(fn ($state) => $state ?: '-')
                     ->size('sm')
-                    ->copyable(),
+                    ->copyable()
+                    ->extraAttributes(['class' => 'text-gray-700']),
 
                 Tables\Columns\TextColumn::make('calculated_balance')
                     ->label('💰 Balance')
@@ -58,18 +58,24 @@ class TopNegativeBalanceWidget extends BaseWidget
                         $formattedBalance = number_format(abs($state), 0);
                         $colorClass = $state < 0 ? 'text-red-600' : 'text-green-600';
                         $icon = $state < 0 ? '🔻' : '🔺';
+                        $badge = $state < 0
+                            ? '<span class="ml-2 text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full font-semibold">DUE</span>'
+                            : '';
 
-                        return "<div class='flex items-center gap-1'>
-                            <span class='{$colorClass} font-bold'>{$icon} {$formattedBalance} ৳</span>
-                            ".($state < 0 ? '<span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full">DUE</span>' : '').'
-                        </div>';
+                        return <<<HTML
+<div class="flex items-center gap-2">
+    <span class="{$colorClass} font-bold text-sm flex items-center gap-1">
+        {$icon} {$formattedBalance} ৳
+    </span>
+    {$badge}
+</div>
+HTML;
                     })
                     ->html()
                     ->badge()
-                    ->color(fn ($state) => $state < 0 ? 'danger' : 'success')
+                    ->color(fn($state) => $state < 0 ? 'danger' : 'success')
                     ->size('sm'),
 
-                // WhatsApp Column - Alpine.js Version
                 Tables\Columns\TextColumn::make('whatsapp_action')
                     ->label('Action')
                     ->getStateUsing(function ($record) {
@@ -78,35 +84,33 @@ class TopNegativeBalanceWidget extends BaseWidget
                         $name = $record->name ?? '';
                         $formattedBalance = number_format(abs($balance), 0);
 
-                        if (! $phone) {
-                            return '
-                            <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-500">
-                                No Phone
-                            </span>';
+                        if (!$phone) {
+                            return '<span class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-500">No Phone</span>';
                         }
 
-                        // Format phone for WhatsApp
                         $cleanPhone = $this->formatPhoneForWhatsApp($phone);
-
-                        // Create button with Alpine.js
                         $message = $this->createWhatsAppMessage($name, $formattedBalance);
                         $encodedMessage = rawurlencode($message);
 
-                        return '
-                        <div x-data="{ isHover: false }">
-                            <a href="https://wa.me/'.$cleanPhone.'?text='.$encodedMessage.'"
-                               target="_blank"
-                               @mouseenter="isHover = true"
-                               @mouseleave="isHover = false"
-                               :class="isHover ? \'bg-[#128C7E] shadow-md transform -translate-y-0.5\' : \'bg-[#25D366] shadow-sm\'"
-                               class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200 cursor-pointer">
-                                ⏰ WhatsApp Remind
-                            </a>
-                        </div>';
+                        return <<<HTML
+<div x-data="{ hover: false }" class="flex justify-center">
+    <a href="https://wa.me/{$cleanPhone}?text={$encodedMessage}" target="_blank"
+       @mouseenter="hover = true" @mouseleave="hover = false"
+       :class="hover 
+            ? 'bg-[#128C7E] shadow-lg transform -translate-y-1 scale-105'
+            : 'bg-[#25D366] shadow-sm'"
+       class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white rounded-lg transition-all duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16h6" />
+        </svg>
+        ⏰ WhatsApp Remind
+    </a>
+</div>
+HTML;
                     })
                     ->html()
                     ->alignCenter()
-                    ->extraAttributes(['class' => 'w-40']),
+                    ->extraAttributes(['class' => 'w-44']),
             ])
             ->heading('📊 Top 10 Negative Balance Users')
             ->description('Users with outstanding dues • Click WhatsApp to send reminder')
@@ -117,9 +121,6 @@ class TopNegativeBalanceWidget extends BaseWidget
             ->paginated(false);
     }
 
-    /**
-     * Create WhatsApp message
-     */
     private function createWhatsAppMessage(string $name, string $formattedBalance): string
     {
         $currentDate = now()->format('d/m/Y');
@@ -149,18 +150,11 @@ class TopNegativeBalanceWidget extends BaseWidget
         return $message;
     }
 
-    /**
-     * Format phone number for WhatsApp
-     */
     private function formatPhoneForWhatsApp(string $phone): string
     {
-        // Remove all non-numeric characters
         $clean = preg_replace('/[^0-9]/', '', $phone);
-
-        // Remove leading plus
         $clean = ltrim($clean, '+');
 
-        // For Bangladeshi numbers
         if (strlen($clean) == 11 && substr($clean, 0, 2) == '01') {
             return '880'.substr($clean, 1);
         }
