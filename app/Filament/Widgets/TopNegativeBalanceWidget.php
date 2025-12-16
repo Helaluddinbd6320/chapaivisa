@@ -140,7 +140,7 @@ class TopNegativeBalanceWidget extends BaseWidget
     private function createWhatsAppMessage(string $name, string $formattedBalance): string
     {
         $currentDate = now()->format('d/m/Y');
-        
+
         // Get settings data
         $settings = app('settings');
         $appName = $settings->get('app_name', 'Visa Office Chapai International');
@@ -162,19 +162,22 @@ class TopNegativeBalanceWidget extends BaseWidget
         $message .= "• Cash payment at our office\n";
         $message .= "• Bank transfer\n";
         $message .= "• Mobile banking (bKash, Nagad, Rocket)\n\n";
+        $message .= "🔍 *VIEW DETAILS:*\n";
+        $message .= "For detailed transaction history, visit:\n";
+        $message .= "https://chapaivisa.com/\n\n";
         $message .= "🏛️ *OFFICE INFORMATION:*\n";
         $message .= "{$appName}\n";
         $message .= "{$officeAddress}\n";
         $message .= "Phone: {$officePhone}\n";
-        
+
         if ($officePhone2) {
             $message .= "Alt. Phone: {$officePhone2}\n";
         }
-        
+
         if ($whatsappNumber) {
             $message .= "WhatsApp: {$whatsappNumber}\n";
         }
-        
+
         $message .= "\n━━━━━━━━━━━━━━━━━━━━\n";
         $message .= "Please clear your dues at the earliest to avoid any inconvenience.\n\n";
         $message .= "Thank you for your cooperation.\n\n";
