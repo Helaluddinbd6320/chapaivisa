@@ -26,7 +26,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                 User::query()
                     ->with(['accounts', 'visas'])
                     ->select(['users.*'])
-                    ->selectRaw($this->getBalanceSubquery() . ' as calculated_balance')
+                    ->selectRaw($this->getBalanceSubquery().' as calculated_balance')
                     ->having('calculated_balance', '<', 0)
                     ->orderBy('calculated_balance')
                     ->limit(10)
@@ -58,11 +58,11 @@ class TopNegativeBalanceWidget extends BaseWidget
                         $formattedBalance = number_format(abs($state), 0);
                         $colorClass = $state < 0 ? 'text-red-600' : 'text-green-600';
                         $icon = $state < 0 ? '🔻' : '🔺';
-                        
+
                         return "<div class='flex items-center gap-1'>
                             <span class='{$colorClass} font-bold'>{$icon} {$formattedBalance} ৳</span>
-                            " . ($state < 0 ? '<span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full">DUE</span>' : '') . "
-                        </div>";
+                            ".($state < 0 ? '<span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full">DUE</span>' : '').'
+                        </div>';
                     })
                     ->html()
                     ->badge()
@@ -77,32 +77,32 @@ class TopNegativeBalanceWidget extends BaseWidget
                         $balance = $record->calculated_balance ?? 0;
                         $name = $record->name ?? '';
                         $formattedBalance = number_format(abs($balance), 0);
-                        
-                        if (!$phone) {
+
+                        if (! $phone) {
                             return '
                             <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-500">
                                 No Phone
                             </span>';
                         }
-                        
+
                         // Create WhatsApp message
                         $message = $this->createBalanceReminderMessage($name, $formattedBalance);
-                        
+
                         // Generate WhatsApp URL
                         $whatsappUrl = $this->getWhatsAppUrl($phone, $message);
-                        
+
                         // Simple text-only button
                         return '
-                        <a href="' . htmlspecialchars($whatsappUrl, ENT_QUOTES, 'UTF-8') . '" 
-                           target="_blank"
-                           title="Send WhatsApp reminder"
-                           class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all duration-200 shadow-sm hover:shadow-md">
-                            WhatsApp Remind
-                        </a>';
+<a href="'.htmlspecialchars($whatsappUrl, ENT_QUOTES, 'UTF-8').'" 
+   target="_blank"
+   title="Send WhatsApp reminder"
+   class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-green-600 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-sm hover:shadow-md">
+    WhatsApp Remind
+</a>';
                     })
                     ->html()
                     ->alignCenter()
-                    ->extraAttributes(['class' => 'w-40'])
+                    ->extraAttributes(['class' => 'w-40']),
             ])
             ->heading('📊 Top 10 Negative Balance Users')
             ->description('Users with outstanding dues • Click WhatsApp to send reminder')
@@ -119,7 +119,7 @@ class TopNegativeBalanceWidget extends BaseWidget
     private function createBalanceReminderMessage(string $name, string $formattedBalance): string
     {
         $currentDate = now()->format('d/m/Y');
-        
+
         $message = "🏢 *Visa Office Chapai International*\n\n";
         $message .= "🔔 *BALANCE REMINDER NOTIFICATION*\n\n";
         $message .= "Dear *{$name}*,\n\n";
@@ -140,8 +140,8 @@ class TopNegativeBalanceWidget extends BaseWidget
         $message .= "Please clear your dues at the earliest to avoid any inconvenience.\n\n";
         $message .= "Thank you for your cooperation.\n\n";
         $message .= "Best regards,\n";
-        $message .= "*Visa Office Chapai International*";
-        
+        $message .= '*Visa Office Chapai International*';
+
         return $message;
     }
 
@@ -152,22 +152,22 @@ class TopNegativeBalanceWidget extends BaseWidget
     {
         // Clean phone number
         $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
-        
+
         // Ensure UTF-8 encoding for emojis
-        if (!mb_check_encoding($message, 'UTF-8')) {
+        if (! mb_check_encoding($message, 'UTF-8')) {
             $message = mb_convert_encoding($message, 'UTF-8');
         }
-        
+
         // Proper URL encoding
         $encodedMessage = rawurlencode($message);
-        
+
         // Fix any encoding issues for special characters
         $encodedMessage = str_replace(
-            ['%0A', '%20', '%2A', '%5F', '%7E'], 
-            ["%0A", '%20', '*', '_', '~'], 
+            ['%0A', '%20', '%2A', '%5F', '%7E'],
+            ['%0A', '%20', '*', '_', '~'],
             $encodedMessage
         );
-        
+
         return "https://wa.me/{$cleanPhone}?text={$encodedMessage}";
     }
 
