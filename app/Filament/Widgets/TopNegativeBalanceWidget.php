@@ -91,13 +91,10 @@ class TopNegativeBalanceWidget extends BaseWidget
                         $encodedMessage = rawurlencode($message);
 
                         return <<<HTML
-<div x-data="{ hover: false }">
+<div class="transition-transform duration-200 hover:scale-105">
     <a href="https://wa.me/{$cleanPhone}?text={$encodedMessage}"
        target="_blank"
-       @mouseenter="hover = true"
-       @mouseleave="hover = false"
-       :class="hover ? 'bg-[#075E54] shadow-lg transform scale-105' : 'bg-[#25D366] shadow-sm'"
-       class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white rounded-lg transition-all duration-200 cursor-pointer hover:scale-105">
+       class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-[#25D366] rounded-lg shadow-sm hover:bg-[#075E54]">
         ⏰ WhatsApp Remind
     </a>
 </div>
@@ -114,7 +111,6 @@ HTML;
             ->emptyStateDescription('No negative balances found.')
             ->emptyStateIcon('heroicon-o-check-circle')
             ->striped()
-            ->hoverable()
             ->bordered()
             ->paginated(false);
     }
