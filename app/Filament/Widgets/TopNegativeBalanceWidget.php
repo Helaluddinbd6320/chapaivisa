@@ -13,6 +13,7 @@ class TopNegativeBalanceWidget extends BaseWidget
     protected static ?int $sort = 2;
     protected int|string|array $columnSpan = 'full';
     protected static ?string $heading = 'Top Negative Balances';
+    protected static ?string $description = 'Customers with outstanding dues requiring immediate attention';
 
     public static function canView(): bool
     {
@@ -33,24 +34,23 @@ class TopNegativeBalanceWidget extends BaseWidget
             )
             ->columns([
                 // Customer Info Column
-                Tables\Columns\Layout\Stack::make([
-                    Tables\Columns\TextColumn::make('name')
-                        ->label('Customer')
-                        ->searchable()
-                        ->url(fn ($record): ?string => $record->id
-                                    ? \App\Filament\Resources\Users\Pages\UserProfile::getUrl([
-                                        'record' => $record->id,
-                                    ])
-                                    : null
-                        )
-                        ->color('gray-900')
-                        ->weight('bold')
-                        ->size('base')
-                        ->icon('heroicon-o-user-circle')
-                        ->iconColor('primary')
-                        ->description(fn ($record) => $record->phone1 ?: 'No phone'),
-                    
-                ])->space(1),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Customer')
+                    ->searchable()
+                    ->url(fn ($record): ?string => $record->id
+                                ? \App\Filament\Resources\Users\Pages\UserProfile::getUrl([
+                                    'record' => $record->id,
+                                ])
+                                : null
+                    )
+                    ->color('gray-900')
+                    ->weight('bold')
+                    ->size('base')
+                    ->icon('heroicon-o-user-circle')
+                    ->iconColor('primary')
+                    ->description(fn ($record) => $record->phone1 ?: 'No phone')
+                    ->wrap()
+                    ->extraAttributes(['class' => 'py-4']),
 
                 // Balance Column
                 Tables\Columns\TextColumn::make('calculated_balance')
@@ -96,7 +96,8 @@ class TopNegativeBalanceWidget extends BaseWidget
                     })
                     ->html()
                     ->alignCenter()
-                    ->sortable(),
+                    ->sortable()
+                    ->extraAttributes(['class' => 'py-4']),
 
                 // Action Column
                 Tables\Columns\TextColumn::make('whatsapp_action')
@@ -125,7 +126,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                         $encodedMessage = rawurlencode($message);
                         
                         return '
-                        <div class="space-y-3">
+                        <div class="space-y-3 py-4">
                             <!-- WhatsApp Button -->
                             <div class="group">
                                 <a href="https://wa.me/'.$cleanPhone.'?text='.$encodedMessage.'"
@@ -187,17 +188,8 @@ class TopNegativeBalanceWidget extends BaseWidget
                     })
                     ->html()
                     ->alignCenter()
-                    ->extraAttributes(['class' => 'min-w-[200px]']),
+                    ->extraAttributes(['class' => 'min-w-[200px] py-4']),
             ])
-            ->heading('Top Negative Balances')
-            ->description('Customers with outstanding dues requiring immediate attention')
-            ->header(function () {
-                return Tables\Actions\Action::make('header')
-                    ->label('')
-                    ->modalContent(view('filament.widgets.negative-balance-header'))
-                    ->modalSubmitAction(false)
-                    ->modalCancelAction(false);
-            })
             ->emptyState(function () {
                 return '
                 <div class="py-16 text-center">
@@ -219,7 +211,7 @@ class TopNegativeBalanceWidget extends BaseWidget
             ->paginated(false)
             ->deferLoading()
             ->extraAttributes([
-                'class' => 'rounded-xl border border-gray-200 shadow-sm bg-white'
+                'class' => 'rounded-xl border border-gray-200 shadow-sm bg-white overflow-hidden'
             ]);
     }
 
