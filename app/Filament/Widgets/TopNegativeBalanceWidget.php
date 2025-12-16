@@ -40,7 +40,6 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->disk('public')
                     ->defaultImageUrl(function ($record) {
                         return 'https://ui-avatars.com/api/?name='.urlencode($record->name).
-                               '&color=FFFFFF&background='.(self::getAvatarColor($record->id)).
                                '&bold=true';
                     })
 
