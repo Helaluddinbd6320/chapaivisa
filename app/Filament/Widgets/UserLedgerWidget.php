@@ -51,7 +51,7 @@ class UserLedgerWidget extends Widget
                 'debit' => $visa->visa_cost,
                 'credit' => 0,
                 'id' => $visa->id,
-                'model_type' => 'visa', // ✅ মডেল টাইপ যোগ
+                'model_type' => 'visa',
             ];
         }
 
@@ -82,7 +82,7 @@ class UserLedgerWidget extends Widget
                 'debit' => $debit,
                 'credit' => $credit,
                 'id' => $acc->id,
-                'model_type' => 'account', // ✅ মডেল টাইপ যোগ
+                'model_type' => 'account',
             ];
         }
 
