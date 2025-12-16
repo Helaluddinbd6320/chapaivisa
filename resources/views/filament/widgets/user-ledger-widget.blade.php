@@ -16,7 +16,7 @@
                             <h2 class="ledger-heading">My Ledger</h2>
                             @if (count($this->ledgerEntries) > 0)
                                 <p class="ledger-subtitle">
-                                    {{ count($this->ledgerEntries) }} transactions • {{ now()->format('M d, Y') }}
+                                    {{ count($this->ledgerEntries) }} transactions • Updated: {{ now()->format('M d, Y h:i A') }}
                                 </p>
                             @endif
                         </div>
@@ -27,15 +27,16 @@
                         @php
                             $totalDebit = $this->totalDebit;
                             $totalCredit = $this->totalCredit;
-                            $netBalance = $this->currentBalance;
+                            $netBalance = $this->currentBalance; // সর্বশেষ ব্যালেন্স
+                            $startingBalance = $this->startingBalance; // প্রারম্ভিক ব্যালেন্স
                         @endphp
 
                         <div class="stats-cards-row">
-                            <!-- Net Balance -->
+                            <!-- Current Balance -->
                             <div class="stat-card net-balance-card">
                                 <div class="stat-card-content">
                                     <div class="stat-card-text">
-                                        <p class="stat-label">Net Balance</p>
+                                        <p class="stat-label">Current Balance</p>
                                         <p class="stat-value {{ $netBalance >= 0 ? 'positive' : 'negative' }}">
                                             {{ number_format($netBalance, 0) }} ৳
                                         </p>
@@ -50,11 +51,11 @@
                                 </div>
                             </div>
 
-                            <!-- Total Credit -->
+                            <!-- Total Income -->
                             <div class="stat-card credit-card">
                                 <div class="stat-card-content">
                                     <div class="stat-card-text">
-                                        <p class="stat-label">Total Credit</p>
+                                        <p class="stat-label">Total Income</p>
                                         <p class="stat-value credit">
                                             {{ number_format($totalCredit, 0) }} ৳
                                         </p>
@@ -69,11 +70,11 @@
                                 </div>
                             </div>
 
-                            <!-- Total Debit -->
+                            <!-- Total Expense -->
                             <div class="stat-card debit-card">
                                 <div class="stat-card-content">
                                     <div class="stat-card-text">
-                                        <p class="stat-label">Total Debit</p>
+                                        <p class="stat-label">Total Expense</p>
                                         <p class="stat-value debit">
                                             {{ number_format($totalDebit, 0) }} ৳
                                         </p>
@@ -107,7 +108,7 @@
             @else
                 <div class="section-2-full-width transaction-section">
                     <div class="transaction-header">
-                        <h3>Transaction History</h3>
+                        <h3>Transaction History (Newest First)</h3>
                         <span class="transaction-count">{{ count($this->ledgerEntries) }} entries</span>
                     </div>
 
@@ -124,15 +125,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($this->ledgerEntries as $row)
+                                    @foreach ($this->ledgerEntries as $index => $row)
                                         @php
                                             $date = $row['date'] ?? now();
                                             $carbonDate = \Carbon\Carbon::parse($date);
+                                            $isFirst = $index === 0;
+                                            $isLast = $index === count($this->ledgerEntries) - 1;
                                         @endphp
-                                        <tr class="transaction-row">
+                                        <tr class="transaction-row {{ $isFirst ? 'first-row' : '' }} {{ $isLast ? 'last-row' : '' }}">
                                             <td class="date-cell">
                                                 <span class="date-main">{{ $carbonDate->format('M d') }}</span>
                                                 <span class="date-year">{{ $carbonDate->format('Y') }}</span>
+                                                @if($isFirst)
+                                                    <span class="date-badge latest-badge">Latest</span>
+                                                @endif
                                             </td>
                                             <td class="type-cell">
                                                 <div class="type-content">
@@ -164,10 +170,16 @@
                                             <td class="amount-cell">
                                                 @if (($row['debit'] ?? 0) > 0)
                                                     <div class="amount-badge debit-badge">
+                                                        <svg class="h-2 w-2 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                                        </svg>
                                                         -{{ number_format($row['debit'], 0) }} ৳
                                                     </div>
                                                 @elseif(($row['credit'] ?? 0) > 0)
                                                     <div class="amount-badge credit-badge">
+                                                        <svg class="h-2 w-2 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                        </svg>
                                                         +{{ number_format($row['credit'], 0) }} ৳
                                                     </div>
                                                 @else
@@ -183,6 +195,9 @@
                                                 @endphp
                                                 <span class="balance-amount {{ $balanceClass }}">
                                                     {{ number_format($balance, 0) }} ৳
+                                                    @if($isFirst)
+                                                        <span class="balance-indicator current-indicator">Current</span>
+                                                    @endif
                                                 </span>
                                             </td>
                                         </tr>
@@ -202,6 +217,27 @@
                             </div>
                         @endif
                     </div>
+                    
+                    <!-- Balance Timeline -->
+                    @if(count($this->ledgerEntries) > 1)
+                        <div class="balance-timeline mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <div class="flex items-center justify-between text-sm">
+                                <div class="text-gray-600 dark:text-gray-400">
+                                    <span class="font-medium">Starting Balance:</span>
+                                    <span class="ml-2 {{ $startingBalance >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                                        {{ number_format($startingBalance, 0) }} ৳
+                                    </span>
+                                </div>
+                                <div class="text-gray-500">→</div>
+                                <div class="text-gray-600 dark:text-gray-400">
+                                    <span class="font-medium">Current Balance:</span>
+                                    <span class="ml-2 {{ $netBalance >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                                        {{ number_format($netBalance, 0) }} ৳
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             @endif
         </div>
@@ -548,6 +584,15 @@
                 transform: translateX(2px);
             }
 
+            .first-row {
+                background: linear-gradient(to right, #f0f9ff, #e0f2fe);
+                border-left: 3px solid #3b82f6;
+            }
+
+            .last-row {
+                border-bottom: 2px solid #e5e7eb;
+            }
+
             .transaction-table td {
                 padding: 0.875rem 1rem;
                 vertical-align: middle;
@@ -577,6 +622,7 @@
             /* Cell Styles */
             .date-cell {
                 white-space: nowrap;
+                position: relative;
             }
 
             .date-main {
@@ -591,6 +637,22 @@
                 font-size: 0.75rem;
                 color: #6b7280;
                 margin-top: 0.125rem;
+            }
+
+            .date-badge {
+                position: absolute;
+                top: -8px;
+                right: -5px;
+                font-size: 0.6rem;
+                font-weight: 700;
+                padding: 1px 4px;
+                border-radius: 3px;
+                background: #3b82f6;
+                color: white;
+            }
+
+            .latest-badge {
+                background: #059669;
             }
 
             .type-content {
@@ -679,6 +741,7 @@
                 display: inline-block;
                 min-width: 80px;
                 text-align: right;
+                position: relative;
             }
 
             .balance-positive {
@@ -689,6 +752,21 @@
             .balance-negative {
                 color: #dc2626;
                 background: #fef2f2;
+            }
+
+            .balance-indicator {
+                position: absolute;
+                top: -8px;
+                right: -5px;
+                font-size: 0.6rem;
+                font-weight: 700;
+                padding: 1px 4px;
+                border-radius: 3px;
+            }
+
+            .current-indicator {
+                background: #3b82f6;
+                color: white;
             }
 
             .scroll-indicator {
@@ -704,6 +782,11 @@
                 color: #6b7280;
             }
 
+            /* Balance Timeline */
+            .balance-timeline {
+                border: 1px solid #e5e7eb;
+            }
+
             /* ===== RESPONSIVE ADJUSTMENTS ===== */
             @media (max-width: 1024px) {
                 .stat-card {
@@ -716,7 +799,6 @@
             }
 
             @media (max-width: 768px) {
-
                 .section-1-full-width,
                 .section-2-full-width {
                     padding: 0.875rem;
