@@ -127,12 +127,13 @@
                                         <th class="date-col">Date</th>
                                         <th class="type-col">Type</th>
                                         <th class="desc-col">Description</th>
+                                        <th class="name-col">Name</th>
+                                        <th class="passport-col">Passport</th>
                                         <th class="amount-col">Amount</th>
                                         <th class="balance-col">Balance</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{-- ডাটাগুলো এখন নতুন থেকে পুরনো দেখাবে --}}
                                     @foreach ($this->ledgerEntries as $row)
                                         <tr class="transaction-row">
                                             <td class="date-cell">
@@ -167,6 +168,16 @@
                                             <td class="desc-cell">
                                                 <div class="desc-content" title="{{ $row['description'] }}">
                                                     {{ $row['description'] }}
+                                                </div>
+                                            </td>
+                                            <td class="name-cell">
+                                                <div class="name-content" title="{{ $row['name'] }}">
+                                                    {{ Str::limit($row['name'], 10) }}
+                                                </div>
+                                            </td>
+                                            <td class="passport-cell">
+                                                <div class="passport-content" title="{{ $row['passport'] }}">
+                                                    {{ $row['passport'] }}
                                                 </div>
                                             </td>
                                             <td class="amount-cell">
@@ -513,7 +524,7 @@
                 width: 100%;
                 font-size: 0.875rem;
                 border-collapse: collapse;
-                min-width: 600px;
+                min-width: 700px;
             }
 
             .transaction-table thead {
@@ -554,25 +565,33 @@
                 vertical-align: middle;
             }
 
-            /* Column Widths */
+            /* Column Widths - আপডেট করা হয়েছে */
             .date-col {
-                width: 12%;
+                width: 10%;
             }
 
             .type-col {
-                width: 15%;
+                width: 10%;
             }
 
             .desc-col {
-                width: 38%;
+                width: 25%;
+            }
+
+            .name-col {
+                width: 12%;
+            }
+
+            .passport-col {
+                width: 15%;
             }
 
             .amount-col {
-                width: 20%;
+                width: 15%;
             }
 
             .balance-col {
-                width: 15%;
+                width: 13%;
             }
 
             /* Cell Styles */
@@ -622,6 +641,7 @@
                 color: #374151;
             }
 
+            /* Description Cell */
             .desc-content {
                 color: #4b5563;
                 overflow: hidden;
@@ -629,6 +649,44 @@
                 white-space: nowrap;
                 cursor: help;
                 padding-right: 0.5rem;
+            }
+
+            /* Name Cell - 10 ক্যারেক্টার লিমিট */
+            .name-content {
+                color: #1f2937;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                cursor: help;
+                font-weight: 500;
+                padding-right: 0.5rem;
+            }
+
+            /* Passport Cell - copyable স্টাইল */
+            .passport-content {
+                color: #3b82f6;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                cursor: pointer;
+                font-family: 'Courier New', monospace;
+                font-weight: 600;
+                padding: 0.25rem 0.5rem;
+                background: #f0f9ff;
+                border-radius: 4px;
+                border: 1px solid #e0f2fe;
+                transition: all 0.2s ease;
+                user-select: none;
+            }
+
+            .passport-content:hover {
+                background: #e0f2fe;
+                border-color: #bae6fd;
+            }
+
+            .passport-content:active {
+                background: #bae6fd;
+                transform: scale(0.98);
             }
 
             /* AMOUNT BADGE STYLES - Smaller icons */
@@ -668,12 +726,9 @@
             /* Smaller amount icons */
             .amount-badge svg {
                 margin-right: 0.25rem;
-                /* Reduced from 0.375rem */
                 flex-shrink: 0;
                 height: 10px;
-                /* Smaller height */
                 width: 10px;
-                /* Smaller width */
             }
 
             /* Specific size for debit/credit icons */
@@ -724,7 +779,7 @@
                 }
 
                 .transaction-table {
-                    min-width: 800px;
+                    min-width: 850px;
                 }
             }
 
@@ -766,6 +821,12 @@
                     margin-right: 0.125rem;
                     height: 8px;
                     width: 8px;
+                }
+
+                /* Smaller passport on mobile */
+                .passport-content {
+                    padding: 0.125rem 0.375rem;
+                    font-size: 0.75rem;
                 }
             }
 
@@ -831,6 +892,12 @@
                     height: 6px;
                     width: 6px;
                 }
+
+                /* Smaller passport on small mobile */
+                .passport-content {
+                    padding: 0.125rem 0.25rem;
+                    font-size: 0.7rem;
+                }
             }
 
             @media (max-width: 480px) {
@@ -867,7 +934,44 @@
                     height: 5px;
                     width: 5px;
                 }
+
+                /* Compact passport for very small screens */
+                .passport-content {
+                    padding: 0.125rem;
+                    font-size: 0.65rem;
+                }
             }
         </style>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Passport number copy functionality
+                document.querySelectorAll('.passport-content').forEach(function(element) {
+                    element.addEventListener('click', function() {
+                        const passportNumber = this.getAttribute('title') || this.textContent.trim();
+                        
+                        // Copy to clipboard
+                        navigator.clipboard.writeText(passportNumber).then(function() {
+                            // Show copied notification
+                            const originalText = element.textContent;
+                            element.textContent = 'Copied!';
+                            element.style.backgroundColor = '#dcfce7';
+                            element.style.color = '#166534';
+                            element.style.borderColor = '#86efac';
+                            
+                            // Revert after 1.5 seconds
+                            setTimeout(function() {
+                                element.textContent = originalText;
+                                element.style.backgroundColor = '#f0f9ff';
+                                element.style.color = '#3b82f6';
+                                element.style.borderColor = '#e0f2fe';
+                            }, 1500);
+                        }).catch(function(err) {
+                            console.error('Failed to copy: ', err);
+                        });
+                    });
+                });
+            });
+        </script>
     @endif
 </x-filament::widget>

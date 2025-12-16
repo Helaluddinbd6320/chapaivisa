@@ -46,6 +46,8 @@ class UserLedgerWidget extends Widget
                 'datetime' => $visa->created_at, // সময় সহ ডেটা রাখছি সাজানোর জন্য
                 'type' => 'Visa',
                 'description' => $visa->visa_condition,
+                'name' => $visa->name ?? 'N/A',
+                'passport' => $visa->passport ?? 'N/A',
                 'debit' => $visa->visa_cost,
                 'credit' => 0,
             ];
@@ -73,6 +75,8 @@ class UserLedgerWidget extends Widget
                 'datetime' => $acc->created_at, // সময় সহ ডেটা রাখছি সাজানোর জন্য
                 'type' => 'Account',
                 'description' => $desc,
+                'name' => '—',
+                'passport' => '—',
                 'debit' => $debit,
                 'credit' => $credit,
             ];
