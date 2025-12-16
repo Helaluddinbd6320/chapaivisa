@@ -100,7 +100,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                                @mouseleave="isHover = false"
                                :class="isHover ? \'bg-[#128C7E] shadow-md transform -translate-y-0.5\' : \'bg-[#25D366] shadow-sm\'"
                                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200 cursor-pointer">
-                                🟢 WhatsApp Remind
+                                ⏰ WhatsApp Remind
                             </a>
                         </div>';
                     })
