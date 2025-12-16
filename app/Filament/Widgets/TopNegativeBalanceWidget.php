@@ -26,7 +26,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                 User::query()
                     ->with(['accounts', 'visas'])
                     ->select(['users.*'])
-                    ->selectRaw($this->getBalanceSubquery() . ' as calculated_balance')
+                    ->selectRaw($this->getBalanceSubquery().' as calculated_balance')
                     ->having('calculated_balance', '<', 0)
                     ->orderBy('calculated_balance')
                     ->limit(10)
@@ -61,8 +61,8 @@ class TopNegativeBalanceWidget extends BaseWidget
 
                         return "<div class='flex items-center gap-1'>
                             <span class='{$colorClass} font-bold'>{$icon} {$formattedBalance} ৳</span>
-                            " . ($state < 0 ? '<span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full">DUE</span>' : '') . "
-                        </div>";
+                            ".($state < 0 ? '<span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full">DUE</span>' : '').'
+                        </div>';
                     })
                     ->html()
                     ->badge()
@@ -77,30 +77,30 @@ class TopNegativeBalanceWidget extends BaseWidget
                         $balance = $record->calculated_balance ?? 0;
                         $name = $record->name ?? '';
                         $formattedBalance = number_format(abs($balance), 0);
-                        
-                        if (!$phone) {
+
+                        if (! $phone) {
                             return '
                             <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-500">
                                 No Phone
                             </span>';
                         }
-                        
+
                         // Format phone for WhatsApp
                         $cleanPhone = $this->formatPhoneForWhatsApp($phone);
-                        
+
                         // Create button with Alpine.js
                         $message = $this->createWhatsAppMessage($name, $formattedBalance);
                         $encodedMessage = rawurlencode($message);
-                        
+
                         return '
                         <div x-data="{ isHover: false }">
-                            <a href="https://wa.me/' . $cleanPhone . '?text=' . $encodedMessage . '"
+                            <a href="https://wa.me/'.$cleanPhone.'?text='.$encodedMessage.'"
                                target="_blank"
                                @mouseenter="isHover = true"
                                @mouseleave="isHover = false"
                                :class="isHover ? \'bg-[#128C7E] shadow-md transform -translate-y-0.5\' : \'bg-[#25D366] shadow-sm\'"
                                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200 cursor-pointer">
-                                WhatsApp Remind
+                                🟢 WhatsApp Remind
                             </a>
                         </div>';
                     })
@@ -156,19 +156,19 @@ class TopNegativeBalanceWidget extends BaseWidget
     {
         // Remove all non-numeric characters
         $clean = preg_replace('/[^0-9]/', '', $phone);
-        
+
         // Remove leading plus
         $clean = ltrim($clean, '+');
-        
+
         // For Bangladeshi numbers
         if (strlen($clean) == 11 && substr($clean, 0, 2) == '01') {
-            return '880' . substr($clean, 1);
+            return '880'.substr($clean, 1);
         }
-        
+
         if (strlen($clean) == 10 && substr($clean, 0, 1) == '1') {
-            return '880' . $clean;
+            return '880'.$clean;
         }
-        
+
         return $clean;
     }
 
