@@ -2,178 +2,90 @@
 
 namespace App\Filament\Widgets;
 
+use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Visa;
-use App\Models\Account;
 
-class UserLedgerWidget
+class UserLedgerWidget extends Widget
 {
-    public static function make()
+
+    protected static ?string $heading = 'My Ledger';
+    protected static ?int $sort = 2; // প্রথমে দেখাবে
+
+    // Widget size - compact
+    protected int|string|array $columnSpan = 'full';
+
+    protected string $view = 'filament.widgets.user-ledger-widget'; // এটিকে non-static রাখুন
+
+    public $ledgerEntries = [];
+
+    public $shouldShowWidget = false;
+
+    // শুধুমাত্র normal user-দের জন্য render হবে
+    public function shouldRender(): bool
     {
         $user = Auth::user();
-        
-        // শুধুমাত্র নরমাল ইউজারদের জন্য
-        if ($user->hasAnyRole(['super_admin', 'admin', 'manager'])) {
-            return null;
-        }
 
-        // ডাটা প্রস্তুত করুন
-        $data = self::prepareLedgerData($user);
-        
-        // ভিউ রিটার্ন করুন
-        return view('filament.widgets.user-ledger-widget', $data);
+        return ! $user->hasAnyRole(['super_admin', 'admin', 'manager']);
     }
 
-    private static function prepareLedgerData($user): array
+    public function mount(): void
     {
+        $user = Auth::user();
+        $this->shouldShowWidget = ! $user->hasAnyRole(['super_admin', 'admin', 'manager']);
+
+        if (! $this->shouldShowWidget) {
+            return;
+        }
+
         $entries = [];
-        $totalDebit = 0;
-        $totalCredit = 0;
+
+        // Visas → Debit
+        foreach ($user->visas as $visa) {
+            $entries[] = [
+                'date' => $visa->created_at->format('Y-m-d'),
+                'type' => 'Visa',
+                'description' => $visa->visa_condition,
+                'debit' => $visa->visa_cost,
+                'credit' => 0,
+            ];
+        }
+
+        // Accounts → Debit / Credit
+        foreach ($user->accounts as $acc) {
+            $desc = match ($acc->transaction_type) {
+                'deposit' => 'Deposit',
+                'withdrawal' => 'Withdrawal',
+                'refund' => 'Refund',
+                default => $acc->transaction_type,
+            };
+
+            if ($acc->transaction_type === 'deposit') {
+                $debit = 0;
+                $credit = $acc->amount;
+            } else {
+                $debit = $acc->amount;
+                $credit = 0;
+            }
+
+            $entries[] = [
+                'date' => $acc->created_at->format('Y-m-d'),
+                'type' => 'Account',
+                'description' => $desc,
+                'debit' => $debit,
+                'credit' => $credit,
+            ];
+        }
+
+        // Sort by date ascending
+        usort($entries, fn ($a, $b) => strtotime($a['date']) <=> strtotime($b['date']));
+
+        // Running balance
         $balance = 0;
-
-        // Visa ডাটা
-        $visas = Visa::where('user_id', $user->id)
-                    ->whereNotNull('visa_cost')
-                    ->where('visa_cost', '>', 0)
-                    ->orderBy('created_at', 'asc')
-                    ->get();
-
-        foreach ($visas as $visa) {
-            $entries[] = self::createVisaEntry($visa);
-        }
-
-        // Account ডাটা
-        $accounts = Account::where('user_id', $user->id)
-                        ->whereNotNull('amount')
-                        ->where('amount', '>', 0)
-                        ->orderBy('created_at', 'asc')
-                        ->get();
-
-        foreach ($accounts as $account) {
-            $entries[] = self::createAccountEntry($account);
-        }
-
-        // সর্ট করুন
-        usort($entries, fn ($a, $b) => $a['timestamp'] <=> $b['timestamp']);
-
-        // ব্যালেন্স ক্যালকুলেশন
-        $runningBalances = [];
-        foreach ($entries as $entry) {
-            $totalDebit += $entry['debit'];
-            $totalCredit += $entry['credit'];
+        foreach ($entries as &$entry) {
             $balance += $entry['credit'] - $entry['debit'];
-            
             $entry['balance'] = $balance;
-            $runningBalances[] = $entry;
         }
 
-        // নতুন থেকে পুরাতন
-        $reversedEntries = array_reverse($runningBalances);
-        
-        if (count($reversedEntries) > 0) {
-            $reversedEntries[0]['is_first'] = true;
-            $reversedEntries[count($reversedEntries)-1]['is_last'] = true;
-        }
-
-        return [
-            'ledgerEntries' => $reversedEntries,
-            'shouldShowWidget' => true,
-            'totalDebit' => $totalDebit,
-            'totalCredit' => $totalCredit,
-            'currentBalance' => $balance,
-            'startingBalance' => count($runningBalances) > 0 ? $runningBalances[0]['balance'] : 0,
-        ];
-    }
-
-    private static function createVisaEntry($visa): array
-    {
-        return [
-            'date' => $visa->created_at->format('Y-m-d H:i:s'),
-            'timestamp' => $visa->created_at->timestamp,
-            'display_date' => $visa->created_at->format('d M, Y'),
-            'type' => 'Visa',
-            'description' => self::getVisaDescription($visa),
-            'debit' => (float) $visa->visa_cost,
-            'credit' => 0,
-            'raw_date' => $visa->created_at,
-        ];
-    }
-
-    private static function createAccountEntry($account): array
-    {
-        if ($account->transaction_type === 'deposit') {
-            $debit = 0;
-            $credit = (float) $account->amount;
-        } else {
-            $debit = (float) $account->amount;
-            $credit = 0;
-        }
-
-        return [
-            'date' => $account->created_at->format('Y-m-d H:i:s'),
-            'timestamp' => $account->created_at->timestamp,
-            'display_date' => $account->created_at->format('d M, Y'),
-            'type' => 'Account',
-            'description' => self::getAccountDescription($account),
-            'debit' => $debit,
-            'credit' => $credit,
-            'status' => $account->status ?? 'pending',
-            'raw_date' => $account->created_at,
-        ];
-    }
-
-    private static function getVisaDescription($visa): string
-    {
-        $description = "Visa";
-        
-        if (!empty($visa->name)) {
-            $description .= " - " . $visa->name;
-        }
-        
-        if (!empty($visa->passport)) {
-            $description .= " (Passport: " . $visa->passport . ")";
-        }
-        
-        if (!empty($visa->visa_condition)) {
-            $condition = match ($visa->visa_condition) {
-                'only_visa' => 'Only Visa',
-                'visa_processing' => 'Visa + Processing',
-                'only_processing' => 'Only Processing',
-                'full_package' => 'Full Package',
-                default => $visa->visa_condition,
-            };
-            $description .= " - " . $condition;
-        }
-        
-        return $description;
-    }
-
-    private static function getAccountDescription($account): string
-    {
-        $type = match ($account->transaction_type ?? '') {
-            'deposit' => 'Deposit',
-            'withdrawal' => 'Withdrawal',
-            'refund' => 'Refund',
-            default => 'Transaction',
-        };
-
-        $description = "{$type}";
-        
-        if (!empty($account->transaction_id)) {
-            $description .= " #" . $account->transaction_id;
-        }
-        
-        if (!empty($account->payment_method)) {
-            $method = match ($account->payment_method) {
-                'cash' => 'Cash',
-                'bank' => 'Bank',
-                'mobile_banking' => 'Mobile Banking',
-                'card' => 'Card',
-                default => ucfirst($account->payment_method),
-            };
-            $description .= " via " . $method;
-        }
-        
-        return $description;
+        $this->ledgerEntries = $entries;
     }
 }
