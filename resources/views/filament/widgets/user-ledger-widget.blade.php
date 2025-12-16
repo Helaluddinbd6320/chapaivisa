@@ -25,9 +25,9 @@
                     <!-- Compact Stats Cards -->
                     @if (!empty($this->ledgerEntries))
                         @php
-                            $totalDebit = array_sum(array_column($this->ledgerEntries, 'debit'));
-                            $totalCredit = array_sum(array_column($this->ledgerEntries, 'credit'));
-                            $netBalance = end($this->ledgerEntries)['balance'] ?? 0;
+                            $totalDebit = $this->totalDebit;
+                            $totalCredit = $this->totalCredit;
+                            $netBalance = $this->currentBalance;
                         @endphp
 
                         <div class="stats-cards-row">
@@ -125,17 +125,18 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($this->ledgerEntries as $row)
+                                        @php
+                                            $date = $row['date'] ?? now();
+                                            $carbonDate = \Carbon\Carbon::parse($date);
+                                        @endphp
                                         <tr class="transaction-row">
                                             <td class="date-cell">
-                                                <span
-                                                    class="date-main">{{ \Carbon\Carbon::parse($row['date'])->format('M d') }}</span>
-                                                <span
-                                                    class="date-year">{{ \Carbon\Carbon::parse($row['date'])->format('Y') }}</span>
+                                                <span class="date-main">{{ $carbonDate->format('M d') }}</span>
+                                                <span class="date-year">{{ $carbonDate->format('Y') }}</span>
                                             </td>
                                             <td class="type-cell">
                                                 <div class="type-content">
-                                                    <span
-                                                        class="type-icon {{ $row['type'] === 'Visa' ? 'visa-icon' : 'account-icon' }}">
+                                                    <span class="type-icon {{ $row['type'] === 'Visa' ? 'visa-icon' : 'account-icon' }}">
                                                         @if ($row['type'] === 'Visa')
                                                             <svg class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24"
                                                                 stroke="currentColor">
@@ -156,27 +157,32 @@
                                                 </div>
                                             </td>
                                             <td class="desc-cell">
-                                                <div class="desc-content" title="{{ $row['description'] }}">
-                                                    {{ $row['description'] }}
+                                                <div class="desc-content" title="{{ $row['description'] ?? '' }}">
+                                                    {{ $row['description'] ?? '' }}
                                                 </div>
                                             </td>
                                             <td class="amount-cell">
-                                                @if ($row['debit'] > 0)
+                                                @if (($row['debit'] ?? 0) > 0)
                                                     <div class="amount-badge debit-badge">
-
                                                         -{{ number_format($row['debit'], 0) }} ৳
                                                     </div>
-                                                @elseif($row['credit'] > 0)
+                                                @elseif(($row['credit'] ?? 0) > 0)
                                                     <div class="amount-badge credit-badge">
-
                                                         +{{ number_format($row['credit'], 0) }} ৳
+                                                    </div>
+                                                @else
+                                                    <div class="amount-badge zero-badge">
+                                                        0 ৳
                                                     </div>
                                                 @endif
                                             </td>
                                             <td class="balance-cell">
-                                                <span
-                                                    class="balance-amount {{ $row['balance'] >= 0 ? 'balance-positive' : 'balance-negative' }}">
-                                                    {{ number_format($row['balance'], 0) }} ৳
+                                                @php
+                                                    $balance = $row['balance'] ?? 0;
+                                                    $balanceClass = $balance >= 0 ? 'balance-positive' : 'balance-negative';
+                                                @endphp
+                                                <span class="balance-amount {{ $balanceClass }}">
+                                                    {{ number_format($balance, 0) }} ৳
                                                 </span>
                                             </td>
                                         </tr>
@@ -624,7 +630,7 @@
                 padding-right: 0.5rem;
             }
 
-            /* AMOUNT BADGE STYLES - Smaller icons */
+            /* AMOUNT BADGE STYLES */
             .amount-badge {
                 display: inline-flex;
                 align-items: center;
@@ -658,22 +664,10 @@
                 transform: translateY(-1px);
             }
 
-            /* Smaller amount icons */
-            .amount-badge svg {
-                margin-right: 0.25rem;
-                /* Reduced from 0.375rem */
-                flex-shrink: 0;
-                height: 10px;
-                /* Smaller height */
-                width: 10px;
-                /* Smaller width */
-            }
-
-            /* Specific size for debit/credit icons */
-            .debit-badge svg,
-            .credit-badge svg {
-                height: 10px;
-                width: 10px;
+            .zero-badge {
+                background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+                color: #6b7280;
+                border: 1px solid #d1d5db;
             }
 
             .balance-amount {
@@ -754,12 +748,6 @@
                     padding: 0.25rem 0.5rem;
                     font-size: 0.75rem;
                 }
-
-                .amount-badge svg {
-                    margin-right: 0.125rem;
-                    height: 8px;
-                    width: 8px;
-                }
             }
 
             @media (max-width: 640px) {
@@ -818,12 +806,6 @@
                     padding: 0.125rem 0.375rem;
                     font-size: 0.7rem;
                 }
-
-                .amount-badge svg {
-                    margin-right: 0.125rem;
-                    height: 6px;
-                    width: 6px;
-                }
             }
 
             @media (max-width: 480px) {
@@ -853,12 +835,6 @@
                 .amount-badge {
                     padding: 0.125rem 0.25rem;
                     font-size: 0.65rem;
-                }
-
-                .amount-badge svg {
-                    margin-right: 0.125rem;
-                    height: 5px;
-                    width: 5px;
                 }
             }
         </style>
