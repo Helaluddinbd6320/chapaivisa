@@ -14,7 +14,7 @@ class UserLedgerWidget extends Widget
 
     protected int|string|array $columnSpan = 'full';
 
-    protected string $view = 'filament.widgets.user-ledger-widget';
+    protected static string $view = 'filament.widgets.user-ledger-widget';
 
     public $ledgerEntries = [];
     public $shouldShowWidget = false;
@@ -22,13 +22,6 @@ class UserLedgerWidget extends Widget
     public $totalCredit = 0;
     public $currentBalance = 0;
     public $startingBalance = 0;
-
-    // শুধুমাত্র normal user-দের জন্য render হবে
-    public function shouldRender(): bool
-    {
-        $user = Auth::user();
-        return ! $user->hasAnyRole(['super_admin', 'admin', 'manager']);
-    }
 
     public function mount(): void
     {
@@ -42,16 +35,17 @@ class UserLedgerWidget extends Widget
         $entries = [];
 
         try {
-            // ✅ Visa ডাটা লোড করুন - user_id এর উপর ভিত্তি করে (পুরাতন থেকে নতুন)
+            // Visa ডাটা লোড করুন - পুরাতন থেকে নতুন
             $visas = Visa::where('user_id', $user->id)
                         ->whereNotNull('visa_cost')
                         ->where('visa_cost', '>', 0)
-                        ->oldest('created_at') // পুরাতন থেকে নতুন
+                        ->orderBy('created_at', 'asc')
                         ->get();
 
             foreach ($visas as $visa) {
                 $entries[] = [
-                    'date' => $visa->created_at->format('Y-m-d H:i'),
+                    'date' => $visa->created_at->format('Y-m-d H:i:s'),
+                    'timestamp' => $visa->created_at->timestamp,
                     'display_date' => $visa->created_at->format('d M, Y'),
                     'type' => 'Visa',
                     'description' => $this->getVisaDescription($visa),
@@ -63,11 +57,11 @@ class UserLedgerWidget extends Widget
                 ];
             }
 
-            // ✅ Account ডাটা লোড করুন - user_id এর উপর ভিত্তি করে (পুরাতন থেকে নতুন)
+            // Account ডাটা লোড করুন - পুরাতন থেকে নতুন
             $accounts = Account::where('user_id', $user->id)
                             ->whereNotNull('amount')
                             ->where('amount', '>', 0)
-                            ->oldest('created_at') // পুরাতন থেকে নতুন
+                            ->orderBy('created_at', 'asc')
                             ->get();
 
             foreach ($accounts as $acc) {
@@ -86,7 +80,8 @@ class UserLedgerWidget extends Widget
                 }
 
                 $entries[] = [
-                    'date' => $acc->created_at->format('Y-m-d H:i'),
+                    'date' => $acc->created_at->format('Y-m-d H:i:s'),
+                    'timestamp' => $acc->created_at->timestamp,
                     'display_date' => $acc->created_at->format('d M, Y'),
                     'type' => 'Account',
                     'description' => $desc,
@@ -99,40 +94,50 @@ class UserLedgerWidget extends Widget
                 ];
             }
 
-            // ✅ তারিখের উপর ভিত্তি করে পুরাতন থেকে নতুন ক্রমে সর্ট
-            usort($entries, fn ($a, $b) => strtotime($a['date']) <=> strtotime($b['date']));
+            // তারিখের উপর ভিত্তি করে পুরাতন থেকে নতুন ক্রমে সর্ট
+            usort($entries, fn ($a, $b) => $a['timestamp'] <=> $b['timestamp']);
 
-            // ✅ Running balance ক্যালকুলেশন - নিচ থেকে ওপরে
+            // ✅ সঠিক ব্যালেন্স ক্যালকুলেশন - নিচ থেকে ওপরে (পুরুন থেকে নতুন)
             $balance = 0;
             $totalDebit = 0;
             $totalCredit = 0;
             $runningBalances = [];
             
-            // প্রথমে সব ট্রানজেকশন যোগ করে মোট ব্যালেন্স বের করুন
+            // প্রথমে সব ট্রানজেকশন প্রসেস করুন (পুরাতন থেকে নতুন)
             foreach ($entries as $entry) {
-                $balance += $entry['credit'] - $entry['debit'];
                 $totalDebit += $entry['debit'];
                 $totalCredit += $entry['credit'];
-                $runningBalances[] = $balance;
+                $balance += $entry['credit'] - $entry['debit'];
+                // প্রতিটি এন্ট্রির জন্য ব্যালেন্স সেভ করুন
+                $entry['balance'] = $balance;
+                $entry['balance_color'] = $balance >= 0 ? 'success' : 'danger';
+                $runningBalances[] = $entry;
             }
             
-            // রিভার্স করে নিচ থেকে ওপরে ব্যালেন্স সেট করুন
-            $reversedBalances = array_reverse($runningBalances);
+            // প্রথম ব্যালেন্স (সর্বপ্রথম লেনদেনের পরের ব্যালেন্স)
+            $this->startingBalance = count($runningBalances) > 0 ? $runningBalances[0]['balance'] : 0;
             
-            // এন্ট্রিগুলোতে ব্যালেন্স সেট করুন (নতুন থেকে পুরাতন)
-            for ($i = 0; $i < count($entries); $i++) {
-                $entries[$i]['balance'] = $reversedBalances[$i];
-                $entries[$i]['balance_color'] = $reversedBalances[$i] >= 0 ? 'success' : 'danger';
-            }
+            // শেষ ব্যালেন্স (সর্বশেষ লেনদেনের পরের ব্যালেন্স)
+            $this->currentBalance = $balance;
             
             // এন্ট্রিগুলো রিভার্স করুন যাতে নতুন গুলো উপরে দেখায়
-            $entries = array_reverse($entries);
+            $reversedEntries = array_reverse($runningBalances);
+            
+            // রিভার্স করার পর ব্যালেন্সগুলো সঠিক রাখুন
+            foreach ($reversedEntries as &$entry) {
+                $entry['is_first'] = false;
+                $entry['is_last'] = false;
+            }
+            
+            // প্রথম এবং শেষ এন্ট্রি চিহ্নিত করুন
+            if (count($reversedEntries) > 0) {
+                $reversedEntries[0]['is_first'] = true; // সর্বশেষ লেনদেন
+                $reversedEntries[count($reversedEntries)-1]['is_last'] = true; // প্রথম লেনদেন
+            }
 
-            $this->ledgerEntries = $entries;
+            $this->ledgerEntries = $reversedEntries;
             $this->totalDebit = $totalDebit;
             $this->totalCredit = $totalCredit;
-            $this->currentBalance = $balance; // সর্বশেষ ব্যালেন্স
-            $this->startingBalance = count($runningBalances) > 0 ? $runningBalances[0] : 0; // প্রথম ব্যালেন্স
 
         } catch (\Exception $e) {
             \Log::error('Ledger Widget Error: ' . $e->getMessage());
@@ -140,9 +145,6 @@ class UserLedgerWidget extends Widget
         }
     }
 
-    /**
-     * Visa-র জন্য বর্ণনা তৈরি
-     */
     private function getVisaDescription($visa): string
     {
         $description = "Visa";
@@ -169,9 +171,6 @@ class UserLedgerWidget extends Widget
         return $description;
     }
 
-    /**
-     * Account-র জন্য বর্ণনা তৈরি
-     */
     private function getAccountDescription($account): string
     {
         $type = match ($account->transaction_type ?? '') {
@@ -184,7 +183,7 @@ class UserLedgerWidget extends Widget
         $description = "{$type}";
         
         if (!empty($account->transaction_id)) {
-            $description .= " #" . substr($account->transaction_id, 0, 8);
+            $description .= " #" . $account->transaction_id;
         }
         
         if (!empty($account->payment_method)) {
