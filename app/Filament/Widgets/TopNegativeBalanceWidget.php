@@ -26,7 +26,7 @@ class TopNegativeBalanceWidget extends BaseWidget
                 User::query()
                     ->with(['accounts', 'visas'])
                     ->select(['users.*'])
-                    ->selectRaw($this->getBalanceSubquery().' as calculated_balance')
+                    ->selectRaw($this->getBalanceSubquery() . ' as calculated_balance')
                     ->having('calculated_balance', '<', 0)
                     ->orderBy('calculated_balance')
                     ->limit(10)
@@ -61,15 +61,15 @@ class TopNegativeBalanceWidget extends BaseWidget
 
                         return "<div class='flex items-center gap-1'>
                             <span class='{$colorClass} font-bold'>{$icon} {$formattedBalance} ৳</span>
-                            ".($state < 0 ? '<span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full">DUE</span>' : '').'
-                        </div>';
+                            " . ($state < 0 ? '<span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full">DUE</span>' : '') . "
+                        </div>";
                     })
                     ->html()
                     ->badge()
                     ->color(fn ($state) => $state < 0 ? 'danger' : 'success')
                     ->size('sm'),
 
-                // WhatsApp Column with Text Only
+                // WhatsApp Column - JavaScript Fixed Version
                 Tables\Columns\TextColumn::make('whatsapp_action')
                     ->label('Action')
                     ->getStateUsing(function ($record) {
@@ -77,34 +77,24 @@ class TopNegativeBalanceWidget extends BaseWidget
                         $balance = $record->calculated_balance ?? 0;
                         $name = $record->name ?? '';
                         $formattedBalance = number_format(abs($balance), 0);
-
-                        if (! $phone) {
+                        
+                        if (!$phone) {
                             return '
                             <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-500">
                                 No Phone
                             </span>';
                         }
-
-                        // Create WhatsApp message
-                        $message = $this->createBalanceReminderMessage($name, $formattedBalance);
-
-                        // Generate WhatsApp URL
-                        $whatsappUrl = $this->getWhatsAppUrl($phone, $message);
-
-                        // Simple text-only button
+                        
+                        // Format phone for WhatsApp
+                        $cleanPhone = $this->formatPhoneForWhatsApp($phone);
+                        
+                        // Create button with JavaScript
                         return '
-<a href="'.htmlspecialchars($whatsappUrl, ENT_QUOTES, 'UTF-8').'" 
-   target="_blank"
-   title="Send WhatsApp Reminder"
-   class="inline-flex items-center gap-2 px-4 py-2
-          text-sm font-semibold text-white
-          bg-[#25D366] hover:bg-[#128C7E]
-          rounded-full transition-all duration-200
-          shadow-md hover:shadow-lg">
-
-    📲 WhatsApp Remind
-</a>';
-
+                        <button type="button" 
+                                onclick="sendWhatsAppReminder(\'' . $cleanPhone . '\', \'' . addslashes($name) . '\', \'' . $formattedBalance . '\')"
+                                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-[#25D366] rounded-lg hover:bg-[#128C7E] transition-all duration-200 shadow-sm cursor-pointer">
+                            WhatsApp Remind
+                        </button>';
                     })
                     ->html()
                     ->alignCenter()
@@ -116,65 +106,67 @@ class TopNegativeBalanceWidget extends BaseWidget
             ->emptyStateDescription('No negative balances found.')
             ->emptyStateIcon('heroicon-o-check-circle')
             ->striped()
-            ->paginated(false);
+            ->paginated(false)
+            ->extraAttributes([
+                'x-data' => '{}',
+                'x-init' => 'function() {
+                    window.sendWhatsAppReminder = function(phone, name, balance) {
+                        const currentDate = new Date().toLocaleDateString("en-GB");
+                        
+                        let message = "🏢 *Visa Office Chapai International*\\n\\n";
+                        message += "🔔 *BALANCE REMINDER NOTIFICATION*\\n\\n";
+                        message += "Dear *" + name + "*,\\n\\n";
+                        message += "Your account has an outstanding balance:\\n\\n";
+                        message += "💰 *Amount Due:* -" + balance + "৳\\n";
+                        message += "⚠️ *Status:* Payment Required\\n";
+                        message += "📅 *Date:* " + currentDate + "\\n\\n";
+                        message += "━━━━━━━━━━━━━━━━━━━━\\n";
+                        message += "💳 *PAYMENT OPTIONS:*\\n";
+                        message += "• Cash payment at our office\\n";
+                        message += "• Bank transfer\\n";
+                        message += "• Mobile banking (bKash, Nagad, Rocket)\\n\\n";
+                        message += "🏛️ *OFFICE INFORMATION:*\\n";
+                        message += "Visa Office Chapai International\\n";
+                        message += "[Your Office Address]\\n";
+                        message += "[Office Phone Number]\\n\\n";
+                        message += "━━━━━━━━━━━━━━━━━━━━\\n";
+                        message += "Please clear your dues at the earliest to avoid any inconvenience.\\n\\n";
+                        message += "Thank you for your cooperation.\\n\\n";
+                        message += "Best regards,\\n";
+                        message += "*Visa Office Chapai International*";
+                        
+                        const encodedMessage = encodeURIComponent(message);
+                        const whatsappUrl = "https://wa.me/" + phone + "?text=" + encodedMessage;
+                        window.open(whatsappUrl, "_blank");
+                    }
+                }',
+            ]);
     }
 
     /**
-     * Create WhatsApp message with proper format
+     * Format phone number for WhatsApp
      */
-    private function createBalanceReminderMessage(string $name, string $formattedBalance): string
+    private function formatPhoneForWhatsApp(string $phone): string
     {
-        $currentDate = now()->format('d/m/Y');
-
-        $message = "🏢 *Visa Office Chapai International*\n\n";
-        $message .= "🔔 *BALANCE REMINDER NOTIFICATION*\n\n";
-        $message .= "Dear *{$name}*,\n\n";
-        $message .= "Your account has an outstanding balance:\n\n";
-        $message .= "💰 *Amount Due:* -{$formattedBalance}৳\n";
-        $message .= "⚠️ *Status:* Payment Required\n";
-        $message .= "📅 *Date:* {$currentDate}\n\n";
-        $message .= "━━━━━━━━━━━━━━━━━━━━\n";
-        $message .= "💳 *PAYMENT OPTIONS:*\n";
-        $message .= "• Cash payment at our office\n";
-        $message .= "• Bank transfer\n";
-        $message .= "• Mobile banking (bKash, Nagad, Rocket)\n\n";
-        $message .= "🏛️ *OFFICE INFORMATION:*\n";
-        $message .= "Visa Office Chapai International\n";
-        $message .= "[Your Office Address]\n";
-        $message .= "[Office Phone Number]\n\n";
-        $message .= "━━━━━━━━━━━━━━━━━━━━\n";
-        $message .= "Please clear your dues at the earliest to avoid any inconvenience.\n\n";
-        $message .= "Thank you for your cooperation.\n\n";
-        $message .= "Best regards,\n";
-        $message .= '*Visa Office Chapai International*';
-
-        return $message;
-    }
-
-    /**
-     * Generate WhatsApp URL with proper encoding
-     */
-    private function getWhatsAppUrl(string $phone, string $message): string
-    {
-        // Clean phone number
-        $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
-
-        // Ensure UTF-8 encoding for emojis
-        if (! mb_check_encoding($message, 'UTF-8')) {
-            $message = mb_convert_encoding($message, 'UTF-8');
+        // Remove all non-numeric characters
+        $clean = preg_replace('/[^0-9]/', '', $phone);
+        
+        // Remove leading plus
+        $clean = ltrim($clean, '+');
+        
+        // For Bangladeshi numbers
+        if (strlen($clean) == 11 && substr($clean, 0, 2) == '01') {
+            // 01XXXXXXXXX → 8801XXXXXXXXX
+            return '880' . substr($clean, 1);
         }
-
-        // Proper URL encoding
-        $encodedMessage = rawurlencode($message);
-
-        // Fix any encoding issues for special characters
-        $encodedMessage = str_replace(
-            ['%0A', '%20', '%2A', '%5F', '%7E'],
-            ['%0A', '%20', '*', '_', '~'],
-            $encodedMessage
-        );
-
-        return "https://wa.me/{$cleanPhone}?text={$encodedMessage}";
+        
+        if (strlen($clean) == 10 && substr($clean, 0, 1) == '1') {
+            // 1XXXXXXXXX → 8801XXXXXXXXX
+            return '880' . $clean;
+        }
+        
+        // Return as is if already in international format
+        return $clean;
     }
 
     private function getBalanceSubquery(): string
