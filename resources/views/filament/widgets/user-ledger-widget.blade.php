@@ -131,11 +131,16 @@
                                         <th class="passport-col">Passport</th>
                                         <th class="amount-col">Amount</th>
                                         <th class="balance-col">Balance</th>
+                                        <th class="action-col">View</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($this->ledgerEntries as $row)
-                                        <tr class="transaction-row">
+                                        @php
+                                            // ডাইনামিক রাউট তৈরি
+                                            $viewUrl = route($row['route'] ?? '#', ['record' => $row['id']]);
+                                        @endphp
+                                        <tr class="transaction-row" data-view-url="{{ $viewUrl }}">
                                             <td class="date-cell">
                                                 <span
                                                     class="date-main">{{ \Carbon\Carbon::parse($row['date'])->format('M d') }}</span>
@@ -196,6 +201,18 @@
                                                     class="balance-amount {{ $row['balance'] >= 0 ? 'balance-positive' : 'balance-negative' }}">
                                                     {{ number_format($row['balance'], 0) }} ৳
                                                 </span>
+                                            </td>
+                                            <td class="action-cell">
+                                                <a href="{{ $viewUrl }}" 
+                                                   class="view-link"
+                                                   title="View {{ $row['type'] }} Details">
+                                                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    </svg>
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -524,7 +541,7 @@
                 width: 100%;
                 font-size: 0.875rem;
                 border-collapse: collapse;
-                min-width: 700px;
+                min-width: 800px;
             }
 
             .transaction-table thead {
@@ -549,15 +566,16 @@
             .transaction-table tbody tr {
                 border-bottom: 1px solid #f3f4f6;
                 transition: all 0.15s ease;
-            }
-
-            .transaction-table tbody tr:last-child {
-                border-bottom: 0;
+                cursor: pointer;
             }
 
             .transaction-table tbody tr:hover {
                 background-color: #f9fafb;
                 transform: translateX(2px);
+            }
+
+            .transaction-table tbody tr:last-child {
+                border-bottom: 0;
             }
 
             .transaction-table td {
@@ -567,31 +585,36 @@
 
             /* Column Widths - আপডেট করা হয়েছে */
             .date-col {
-                width: 10%;
+                width: 9%;
             }
 
             .type-col {
-                width: 10%;
+                width: 9%;
             }
 
             .desc-col {
-                width: 25%;
+                width: 22%;
             }
 
             .name-col {
-                width: 12%;
+                width: 11%;
             }
 
             .passport-col {
-                width: 15%;
+                width: 13%;
             }
 
             .amount-col {
-                width: 15%;
+                width: 13%;
             }
 
             .balance-col {
-                width: 13%;
+                width: 12%;
+            }
+
+            .action-col {
+                width: 5%;
+                text-align: center;
             }
 
             /* Cell Styles */
@@ -689,7 +712,7 @@
                 transform: scale(0.98);
             }
 
-            /* AMOUNT BADGE STYLES - Smaller icons */
+            /* AMOUNT BADGE STYLES */
             .amount-badge {
                 display: inline-flex;
                 align-items: center;
@@ -723,19 +746,31 @@
                 transform: translateY(-1px);
             }
 
-            /* Smaller amount icons */
-            .amount-badge svg {
-                margin-right: 0.25rem;
-                flex-shrink: 0;
-                height: 10px;
-                width: 10px;
+            /* View Link Styles */
+            .view-link {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 32px;
+                height: 32px;
+                border-radius: 6px;
+                background: #f8fafc;
+                border: 1px solid #e2e8f0;
+                color: #64748b;
+                transition: all 0.2s ease;
+                text-decoration: none;
             }
 
-            /* Specific size for debit/credit icons */
-            .debit-badge svg,
-            .credit-badge svg {
-                height: 10px;
-                width: 10px;
+            .view-link:hover {
+                background: #3b82f6;
+                border-color: #3b82f6;
+                color: white;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+            }
+
+            .view-link:active {
+                transform: translateY(0);
             }
 
             .balance-amount {
@@ -779,7 +814,7 @@
                 }
 
                 .transaction-table {
-                    min-width: 850px;
+                    min-width: 900px;
                 }
             }
 
@@ -811,22 +846,20 @@
                     max-height: 280px;
                 }
 
-                /* Smaller amount badges on mobile */
+                /* Smaller badges on mobile */
                 .amount-badge {
                     padding: 0.25rem 0.5rem;
                     font-size: 0.75rem;
                 }
 
-                .amount-badge svg {
-                    margin-right: 0.125rem;
-                    height: 8px;
-                    width: 8px;
-                }
-
-                /* Smaller passport on mobile */
                 .passport-content {
                     padding: 0.125rem 0.375rem;
                     font-size: 0.75rem;
+                }
+
+                .view-link {
+                    width: 28px;
+                    height: 28px;
                 }
             }
 
@@ -881,22 +914,20 @@
                     padding: 0.75rem 0.875rem;
                 }
 
-                /* Even smaller amount badges on small mobile */
+                /* Smaller on small mobile */
                 .amount-badge {
                     padding: 0.125rem 0.375rem;
                     font-size: 0.7rem;
                 }
 
-                .amount-badge svg {
-                    margin-right: 0.125rem;
-                    height: 6px;
-                    width: 6px;
-                }
-
-                /* Smaller passport on small mobile */
                 .passport-content {
                     padding: 0.125rem 0.25rem;
                     font-size: 0.7rem;
+                }
+
+                .view-link {
+                    width: 24px;
+                    height: 24px;
                 }
             }
 
@@ -923,22 +954,20 @@
                     align-self: flex-start;
                 }
 
-                /* Compact amount badges for very small screens */
+                /* Compact for very small screens */
                 .amount-badge {
                     padding: 0.125rem 0.25rem;
                     font-size: 0.65rem;
                 }
 
-                .amount-badge svg {
-                    margin-right: 0.125rem;
-                    height: 5px;
-                    width: 5px;
-                }
-
-                /* Compact passport for very small screens */
                 .passport-content {
                     padding: 0.125rem;
                     font-size: 0.65rem;
+                }
+
+                .view-link {
+                    width: 22px;
+                    height: 22px;
                 }
             }
         </style>
@@ -947,7 +976,8 @@
             document.addEventListener('DOMContentLoaded', function() {
                 // Passport number copy functionality
                 document.querySelectorAll('.passport-content').forEach(function(element) {
-                    element.addEventListener('click', function() {
+                    element.addEventListener('click', function(e) {
+                        e.stopPropagation(); // Prevent row click event
                         const passportNumber = this.getAttribute('title') || this.textContent.trim();
                         
                         // Copy to clipboard
@@ -969,6 +999,32 @@
                         }).catch(function(err) {
                             console.error('Failed to copy: ', err);
                         });
+                    });
+                });
+
+                // Row click to view functionality
+                document.querySelectorAll('.transaction-row').forEach(function(row) {
+                    row.addEventListener('click', function(e) {
+                        // Don't trigger if clicking on passport or view link
+                        if (e.target.closest('.passport-content') || e.target.closest('.view-link')) {
+                            return;
+                        }
+                        
+                        const viewUrl = this.getAttribute('data-view-url');
+                        if (viewUrl && viewUrl !== '#') {
+                            window.location.href = viewUrl;
+                        }
+                    });
+                });
+
+                // View link hover effects
+                document.querySelectorAll('.view-link').forEach(function(link) {
+                    link.addEventListener('mouseenter', function() {
+                        this.closest('.transaction-row').style.backgroundColor = '#f0f9ff';
+                    });
+                    
+                    link.addEventListener('mouseleave', function() {
+                        this.closest('.transaction-row').style.backgroundColor = '';
                     });
                 });
             });

@@ -43,13 +43,15 @@ class UserLedgerWidget extends Widget
         foreach ($user->visas as $visa) {
             $entries[] = [
                 'date' => $visa->created_at->format('Y-m-d'),
-                'datetime' => $visa->created_at, // সময় সহ ডেটা রাখছি সাজানোর জন্য
+                'datetime' => $visa->created_at,
                 'type' => 'Visa',
                 'description' => $visa->visa_condition,
                 'name' => $visa->name ?? 'N/A',
                 'passport' => $visa->passport ?? 'N/A',
                 'debit' => $visa->visa_cost,
                 'credit' => 0,
+                'id' => $visa->id, // ✅ আইডি যোগ
+                'route' => 'filament.resources.visas.view', // ✅ রাউট যোগ
             ];
         }
 
@@ -72,13 +74,15 @@ class UserLedgerWidget extends Widget
 
             $entries[] = [
                 'date' => $acc->created_at->format('Y-m-d'),
-                'datetime' => $acc->created_at, // সময় সহ ডেটা রাখছি সাজানোর জন্য
+                'datetime' => $acc->created_at,
                 'type' => 'Account',
                 'description' => $desc,
                 'name' => '—',
                 'passport' => '—',
                 'debit' => $debit,
                 'credit' => $credit,
+                'id' => $acc->id, // ✅ আইডি যোগ
+                'route' => 'filament.resources.accounts.view', // ✅ রাউট যোগ
             ];
         }
 
