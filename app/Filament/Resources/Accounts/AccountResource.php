@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Accounts;
 use App\Filament\Resources\Accounts\Pages\CreateAccount;
 use App\Filament\Resources\Accounts\Pages\EditAccount;
 use App\Filament\Resources\Accounts\Pages\ListAccounts;
+use App\Filament\Resources\Accounts\Pages\ViewAccount;
 use App\Filament\Resources\Accounts\Schemas\AccountForm;
 use App\Filament\Resources\Accounts\Tables\AccountsTable;
 use App\Models\Account;
@@ -45,6 +46,7 @@ class AccountResource extends Resource
             'index' => ListAccounts::route('/'),
             'create' => CreateAccount::route('/create'),
             'edit' => EditAccount::route('/{record}/edit'),
+            'view' => ViewAccount::route('/{record}'),
         ];
     }
 }
