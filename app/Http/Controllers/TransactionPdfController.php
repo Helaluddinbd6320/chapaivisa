@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Setting; // Setting Model
 use Illuminate\Http\Request;
 
 class TransactionPdfController extends Controller
@@ -11,7 +12,6 @@ class TransactionPdfController extends Controller
     {
         $entries = [];
 
-        // Visas → Debit
         foreach ($user->visas as $visa) {
             $entries[] = [
                 'date' => $visa->created_at,
@@ -24,7 +24,6 @@ class TransactionPdfController extends Controller
             ];
         }
 
-        // Accounts → Credit / Debit
         foreach ($user->accounts as $acc) {
             $entries[] = [
                 'date' => $acc->created_at,
@@ -37,20 +36,16 @@ class TransactionPdfController extends Controller
             ];
         }
 
-        // Sort by date ascending
-        usort($entries, fn ($a, $b) => $a['date'] <=> $b['date']);
+        usort($entries, fn($a, $b) => $a['date'] <=> $b['date']);
 
-        // Calculate balance
         $balance = 0;
         foreach ($entries as &$entry) {
             $balance += $entry['credit'] - $entry['debit'];
             $entry['balance'] = $balance;
         }
-
-        // Reverse for newest first
         $entries = array_reverse($entries);
 
-        $settings = app('settings');
+        $settings = Setting::first(); // বা app('settings') যদি Filament ব্যবহার হয়
 
         $pdf = app('dompdf.wrapper')->loadView(
             'pdf.transaction-history',
