@@ -124,6 +124,22 @@ class TopNegativeBalanceWidget extends BaseWidget
                     ->html()
                     ->alignCenter()
                     ->extraAttributes(['class' => 'w-40']),
+
+                Tables\Columns\TextColumn::make('pdf_action')
+                    ->label('PDF')
+                    ->getStateUsing(function ($record) {
+                        return '
+            <a href="'.route('transactions.pdf', $record->id).'"
+               target="_blank"
+               class="inline-flex items-center justify-center px-3 py-2 text-xs font-semibold text-white rounded-lg bg-red-600 hover:bg-red-700 transition">
+                📄 PDF
+            </a>
+        ';
+                    })
+                    ->html()
+                    ->alignCenter()
+                    ->extraAttributes(['class' => 'w-24']),
+
             ])
             ->heading('📊 Top 10 Negative Balance Users')
             ->description('Users with outstanding dues • Click WhatsApp to send reminder')
