@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Helpers\AppSettings;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 
 class TransactionPdfController extends Controller
 {
@@ -12,79 +11,52 @@ class TransactionPdfController extends Controller
     {
         $entries = [];
 
-        // -------------------------
         // Visas → Debit
-        // -------------------------
         foreach ($user->visas as $visa) {
             $entries[] = [
-                'date' => $visa->created_at->format('Y-m-d'),
-                'datetime' => $visa->created_at,
+                'date' => $visa->created_at,
                 'type' => 'Visa',
                 'description' => $visa->visa_condition,
-                'debit' => (float) $visa->visa_cost,
+                'name' => $visa->name ?? 'N/A',
+                'passport' => $visa->passport ?? 'N/A',
+                'debit' => $visa->visa_cost,
                 'credit' => 0,
             ];
         }
 
-        // -------------------------
-        // Accounts → Debit / Credit
-        // -------------------------
+        // Accounts → Credit / Debit
         foreach ($user->accounts as $acc) {
-            $description = match ($acc->transaction_type) {
-                'deposit' => 'Deposit',
-                'withdrawal' => 'Withdrawal',
-                'refund' => 'Refund',
-                default => ucfirst($acc->transaction_type),
-            };
-
-            if ($acc->transaction_type === 'deposit') {
-                $debit = 0;
-                $credit = (float) $acc->amount;
-            } else {
-                $debit = (float) $acc->amount;
-                $credit = 0;
-            }
-
             $entries[] = [
-                'date' => $acc->created_at->format('Y-m-d'),
-                'datetime' => $acc->created_at,
+                'date' => $acc->created_at,
                 'type' => 'Account',
-                'description' => $description,
-                'debit' => $debit,
-                'credit' => $credit,
+                'description' => ucfirst($acc->transaction_type),
+                'name' => '—',
+                'passport' => '—',
+                'debit' => $acc->transaction_type === 'deposit' ? 0 : $acc->amount,
+                'credit' => $acc->transaction_type === 'deposit' ? $acc->amount : 0,
             ];
         }
 
-        // -------------------------
-        // Sort old → new
-        // -------------------------
-        usort($entries, fn ($a, $b) => $a['datetime'] <=> $b['datetime']);
+        // Sort by date ascending
+        usort($entries, fn ($a, $b) => $a['date'] <=> $b['date']);
 
-        // -------------------------
-        // Running balance
-        // -------------------------
+        // Calculate balance
         $balance = 0;
         foreach ($entries as &$entry) {
             $balance += $entry['credit'] - $entry['debit'];
             $entry['balance'] = $balance;
         }
 
-        // New → old
+        // Reverse for newest first
         $entries = array_reverse($entries);
 
-        // -------------------------
-        // Settings info
-        // -------------------------
-        $settings = AppSettings::info();
+        $settings = app('settings');
 
-        $pdf = Pdf::loadView('pdf.transaction-history', [
-            'user'     => $user,
-            'ledger'   => $entries,
-            'settings' => $settings,
-        ]);
-
-        return $pdf->stream(
-            'transaction-history-'.$user->id.'.pdf'
+        $pdf = app('dompdf.wrapper')->loadView(
+            'pdf.transaction-history',
+            compact('user', 'entries', 'settings')
         );
+
+        return $pdf->stream('transaction-history-'.$user->id.'.pdf');
     }
 }
