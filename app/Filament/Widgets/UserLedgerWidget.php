@@ -50,8 +50,8 @@ class UserLedgerWidget extends Widget
                 'passport' => $visa->passport ?? 'N/A',
                 'debit' => $visa->visa_cost,
                 'credit' => 0,
-                'id' => $visa->id, // ✅ আইডি যোগ
-                'route' => 'filament.resources.visas.view', // ✅ রাউট যোগ
+                'id' => $visa->id,
+                'model_type' => 'visa', // ✅ মডেল টাইপ যোগ
             ];
         }
 
@@ -81,8 +81,8 @@ class UserLedgerWidget extends Widget
                 'passport' => '—',
                 'debit' => $debit,
                 'credit' => $credit,
-                'id' => $acc->id, // ✅ আইডি যোগ
-                'route' => 'filament.resources.accounts.view', // ✅ রাউট যোগ
+                'id' => $acc->id,
+                'model_type' => 'account', // ✅ মডেল টাইপ যোগ
             ];
         }
 
