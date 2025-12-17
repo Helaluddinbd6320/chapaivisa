@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Transaction History</title>
@@ -13,107 +14,135 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 8px;
+            margin-top: 5px;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #ddd;
-            padding: 5px;
+            padding: 6px;
             text-align: center;
         }
 
         th {
-            background-color: #f3f4f6;
+            background: #f3f4f6;
             font-weight: bold;
         }
 
-        .no-border td {
+        .header-table td {
             border: none;
-            padding: 3px;
-            text-align: left;
+            padding: 0;
+            vertical-align: bottom;
         }
 
-        .right {
-            text-align: right;
-        }
-
-        /* ===== COLORS ===== */
-        .debit {
-            color: #dc2626; /* red */
+        .title {
+            font-size: 18px;
             font-weight: bold;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            margin-top: 2px;
+        }
+
+        .line {
+            border-top: 2px solid #000;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        .info-table td {
+            border: none;
+            text-align: left;
+            padding: 3px;
+        }
+
+        /* Amount styles */
+        .debit {
+            color: #dc2626;
+            font-weight: bold;
+            font-size: 14px;
         }
 
         .credit {
-            color: #16a34a; /* green */
+            color: #16a34a;
             font-weight: bold;
-        }
-
-        .negative-balance {
-            background-color: #fee2e2;
-            color: #b91c1c;
-            font-weight: bold;
+            font-size: 14px;
         }
 
         .positive-balance {
-            color: #065f46;
+            color: #16a34a;
             font-weight: bold;
+            font-size: 15px;
         }
 
-        .current-balance-negative {
-            color: #b91c1c;
+        .negative-balance {
+            color: #dc2626;
             font-weight: bold;
+            font-size: 15px;
+            background-color: #fee2e2;
         }
 
-        .current-balance-positive {
-            color: #065f46;
-            font-weight: bold;
+        /* Column widths */
+        .col-debit {
+            width: 100px;
+        }
+
+        .col-credit {
+            width: 100px;
+        }
+
+        .col-balance {
+            width: 130px;
+        }
+
+        .footer td {
+            border: none;
+            text-align: left;
+            padding: 3px;
         }
     </style>
 </head>
 
 <body>
 
-    <!-- ================= HEADER ================= -->
-    <table class="no-border">
+    {{-- Header --}}
+    <table class="header-table">
         <tr>
-            <td>
-                <strong>{{ $settings->app_name ?? 'Visa Office' }}</strong><br>
-                Transaction History
+            <td style="text-align: left;">
+                <div class="title">{{ $settings->app_name ?? 'Visa Office Chapai International' }}</div>
+                <div class="subtitle">Transaction History</div>
             </td>
-            <td class="right">
-                <strong>Report Date:</strong>
-                {{ $reportDate ?? now()->format('d-F-Y') }}
+            <td style="text-align: right;">
+                <div class="subtitle"><strong>Report Date:</strong> {{ now()->format('d-F-Y') }}</div>
             </td>
         </tr>
     </table>
 
-    <hr>
+    <div class="line"></div>
 
-    <!-- ================= USER INFO ================= -->
+    {{-- User Info --}}
     @php
         $currentBalance = $entries[0]['balance'] ?? 0;
     @endphp
 
-    <table class="no-border">
+    <table class="info-table">
         <tr>
             <td><strong>User Name:</strong> {{ $user->name }}</td>
             <td><strong>Email:</strong> {{ $user->email ?? '-' }}</td>
         </tr>
         <tr>
             <td><strong>Phone:</strong> {{ $user->phone1 ?? '-' }}</td>
-            <td><strong>Phone 2:</strong> {{ $user->phone2 ?? '-' }}</td>
-        </tr>
-        <tr>
-            <td colspan="2">
+            <td>
                 <strong>Current Balance:</strong>
-                <span class="{{ $currentBalance < 0 ? 'current-balance-negative' : 'current-balance-positive' }}">
-                    {{ number_format($currentBalance, 2) }}
+                <span class="{{ $currentBalance < 0 ? 'negative-balance' : 'positive-balance' }}">
+                    {{ number_format($currentBalance, 0) }}
                 </span>
             </td>
         </tr>
     </table>
 
-    <!-- ================= TRANSACTIONS ================= -->
+    {{-- Transactions --}}
     <table>
         <thead>
             <tr>
@@ -122,57 +151,51 @@
                 <th>Name</th>
                 <th>Passport</th>
                 <th>Description</th>
-                <th>Debit</th>
-                <th>Credit</th>
-                <th>Balance</th>
+                <th class="col-debit">Debit</th>
+                <th class="col-credit">Credit</th>
+                <th class="col-balance">Balance</th>
             </tr>
         </thead>
 
         <tbody>
             @foreach ($entries as $entry)
                 <tr>
-                    <td>{{ $entry['date']->format('d-F-Y') }}</td>
+                    <td>{{ $entry['date']->format('d/m/Y') }}</td>
                     <td>{{ $entry['type'] }}</td>
                     <td>{{ $entry['name'] }}</td>
                     <td>{{ $entry['passport'] }}</td>
                     <td>{{ $entry['description'] }}</td>
 
-                    <!-- Debit -->
-                    <td class="debit">
-                        {{ $entry['debit'] > 0 ? number_format($entry['debit'], 2) : '-' }}
+                    <td class="debit col-debit">
+                        {{ $entry['debit'] > 0 ? number_format($entry['debit'], 0) : '-' }}
                     </td>
 
-                    <!-- Credit -->
-                    <td class="credit">
-                        {{ $entry['credit'] > 0 ? number_format($entry['credit'], 2) : '-' }}
+                    <td class="credit col-credit">
+                        {{ $entry['credit'] > 0 ? number_format($entry['credit'], 0) : '-' }}
                     </td>
 
-                    <!-- Balance -->
-                    <td class="{{ $entry['balance'] < 0 ? 'negative-balance' : 'positive-balance' }}">
-                        {{ number_format($entry['balance'], 2) }}
+                    <td class="col-balance {{ $entry['balance'] < 0 ? 'negative-balance' : 'positive-balance' }}">
+                        {{ number_format($entry['balance'], 0) }}
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
 
-    <!-- ================= OFFICE INFO ================= -->
-    <table class="no-border" style="margin-top: 10px;">
+    {{-- Office Info --}}
+    <table class="footer">
         <tr>
             <td><strong>Office Phone:</strong> {{ $settings->office_phone ?? '-' }}</td>
             <td><strong>Office Phone 2:</strong> {{ $settings->office_phone2 ?? '-' }}</td>
         </tr>
         <tr>
-            <td colspan="2">
-                <strong>Office Address:</strong> {{ $settings->office_address ?? '-' }}
-            </td>
+            <td colspan="2"><strong>Office Address:</strong> {{ $settings->office_address ?? '-' }}</td>
         </tr>
         <tr>
-            <td colspan="2">
-                <strong>Office Email:</strong> {{ $settings->office_email ?? '-' }}
-            </td>
+            <td colspan="2"><strong>Office Email:</strong> {{ $settings->office_email ?? '-' }}</td>
         </tr>
     </table>
 
 </body>
+
 </html>
