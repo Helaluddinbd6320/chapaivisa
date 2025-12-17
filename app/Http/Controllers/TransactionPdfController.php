@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Setting; // Setting Model
-use Illuminate\Http\Request;
+use App\Models\Setting;
+use Illuminate\Support\Str;
 
 class TransactionPdfController extends Controller
 {
@@ -12,6 +12,7 @@ class TransactionPdfController extends Controller
     {
         $entries = [];
 
+        // Visa Transactions
         foreach ($user->visas as $visa) {
             $entries[] = [
                 'date' => $visa->created_at,
@@ -24,6 +25,7 @@ class TransactionPdfController extends Controller
             ];
         }
 
+        // Account Transactions
         foreach ($user->accounts as $acc) {
             $entries[] = [
                 'date' => $acc->created_at,
@@ -36,22 +38,43 @@ class TransactionPdfController extends Controller
             ];
         }
 
-        usort($entries, fn($a, $b) => $a['date'] <=> $b['date']);
+        // Sort by date
+        usort($entries, fn ($a, $b) => $a['date'] <=> $b['date']);
 
+        // Running balance
         $balance = 0;
         foreach ($entries as &$entry) {
             $balance += $entry['credit'] - $entry['debit'];
             $entry['balance'] = $balance;
         }
+        unset($entry);
+
+        // Latest first
         $entries = array_reverse($entries);
 
-        $settings = Setting::first(); // বা app('settings') যদি Filament ব্যবহার হয়
+        // Office settings
+        $settings = Setting::first();
 
-        $pdf = app('dompdf.wrapper')->loadView(
-            'pdf.transaction-history',
-            compact('user', 'entries', 'settings')
-        );
+        // Date format: 20-December-2025
+        $date = now()->format('d-F-Y');
 
-        return $pdf->stream('transaction-history-'.$user->id.'.pdf');
+        // Safe user name for file
+        $userName = Str::slug($user->name ?? 'user');
+
+        // File name
+        $fileName = "{$userName}-transaction-history-{$date}.pdf";
+
+        // Generate PDF
+        $pdf = app('dompdf.wrapper')
+            ->loadView('pdf.transaction-history', [
+                'user' => $user,
+                'entries' => $entries,
+                'settings' => $settings,
+                'reportDate' => $date,
+            ])
+            ->setPaper('A4', 'portrait');
+
+        // ⬇️ Direct download (NO save)
+        return $pdf->download($fileName);
     }
 }
