@@ -18,7 +18,7 @@ class Visa extends Model
         'phone_1',
         'phone_2',
         'user_id',
-
+        'agent_id',
         'takamul_category',
         'takamul',
         'tasheer',
@@ -50,7 +50,6 @@ class Visa extends Model
         'visa_date' => 'date',
         'visa_cost' => 'decimal:2',
         'takamul' => 'string',
-
     ];
 
     // Relationships
@@ -102,7 +101,7 @@ class Visa extends Model
 
     public function getMedicalStatusColorAttribute()
     {
-        if (! $this->medical_status) {
+        if (!$this->medical_status) {
             return 'gray';
         }
 
@@ -117,31 +116,15 @@ class Visa extends Model
     public function getPhoneNumbersAttribute()
     {
         $phones = [];
-        if ($this->phone_1) {
-            $phones[] = $this->phone_1;
-        }
-        if ($this->phone_2) {
-            $phones[] = $this->phone_2;
-        }
-
+        if ($this->phone_1) $phones[] = $this->phone_1;
+        if ($this->phone_2) $phones[] = $this->phone_2;
         return implode(', ', $phones);
     }
 
     // Scopes
-    public function scopePending($query)
-    {
-        return $query->where('report', 'pending');
-    }
-
-    public function scopeApproved($query)
-    {
-        return $query->where('report', 'approved');
-    }
-
-    public function scopeCompleted($query)
-    {
-        return $query->where('report', 'completed');
-    }
+    public function scopePending($query) { return $query->where('report', 'pending'); }
+    public function scopeApproved($query) { return $query->where('report', 'approved'); }
+    public function scopeCompleted($query) { return $query->where('report', 'completed'); }
 
     public function scopeSearch($query, $search)
     {
@@ -150,21 +133,34 @@ class Visa extends Model
             ->orWhere('phone_1', 'like', "%{$search}%")
             ->orWhere('visa_number', 'like', "%{$search}%")
             ->orWhere('mofa_number', 'like', "%{$search}%")
-            ->orWhereHas('agency', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            })
-            ->orWhereHas('agent', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            });
+            ->orWhereHas('agency', fn($q)=> $q->where('name', 'like', "%{$search}%"))
+            ->orWhereHas('agent', fn($q)=> $q->where('name', 'like', "%{$search}%"));
     }
 
-    public function scopeByVisaType($query, $type)
+    public function scopeByVisaType($query, $type) { return $query->where('visa_type', $type); }
+    public function scopeByAgency($query, $agencyId) { return $query->where('agency_id', $agencyId); }
+
+    // updated_at only changes if visa_cost changes
+    public function save(array $options = [])
     {
-        return $query->where('visa_type', $type);
+        if (!array_key_exists('visa_cost', $this->getDirty())) {
+            $this->timestamps = false;
+        } else {
+            $this->timestamps = true;
+        }
+
+        parent::save($options);
+        $this->timestamps = true;
     }
 
-    public function scopeByAgency($query, $agencyId)
+    // Sorting scopes
+    public function scopeVisaCostZeroFirst($query)
     {
-        return $query->where('agency_id', $agencyId);
+        return $query->orderByRaw("CASE WHEN visa_cost = 0 THEN 0 ELSE 1 END ASC");
+    }
+
+    public function scopeLatestUpdated($query)
+    {
+        return $query->orderByDesc('updated_at');
     }
 }
