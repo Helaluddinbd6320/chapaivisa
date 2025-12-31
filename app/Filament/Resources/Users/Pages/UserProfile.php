@@ -145,7 +145,15 @@ class UserProfile extends ViewRecord
                                 ->schema([
                                     Repeater::make('ledgerEntries')
                                         ->schema([
-                                            TextInput::make('date')->label('Date')->disabled(),
+                                            TextInput::make('date')
+                                                ->formatStateUsing(function ($state) {
+                                                    $date = \Carbon\Carbon::parse($state);
+                                                    $now = \Carbon\Carbon::now();
+                                                    $diff = $date->diff($now);
+
+                                                    return "{$diff->y} বছর {$diff->m} মাস {$diff->d} দিন";
+                                                })
+                                                ->label('Date')->disabled(),
                                             TextInput::make('type')->label('Type')->disabled(),
                                             TextInput::make('description')->label('Description')->disabled(),
                                             TextInput::make('debit')
@@ -182,7 +190,14 @@ class UserProfile extends ViewRecord
                                             TextInput::make('visa_cost')->label('Cost')->prefix('৳')->disabled(),
                                             TextInput::make('created_at_display')
                                                 ->label('Applied On')
-                                                ->formatStateUsing(fn ($record) => $record->created_at ? $record->created_at->format('d M Y') : 'N/A')
+                                                // ->formatStateUsing(fn ($record) => $record->created_at ? $record->created_at->format('d M Y') : 'N/A')
+                                                ->formatStateUsing(function ($state) {
+                                                    $date = \Carbon\Carbon::parse($state);
+                                                    $now = \Carbon\Carbon::now();
+                                                    $diff = $date->diff($now);
+
+                                                    return "{$diff->y} বছর {$diff->m} মাস {$diff->d} দিন";
+                                                })
                                                 ->disabled(),
                                         ])
                                         ->columns(5)
