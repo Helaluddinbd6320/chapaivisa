@@ -56,29 +56,7 @@ class Visa extends Model
         'embassy' => 'string',
     ];
 
-    /**
-     * =========================================
-     * Timestamp Control Logic
-     * =========================================
-     * ✔️ visa_cost পরিবর্তন হলে → updated_at update
-     * ❌ অন্য field update হলে → updated_at freeze
-     */
-    protected static function booted()
-    {
-        static::updating(function ($visa) {
-
-            // যদি visa_cost পরিবর্তন হয় → updated_at auto update হবে
-            if ($visa->isDirty('visa_cost')) {
-                return;
-            }
-
-            // অন্য কোনো field change হলে updated_at আগেরটাই থাকবে
-            $visa->updated_at = $visa->getOriginal('updated_at');
-        });
-    }
-
-    // ================= Relationships =================
-
+    // Relationships
     public function agent(): BelongsTo
     {
         return $this->belongsTo(User::class, 'agent_id');
@@ -99,8 +77,7 @@ class Visa extends Model
         return $this->belongsTo(Agency::class, 'agency_id');
     }
 
-    // ================= Accessors =================
-
+    // Accessors
     public function getAgentNameAttribute()
     {
         return $this->agent?->name;
@@ -143,11 +120,9 @@ class Visa extends Model
     public function getPhoneNumbersAttribute()
     {
         $phones = [];
-
         if ($this->phone_1) {
             $phones[] = $this->phone_1;
         }
-
         if ($this->phone_2) {
             $phones[] = $this->phone_2;
         }
@@ -155,8 +130,7 @@ class Visa extends Model
         return implode(', ', $phones);
     }
 
-    // ================= Scopes =================
-
+    // Scopes
     public function scopePending($query)
     {
         return $query->where('report', 'pending');
@@ -174,15 +148,17 @@ class Visa extends Model
 
     public function scopeSearch($query, $search)
     {
-        return $query->where(function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%")
-                ->orWhere('passport', 'like', "%{$search}%")
-                ->orWhere('phone_1', 'like', "%{$search}%")
-                ->orWhere('visa_number', 'like', "%{$search}%")
-                ->orWhere('mofa_number', 'like', "%{$search}%")
-                ->orWhereHas('agency', fn ($q) => $q->where('name', 'like', "%{$search}%"))
-                ->orWhereHas('agent', fn ($q) => $q->where('name', 'like', "%{$search}%"));
-        });
+        return $query->where('name', 'like', "%{$search}%")
+            ->orWhere('passport', 'like', "%{$search}%")
+            ->orWhere('phone_1', 'like', "%{$search}%")
+            ->orWhere('visa_number', 'like', "%{$search}%")
+            ->orWhere('mofa_number', 'like', "%{$search}%")
+            ->orWhereHas('agency', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })
+            ->orWhereHas('agent', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
     }
 
     public function scopeByVisaType($query, $type)
