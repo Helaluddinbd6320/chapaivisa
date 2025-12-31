@@ -21,7 +21,6 @@ class UserProfile extends ViewRecord
         $user = $this->record;
         $phone = $user->phone1 ?? 'No phone';
         $email = $user->email ?? 'No email';
-        $balance = $this->calculateBalance($user);
         $photoUrl = $this->getUserPhoto($user);
 
         $html = <<<HTML
@@ -42,21 +41,6 @@ class UserProfile extends ViewRecord
         return new HtmlString($html);
     }
 
-    private function calculateBalance($user): string
-    {
-        $balance = 0;
-        if ($user->accounts) {
-            foreach ($user->accounts as $acc) {
-                if ($acc->transaction_type === 'deposit') {
-                    $balance += $acc->amount;
-                } else {
-                    $balance -= $acc->amount;
-                }
-            }
-        }
-        return number_format($balance, 2);
-    }
-
     private function getUserPhoto($user): string
     {
         if ($user->photo && filter_var($user->photo, FILTER_VALIDATE_URL)) {
@@ -67,7 +51,7 @@ class UserProfile extends ViewRecord
             return asset('storage/'.$user->photo);
         }
 
-        $colors = ['7F9CF5', '48BB78', 'ED8936', '9F7AEA', 'F56565', '38B2AC', 'ECC94B', '4299E1', '0BC5EA', 'ED64A6'];
+        $colors = ['7F9CF5','48BB78','ED8936','9F7AEA','F56565','38B2AC','ECC94B','4299E1','0BC5EA','ED64A6'];
         $colorIndex = $user->id % count($colors);
         $color = $colors[$colorIndex];
 
@@ -86,7 +70,7 @@ class UserProfile extends ViewRecord
 
         foreach ($user->visas as $visa) {
             $entries[] = [
-                'date' => $visa->created_at->format('Y-m-d'),
+                'date' => $visa->updated_at->format('Y-m-d H:i:s'),
                 'type' => 'Visa',
                 'description' => $visa->visa_condition,
                 'debit' => $visa->visa_cost,
@@ -111,7 +95,7 @@ class UserProfile extends ViewRecord
             }
 
             $entries[] = [
-                'date' => $acc->created_at->format('Y-m-d'),
+                'date' => $acc->updated_at->format('Y-m-d H:i:s'),
                 'type' => 'Account',
                 'description' => $desc,
                 'debit' => $debit,
@@ -119,7 +103,7 @@ class UserProfile extends ViewRecord
             ];
         }
 
-        // Debit & Credit = 0 উপরে রাখবে, বাকি date ascending
+        // ✅ Debit & Credit = 0 উপরে, বাকি updated_at descending
         usort($entries, function($a, $b) {
             $aZero = $a['debit'] == 0 && $a['credit'] == 0;
             $bZero = $b['debit'] == 0 && $b['credit'] == 0;
@@ -127,10 +111,10 @@ class UserProfile extends ViewRecord
             if ($aZero && !$bZero) return -1;
             if (!$aZero && $bZero) return 1;
 
-            return strtotime($a['date']) <=> strtotime($b['date']);
+            return strtotime($b['date']) <=> strtotime($a['date']);
         });
 
-        // Balance নিচ থেকে ওপরে হিসাব
+        // ✅ Balance নিচ থেকে ওপরে হিসাব
         $balance = 0;
         for ($i = count($entries) - 1; $i >= 0; $i--) {
             $entry = &$entries[$i];
