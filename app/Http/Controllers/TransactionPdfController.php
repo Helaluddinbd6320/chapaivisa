@@ -5,11 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Setting;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class TransactionPdfController extends Controller
 {
     public function download(User $user)
     {
+        $authUser = Auth::user();
+
+        // শুধুমাত্র নিজের ডাটা অথবা admin/manager দেখতে পারবে
+        if ($authUser->id !== $user->id && ! $authUser->hasAnyRole(['super_admin', 'admin', 'manager'])) {
+            abort(Response::HTTP_FORBIDDEN, 'Unauthorized access.');
+        }
+
         $entries = [];
 
         // Visa condition mapping
