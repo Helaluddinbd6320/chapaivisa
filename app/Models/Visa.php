@@ -50,7 +50,7 @@ class Visa extends Model
         'visa_date' => 'date',
         'visa_cost' => 'decimal:2',
         'takamul' => 'string',
-        
+
     ];
 
     // Relationships
