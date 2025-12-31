@@ -8,5 +8,10 @@ Route::get('/', function () {
 
 use App\Http\Controllers\TransactionPdfController;
 
-Route::get('/transactions/pdf/{user}', [TransactionPdfController::class, 'download'])
-    ->name('transactions.pdf');
+// Route::get('/transactions/pdf/{user}', [TransactionPdfController::class, 'download'])
+//     ->name('transactions.pdf');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/transactions/pdf/{user}', [TransactionPdfController::class, 'download'])
+        ->name('transactions.pdf');
+});
