@@ -91,7 +91,7 @@ class VisasTable
                         'no' => 'danger',
                         'na' => 'gray',
                         default => 'secondary',
-                    }),
+                    })->disabledClick(),
 
                 TextColumn::make('tasheer')
                     ->formatStateUsing(fn ($state) => match (strtolower($state ?? '')) {
@@ -104,7 +104,8 @@ class VisasTable
                         'yes' => 'success',
                         'no' => 'danger',
                         default => 'gray',
-                    }),
+                    })
+                    ->disabledClick(),
 
                 TextColumn::make('ttc')
                     ->formatStateUsing(fn ($state) => match (strtolower($state ?? '')) {
@@ -117,7 +118,8 @@ class VisasTable
                         'yes' => 'success',
                         'no' => 'danger',
                         default => 'gray',
-                    }),
+                    })
+                    ->disabledClick(),
 
                 TextColumn::make('embassy')
                     ->formatStateUsing(fn ($state) => match (strtolower($state ?? '')) {
@@ -130,7 +132,8 @@ class VisasTable
                         'yes' => 'success',
                         'no' => 'danger',
                         default => 'gray',
-                    }),
+                    })
+                    ->disabledClick(),
 
                 TextColumn::make('bmet')
                     ->formatStateUsing(fn ($state) => match (strtolower($state ?? '')) {
@@ -143,7 +146,8 @@ class VisasTable
                         'yes' => 'success',
                         'no' => 'danger',
                         default => 'gray',
-                    }),
+                    })
+                    ->disabledClick(),
 
                 TextColumn::make('iqama')->copyable()->searchable()->disabledClick(),
                 TextColumn::make('visa_type')->copyable()->disabledClick(),
