@@ -202,18 +202,18 @@ class UserProfile extends ViewRecord
                                         ->schema([
                                             TextInput::make('transaction_type')->label('Type')->disabled(),
                                             TextInput::make('amount')->label('Amount')->prefix('৳')->disabled(),
-                                            TextInput::make('created_at')
-                                                ->label('Created')
+
+                                            TextInput::make('created_at_display')
+                                                ->label('Date')
+                                                // ->formatStateUsing(fn ($record) => $record->created_at ? $record->created_at->format('d M Y') : 'N/A')
                                                 ->formatStateUsing(function ($state) {
                                                     $date = \Carbon\Carbon::parse($state);
                                                     $now = \Carbon\Carbon::now();
                                                     $diff = $date->diff($now);
 
                                                     return "{$diff->y} বছর {$diff->m} মাস {$diff->d} দিন";
-                                                })->description(fn ($record) => $record->created_at->format('d M, Y h:i A'))->weight('bold'),
-                                            TextInput::make('created_at_display')
-                                                ->label('Date')
-                                                ->formatStateUsing(fn ($record) => $record->created_at ? $record->created_at->format('d M Y') : 'N/A')
+                                                })
+                                                ->weight('bold')
                                                 ->disabled(),
                                         ])
                                         ->columns(3)
