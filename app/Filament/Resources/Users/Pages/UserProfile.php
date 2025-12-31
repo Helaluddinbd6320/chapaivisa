@@ -204,7 +204,6 @@ class UserProfile extends ViewRecord
                                             TextInput::make('amount')->label('Amount')->prefix('৳')->disabled(),
                                             TextInput::make('created_at')
                                                 ->label('Created')
-                                                ->sortable()
                                                 ->formatStateUsing(function ($state) {
                                                     $date = \Carbon\Carbon::parse($state);
                                                     $now = \Carbon\Carbon::now();
