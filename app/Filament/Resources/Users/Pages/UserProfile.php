@@ -119,7 +119,7 @@ class UserProfile extends ViewRecord
             ];
         }
 
-        // ✅ Debit ও Credit ০ হলে উপরে, বাকি date ascending
+        // Debit & Credit = 0 উপরে রাখবে, বাকি date ascending
         usort($entries, function($a, $b) {
             $aZero = $a['debit'] == 0 && $a['credit'] == 0;
             $bZero = $b['debit'] == 0 && $b['credit'] == 0;
@@ -130,8 +130,10 @@ class UserProfile extends ViewRecord
             return strtotime($a['date']) <=> strtotime($b['date']);
         });
 
+        // Balance নিচ থেকে ওপরে হিসাব
         $balance = 0;
-        foreach ($entries as &$entry) {
+        for ($i = count($entries) - 1; $i >= 0; $i--) {
+            $entry = &$entries[$i];
             $balance += $entry['credit'] - $entry['debit'];
             $entry['balance'] = $balance;
         }
