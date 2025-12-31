@@ -18,40 +18,26 @@ class UserProfile extends ViewRecord
 
     /**
      * Render user profile title with compact horizontal layout
-     * Phone first, Email after, Balance at the end
      */
     public function getTitle(): HtmlString
     {
         $user = $this->record;
-        $phone = $user->phone1 ? $user->phone1 : 'No phone';
-        $email = $user->email ? $user->email : 'No email';
+        $phone = $user->phone1 ?? 'No phone';
+        $email = $user->email ?? 'No email';
         $balance = $this->calculateBalance($user);
         $photoUrl = $this->getUserPhoto($user);
 
         $html = <<<HTML
         <div class="flex items-center space-x-4">
-            <!-- Avatar -->
             <div class="shrink-0">
-                <img src="{$photoUrl}" 
-                     
-                     class="w-10 h-10 rounded-full border-2 border-white dark:border-gray-800 shadow-sm">
+                <img src="{$photoUrl}" class="w-10 h-10 rounded-full border-2 border-white dark:border-gray-800 shadow-sm">
             </div>
-
-            <!-- User Info Horizontal -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-6">
                 <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">
                     {$user->name}
                 </p>
-
-                <span class="text-xs text-gray-500 dark:text-gray-400 truncate">
-                    Phone: {$phone}
-                </span>
-
-                <span class="text-xs text-gray-500 dark:text-gray-400 truncate">
-                    Email: {$email}
-                </span>
-
-                
+                <span class="text-xs text-gray-500 dark:text-gray-400 truncate">Phone: {$phone}</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400 truncate">Email: {$email}</span>
             </div>
         </div>
         HTML;
@@ -103,11 +89,14 @@ class UserProfile extends ViewRecord
 
     /**
      * Eager load visas and account entries, combine into ledger entries
+     * Updated: Visas and Accounts are sorted by updated_at descending
      */
     protected function resolveRecord(string|int $key): Model
     {
-        $user = static::getResource()::getModel()::with(['visas', 'accounts'])
-            ->findOrFail($key);
+        $user = static::getResource()::getModel()::with([
+            'visas' => fn($q) => $q->orderByDesc('updated_at'),
+            'accounts' => fn($q) => $q->orderByDesc('updated_at'),
+        ])->findOrFail($key);
 
         $entries = [];
 
@@ -148,10 +137,9 @@ class UserProfile extends ViewRecord
             ];
         }
 
-        // Sort by date ascending
+        // Sort ledger by date ascending for balance calculation
         usort($entries, fn ($a, $b) => strtotime($a['date']) <=> strtotime($b['date']));
 
-        // Calculate running balance
         $balance = 0;
         foreach ($entries as &$entry) {
             $balance += $entry['credit'] - $entry['debit'];
@@ -164,7 +152,7 @@ class UserProfile extends ViewRecord
     }
 
     /**
-     * Form schema for displaying ledger
+     * Form schema for displaying ledger and records
      */
     public function form(Schema $schema): Schema
     {
@@ -173,7 +161,7 @@ class UserProfile extends ViewRecord
                 ->tabs([
                     Tabs\Tab::make('Financial Ledger')
                         ->icon('heroicon-o-currency-dollar')
-                        ->badge(fn ($record) => isset($record->ledgerEntries) ? count($record->ledgerEntries) : 0)
+                        ->badge(fn($record) => isset($record->ledgerEntries) ? count($record->ledgerEntries) : 0)
                         ->schema([
                             Section::make('Transaction History')
                                 ->description('Complete financial transaction history')
@@ -186,15 +174,15 @@ class UserProfile extends ViewRecord
                                             TextInput::make('debit')
                                                 ->label('Debit')
                                                 ->disabled()
-                                                ->formatStateUsing(fn ($state) => $state ? '৳'.number_format($state, 2) : ''),
+                                                ->formatStateUsing(fn($state) => $state ? '৳'.number_format($state, 2) : ''),
                                             TextInput::make('credit')
                                                 ->label('Credit')
                                                 ->disabled()
-                                                ->formatStateUsing(fn ($state) => $state ? '৳'.number_format($state, 2) : ''),
+                                                ->formatStateUsing(fn($state) => $state ? '৳'.number_format($state, 2) : ''),
                                             TextInput::make('balance')
                                                 ->label('Balance')
                                                 ->disabled()
-                                                ->formatStateUsing(fn ($state) => '৳'.number_format($state, 2)),
+                                                ->formatStateUsing(fn($state) => '৳'.number_format($state, 2)),
                                         ])
                                         ->columns(6)
                                         ->columnSpanFull()
@@ -204,7 +192,7 @@ class UserProfile extends ViewRecord
 
                     Tabs\Tab::make('Visas')
                         ->icon('heroicon-o-document-text')
-                        ->badge(fn ($record) => $record->visas ? $record->visas->count() : 0)
+                        ->badge(fn($record) => $record->visas ? $record->visas->count() : 0)
                         ->schema([
                             Section::make('Visa Applications')
                                 ->schema([
@@ -217,7 +205,7 @@ class UserProfile extends ViewRecord
                                             TextInput::make('visa_cost')->label('Cost')->prefix('৳')->disabled(),
                                             TextInput::make('created_at_display')
                                                 ->label('Applied On')
-                                                ->formatStateUsing(fn ($record) => $record->created_at ? $record->created_at->format('d M Y') : 'N/A')
+                                                ->formatStateUsing(fn($record) => $record->created_at ? $record->created_at->format('d M Y') : 'N/A')
                                                 ->disabled(),
                                         ])
                                         ->columns(5)
@@ -228,7 +216,7 @@ class UserProfile extends ViewRecord
 
                     Tabs\Tab::make('Accounts')
                         ->icon('heroicon-o-banknotes')
-                        ->badge(fn ($record) => $record->accounts ? $record->accounts->count() : 0)
+                        ->badge(fn($record) => $record->accounts ? $record->accounts->count() : 0)
                         ->schema([
                             Section::make('Account Transactions')
                                 ->schema([
@@ -239,7 +227,7 @@ class UserProfile extends ViewRecord
                                             TextInput::make('amount')->label('Amount')->prefix('৳')->disabled(),
                                             TextInput::make('created_at_display')
                                                 ->label('Date')
-                                                ->formatStateUsing(fn ($record) => $record->created_at ? $record->created_at->format('d M Y') : 'N/A')
+                                                ->formatStateUsing(fn($record) => $record->created_at ? $record->created_at->format('d M Y') : 'N/A')
                                                 ->disabled(),
                                         ])
                                         ->columns(3)
