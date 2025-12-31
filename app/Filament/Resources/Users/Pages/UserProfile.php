@@ -16,9 +16,6 @@ class UserProfile extends ViewRecord
 {
     protected static string $resource = UserResource::class;
 
-    /**
-     * Render user profile title with compact horizontal layout
-     */
     public function getTitle(): HtmlString
     {
         $user = $this->record;
@@ -45,29 +42,21 @@ class UserProfile extends ViewRecord
         return new HtmlString($html);
     }
 
-    /**
-     * Calculate current user balance from accounts
-     */
     private function calculateBalance($user): string
     {
         $balance = 0;
-
         if ($user->accounts) {
             foreach ($user->accounts as $acc) {
                 if ($acc->transaction_type === 'deposit') {
                     $balance += $acc->amount;
-                } else { // withdrawal / refund
+                } else {
                     $balance -= $acc->amount;
                 }
             }
         }
-
         return number_format($balance, 2);
     }
 
-    /**
-     * Get user photo URL or default avatar
-     */
     private function getUserPhoto($user): string
     {
         if ($user->photo && filter_var($user->photo, FILTER_VALIDATE_URL)) {
@@ -78,7 +67,6 @@ class UserProfile extends ViewRecord
             return asset('storage/'.$user->photo);
         }
 
-        // Default avatar
         $colors = ['7F9CF5', '48BB78', 'ED8936', '9F7AEA', 'F56565', '38B2AC', 'ECC94B', '4299E1', '0BC5EA', 'ED64A6'];
         $colorIndex = $user->id % count($colors);
         $color = $colors[$colorIndex];
@@ -87,10 +75,6 @@ class UserProfile extends ViewRecord
                '&color=FFFFFF&background='.$color.'&bold=true';
     }
 
-    /**
-     * Eager load visas and account entries, combine into ledger entries
-     * Updated: Visas and Accounts are sorted by updated_at descending
-     */
     protected function resolveRecord(string|int $key): Model
     {
         $user = static::getResource()::getModel()::with([
@@ -100,7 +84,6 @@ class UserProfile extends ViewRecord
 
         $entries = [];
 
-        // Visa entries
         foreach ($user->visas as $visa) {
             $entries[] = [
                 'date' => $visa->created_at->format('Y-m-d'),
@@ -111,7 +94,6 @@ class UserProfile extends ViewRecord
             ];
         }
 
-        // Account entries
         foreach ($user->accounts as $acc) {
             $desc = match ($acc->transaction_type) {
                 'deposit' => 'Deposit',
@@ -137,8 +119,16 @@ class UserProfile extends ViewRecord
             ];
         }
 
-        // Sort ledger by date ascending for balance calculation
-        usort($entries, fn ($a, $b) => strtotime($a['date']) <=> strtotime($b['date']));
+        // ✅ Debit ও Credit ০ হলে উপরে, বাকি date ascending
+        usort($entries, function($a, $b) {
+            $aZero = $a['debit'] == 0 && $a['credit'] == 0;
+            $bZero = $b['debit'] == 0 && $b['credit'] == 0;
+
+            if ($aZero && !$bZero) return -1;
+            if (!$aZero && $bZero) return 1;
+
+            return strtotime($a['date']) <=> strtotime($b['date']);
+        });
 
         $balance = 0;
         foreach ($entries as &$entry) {
@@ -151,9 +141,6 @@ class UserProfile extends ViewRecord
         return $user;
     }
 
-    /**
-     * Form schema for displaying ledger and records
-     */
     public function form(Schema $schema): Schema
     {
         return $schema->components([
