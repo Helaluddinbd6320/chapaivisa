@@ -51,7 +51,7 @@ class UserProfile extends ViewRecord
             return asset('storage/'.$user->photo);
         }
 
-        $colors = ['7F9CF5','48BB78','ED8936','9F7AEA','F56565','38B2AC','ECC94B','4299E1','0BC5EA','ED64A6'];
+        $colors = ['7F9CF5', '48BB78', 'ED8936', '9F7AEA', 'F56565', '38B2AC', 'ECC94B', '4299E1', '0BC5EA', 'ED64A6'];
         $colorIndex = $user->id % count($colors);
         $color = $colors[$colorIndex];
 
@@ -62,8 +62,8 @@ class UserProfile extends ViewRecord
     protected function resolveRecord(string|int $key): Model
     {
         $user = static::getResource()::getModel()::with([
-            'visas' => fn($q) => $q->orderByDesc('updated_at'),
-            'accounts' => fn($q) => $q->orderByDesc('updated_at'),
+            'visas' => fn ($q) => $q->orderByDesc('updated_at'),
+            'accounts' => fn ($q) => $q->orderByDesc('updated_at'),
         ])->findOrFail($key);
 
         $entries = [];
@@ -104,12 +104,16 @@ class UserProfile extends ViewRecord
         }
 
         // ✅ Debit & Credit = 0 উপরে, বাকি updated_at descending
-        usort($entries, function($a, $b) {
+        usort($entries, function ($a, $b) {
             $aZero = $a['debit'] == 0 && $a['credit'] == 0;
             $bZero = $b['debit'] == 0 && $b['credit'] == 0;
 
-            if ($aZero && !$bZero) return -1;
-            if (!$aZero && $bZero) return 1;
+            if ($aZero && ! $bZero) {
+                return -1;
+            }
+            if (! $aZero && $bZero) {
+                return 1;
+            }
 
             return strtotime($b['date']) <=> strtotime($a['date']);
         });
@@ -134,7 +138,7 @@ class UserProfile extends ViewRecord
                 ->tabs([
                     Tabs\Tab::make('Financial Ledger')
                         ->icon('heroicon-o-currency-dollar')
-                        ->badge(fn($record) => isset($record->ledgerEntries) ? count($record->ledgerEntries) : 0)
+                        ->badge(fn ($record) => isset($record->ledgerEntries) ? count($record->ledgerEntries) : 0)
                         ->schema([
                             Section::make('Transaction History')
                                 ->description('Complete financial transaction history')
@@ -147,15 +151,15 @@ class UserProfile extends ViewRecord
                                             TextInput::make('debit')
                                                 ->label('Debit')
                                                 ->disabled()
-                                                ->formatStateUsing(fn($state) => $state ? '৳'.number_format($state, 2) : ''),
+                                                ->formatStateUsing(fn ($state) => $state ? '৳'.number_format($state, 2) : ''),
                                             TextInput::make('credit')
                                                 ->label('Credit')
                                                 ->disabled()
-                                                ->formatStateUsing(fn($state) => $state ? '৳'.number_format($state, 2) : ''),
+                                                ->formatStateUsing(fn ($state) => $state ? '৳'.number_format($state, 2) : ''),
                                             TextInput::make('balance')
                                                 ->label('Balance')
                                                 ->disabled()
-                                                ->formatStateUsing(fn($state) => '৳'.number_format($state, 2)),
+                                                ->formatStateUsing(fn ($state) => '৳'.number_format($state, 2)),
                                         ])
                                         ->columns(6)
                                         ->columnSpanFull()
@@ -165,7 +169,7 @@ class UserProfile extends ViewRecord
 
                     Tabs\Tab::make('Visas')
                         ->icon('heroicon-o-document-text')
-                        ->badge(fn($record) => $record->visas ? $record->visas->count() : 0)
+                        ->badge(fn ($record) => $record->visas ? $record->visas->count() : 0)
                         ->schema([
                             Section::make('Visa Applications')
                                 ->schema([
@@ -178,7 +182,7 @@ class UserProfile extends ViewRecord
                                             TextInput::make('visa_cost')->label('Cost')->prefix('৳')->disabled(),
                                             TextInput::make('created_at_display')
                                                 ->label('Applied On')
-                                                ->formatStateUsing(fn($record) => $record->created_at ? $record->created_at->format('d M Y') : 'N/A')
+                                                ->formatStateUsing(fn ($record) => $record->created_at ? $record->created_at->format('d M Y') : 'N/A')
                                                 ->disabled(),
                                         ])
                                         ->columns(5)
@@ -189,7 +193,7 @@ class UserProfile extends ViewRecord
 
                     Tabs\Tab::make('Accounts')
                         ->icon('heroicon-o-banknotes')
-                        ->badge(fn($record) => $record->accounts ? $record->accounts->count() : 0)
+                        ->badge(fn ($record) => $record->accounts ? $record->accounts->count() : 0)
                         ->schema([
                             Section::make('Account Transactions')
                                 ->schema([
@@ -198,9 +202,19 @@ class UserProfile extends ViewRecord
                                         ->schema([
                                             TextInput::make('transaction_type')->label('Type')->disabled(),
                                             TextInput::make('amount')->label('Amount')->prefix('৳')->disabled(),
+                                            TextColumn::make('created_at')
+                                                ->label('Created')
+                                                ->sortable()
+                                                ->formatStateUsing(function ($state) {
+                                                    $date = \Carbon\Carbon::parse($state);
+                                                    $now = \Carbon\Carbon::now();
+                                                    $diff = $date->diff($now);
+
+                                                    return "{$diff->y} বছর {$diff->m} মাস {$diff->d} দিন";
+                                                })->description(fn ($record) => $record->created_at->format('d M, Y h:i A'))->weight('bold'),
                                             TextInput::make('created_at_display')
                                                 ->label('Date')
-                                                ->formatStateUsing(fn($record) => $record->created_at ? $record->created_at->format('d M Y') : 'N/A')
+                                                ->formatStateUsing(fn ($record) => $record->created_at ? $record->created_at->format('d M Y') : 'N/A')
                                                 ->disabled(),
                                         ])
                                         ->columns(3)
