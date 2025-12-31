@@ -202,7 +202,7 @@ class UserProfile extends ViewRecord
                                         ->schema([
                                             TextInput::make('transaction_type')->label('Type')->disabled(),
                                             TextInput::make('amount')->label('Amount')->prefix('৳')->disabled(),
-                                            TextColumn::make('created_at')
+                                            TextInput::make('created_at')
                                                 ->label('Created')
                                                 ->sortable()
                                                 ->formatStateUsing(function ($state) {
