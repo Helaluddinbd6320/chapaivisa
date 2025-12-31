@@ -57,7 +57,6 @@
             padding: 3px;
         }
 
-        /* Amount styles */
         .debit {
             color: #dc2626;
             font-weight: bold;
@@ -83,7 +82,6 @@
             background-color: #fee2e2;
         }
 
-        /* Column widths */
         .col-debit {
             width: 100px;
         }
@@ -114,7 +112,7 @@
                 <div class="subtitle">Transaction History</div>
             </td>
             <td style="text-align: right;">
-                <div class="subtitle"><strong>Report Date:</strong> {{ now()->format('d-F-Y') }}</div>
+                <div class="subtitle"><strong>Report Date:</strong> {{ $reportDate }}</div>
             </td>
         </tr>
     </table>

@@ -15,7 +15,7 @@ class TransactionPdfController extends Controller
         // Visa Transactions
         foreach ($user->visas as $visa) {
             $entries[] = [
-                'date' => $visa->created_at,
+                'date' => $visa->updated_at,
                 'type' => 'Visa',
                 'description' => $visa->visa_condition,
                 'name' => $visa->name ?? 'N/A',
@@ -28,7 +28,7 @@ class TransactionPdfController extends Controller
         // Account Transactions
         foreach ($user->accounts as $acc) {
             $entries[] = [
-                'date' => $acc->created_at,
+                'date' => $acc->updated_at,
                 'type' => 'Account',
                 'description' => ucfirst($acc->transaction_type),
                 'name' => '—',
@@ -38,24 +38,30 @@ class TransactionPdfController extends Controller
             ];
         }
 
-        // Sort by date
-        usort($entries, fn ($a, $b) => $a['date'] <=> $b['date']);
+        // ✅ Debit & Credit = 0 entries উপরে, বাকি updated_at descending
+        usort($entries, function($a, $b) {
+            $aZero = $a['debit'] == 0 && $a['credit'] == 0;
+            $bZero = $b['debit'] == 0 && $b['credit'] == 0;
 
-        // Running balance
+            if ($aZero && !$bZero) return -1;
+            if (!$aZero && $bZero) return 1;
+
+            return $b['date']->timestamp <=> $a['date']->timestamp;
+        });
+
+        // ✅ Balance নিচ থেকে ওপরে হিসাব
         $balance = 0;
-        foreach ($entries as &$entry) {
+        for ($i = count($entries) - 1; $i >= 0; $i--) {
+            $entry = &$entries[$i];
             $balance += $entry['credit'] - $entry['debit'];
             $entry['balance'] = $balance;
         }
         unset($entry);
 
-        // Latest first
-        $entries = array_reverse($entries);
-
         // Office settings
         $settings = Setting::first();
 
-        // Date format: 20-December-2025
+        // Date format for file name: 20-December-2025
         $date = now()->format('d-F-Y');
 
         // Safe user name for file
@@ -74,7 +80,6 @@ class TransactionPdfController extends Controller
             ])
             ->setPaper('A4', 'portrait');
 
-        // ⬇️ Direct download (NO save)
         return $pdf->download($fileName);
     }
 }
