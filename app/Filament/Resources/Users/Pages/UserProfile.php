@@ -213,7 +213,6 @@ class UserProfile extends ViewRecord
 
                                                     return "{$diff->y} বছর {$diff->m} মাস {$diff->d} দিন";
                                                 })
-                                                ->weight('bold')
                                                 ->disabled(),
                                         ])
                                         ->columns(3)
