@@ -15,6 +15,12 @@
       --accent-4: #10b981; /* emerald */
       --accent-5: #f59e0b; /* amber */
       --accent-6: #8b5cf6; /* violet */
+      --bird-white: #e0f2fe;
+      --bird-gray: #94a3b8;
+      --bird-black: #1e293b;
+      --bird-red: #ef4444;
+      --bird-blue: #3b82f6;
+      --bird-yellow: #fbbf24;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -45,15 +51,17 @@
       pointer-events: none;
     }
 
-    /* Butterfly styles */
+    /* Butterfly styles - Whole screen movement */
     .butterfly {
       position: absolute;
       width: 50px;
       height: 50px;
       filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
-      opacity: 0.85;
-      z-index: -1;
+      opacity: 0.9;
+      z-index: 0;
       pointer-events: none;
+      animation: butterflyRandomFly 40s linear infinite;
+      animation-play-state: running;
     }
 
     .butterfly .left-wing,
@@ -109,113 +117,263 @@
       transform: rotate(20deg);
     }
 
-    /* Bird styles */
+    /* Bird styles - Directional flying */
     .bird {
       position: absolute;
-      width: 80px;
-      height: 40px;
-      opacity: 0.9;
-      z-index: -1;
+      width: 100px;
+      height: 70px;
+      opacity: 0.95;
+      z-index: 1;
       pointer-events: none;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.3));
+      animation: birdCrossFly 25s linear infinite;
+      animation-play-state: running;
     }
 
-    .bird .body {
+    /* Bird fleeing from mouse */
+    .bird.fleeing {
+      animation: birdFleeFly 3s ease-out forwards !important;
+      filter: brightness(1.3) drop-shadow(0 8px 15px rgba(239,68,68,0.3));
+      z-index: 10;
+    }
+
+    /* Bird body */
+    .bird-body {
       position: absolute;
-      width: 50px;
-      height: 25px;
-      background: var(--bird-color, var(--accent-2));
+      width: 60px;
+      height: 40px;
+      background: var(--bird-body-color, var(--bird-gray));
       border-radius: 50% 50% 40% 40%;
-      left: 15px;
-      top: 7px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      left: 20px;
+      top: 15px;
+      box-shadow: 
+        inset 0 -5px 10px rgba(0,0,0,0.2),
+        0 3px 5px rgba(0,0,0,0.1);
     }
 
-    .bird .wing {
+    /* Bird head */
+    .bird-head {
       position: absolute;
-      width: 40px;
-      height: 20px;
-      background: var(--bird-color, var(--accent-2));
+      width: 35px;
+      height: 35px;
+      background: var(--bird-head-color, var(--bird-gray));
       border-radius: 50%;
+      left: 0;
       top: 5px;
-      transform-origin: 30px 10px;
-      animation: birdFlap 1s ease-in-out infinite;
+      z-index: 2;
+      box-shadow: 
+        inset 0 -3px 5px rgba(0,0,0,0.2),
+        0 2px 4px rgba(0,0,0,0.1);
     }
 
-    .bird .wing.left {
-      left: 0;
-      background: linear-gradient(to right, color-mix(in srgb, var(--bird-color, var(--accent-2)) 70%, black), var(--bird-color, var(--accent-2)));
-    }
-
-    .bird .wing.right {
-      right: 0;
-      background: linear-gradient(to left, color-mix(in srgb, var(--bird-color, var(--accent-2)) 70%, black), var(--bird-color, var(--accent-2)));
-      animation-delay: 0.5s;
-    }
-
-    .bird .tail {
+    /* Bird beak */
+    .bird-beak {
       position: absolute;
-      width: 0;
-      height: 0;
-      border-left: 15px solid var(--bird-color, var(--accent-2));
-      border-top: 8px solid transparent;
-      border-bottom: 8px solid transparent;
-      right: -10px;
-      top: 15px;
+      width: 25px;
+      height: 12px;
+      background: var(--bird-beak-color, #ffb347);
+      border-radius: 50% 0 0 50%;
+      left: -15px;
+      top: 16px;
+      z-index: 1;
+      clip-path: polygon(0 0, 100% 25%, 100% 75%, 0 100%);
+      box-shadow: 2px 0 5px rgba(0,0,0,0.2);
     }
 
-    .bird .head {
+    .bird-beak::after {
+      content: '';
       position: absolute;
-      width: 20px;
-      height: 20px;
-      background: var(--bird-color, var(--accent-2));
-      border-radius: 50%;
-      left: 0;
-      top: 10px;
+      width: 5px;
+      height: 2px;
+      background: #000;
+      top: 5px;
+      right: 5px;
+      border-radius: 2px;
     }
 
-    .bird .beak {
+    /* Bird eye */
+    .bird-eye {
       position: absolute;
-      width: 0;
-      height: 0;
-      border-left: 10px solid #ffb347;
-      border-top: 5px solid transparent;
-      border-bottom: 5px solid transparent;
-      left: -8px;
-      top: 15px;
-    }
-
-    .bird .eye {
-      position: absolute;
-      width: 6px;
-      height: 6px;
+      width: 10px;
+      height: 10px;
       background: #fff;
       border-radius: 50%;
-      left: 12px;
-      top: 13px;
-      box-shadow: 0 0 2px rgba(0,0,0,0.5);
+      left: 20px;
+      top: 12px;
+      z-index: 3;
+      box-shadow: 
+        0 0 0 3px rgba(0,0,0,0.1),
+        inset 0 1px 3px rgba(0,0,0,0.3);
     }
 
-    .bird .eye::after {
+    .bird-eye::before {
+      content: '';
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #000;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+    }
+
+    .bird-eye::after {
       content: '';
       position: absolute;
       width: 2px;
       height: 2px;
-      background: #000;
-      border-radius: 50%;
-      top: 2px;
-      left: 2px;
-    }
-
-    /* Sparkle particles */
-    .sparkle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
       background: #fff;
       border-radius: 50%;
-      filter: blur(1px);
-      opacity: 0;
-      animation: sparkleFloat 3s linear infinite;
+      top: 4px;
+      left: 4px;
+    }
+
+    /* Bird wings */
+    .bird-wing {
+      position: absolute;
+      width: 70px;
+      height: 35px;
+      background: var(--bird-wing-color, var(--bird-gray));
+      border-radius: 50%;
+      top: 20px;
+      left: 25px;
+      transform-origin: 25px 17px;
+      animation: birdWingFlap 1.2s ease-in-out infinite;
+      box-shadow: 
+        inset 0 -3px 10px rgba(0,0,0,0.3),
+        0 3px 5px rgba(0,0,0,0.1);
+      z-index: 1;
+    }
+
+    .bird-wing::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, 
+        transparent 20%,
+        rgba(255,255,255,0.1) 30%,
+        rgba(0,0,0,0.1) 70%,
+        transparent 80%);
+      border-radius: 50%;
+    }
+
+    /* Bird tail */
+    .bird-tail {
+      position: absolute;
+      width: 45px;
+      height: 25px;
+      background: var(--bird-tail-color, var(--bird-gray));
+      right: -25px;
+      top: 30px;
+      border-radius: 0 50% 50% 0;
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+      box-shadow: 
+        inset -3px 0 5px rgba(0,0,0,0.2),
+        2px 0 5px rgba(0,0,0,0.1);
+      z-index: 0;
+    }
+
+    /* Bird legs */
+    .bird-leg {
+      position: absolute;
+      width: 3px;
+      height: 20px;
+      background: #ffb347;
+      bottom: -15px;
+      border-radius: 2px;
+      z-index: 0;
+    }
+
+    .bird-leg.left {
+      left: 45px;
+      transform: rotate(-5deg);
+    }
+
+    .bird-leg.right {
+      left: 55px;
+      transform: rotate(5deg);
+    }
+
+    .bird-leg::before {
+      content: '';
+      position: absolute;
+      width: 6px;
+      height: 3px;
+      background: #ffb347;
+      bottom: 0;
+      left: -1.5px;
+      border-radius: 2px;
+    }
+
+    /* Bird flying trail */
+    .bird-trail {
+      position: absolute;
+      width: 15px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1));
+      border-radius: 2px;
+      right: -20px;
+      top: 35px;
+      opacity: 0.3;
+      animation: trailFade 1s linear infinite;
+    }
+
+    /* Bird types */
+    .bird.sparrow .bird-body,
+    .bird.sparrow .bird-head,
+    .bird.sparrow .bird-wing,
+    .bird.sparrow .bird-tail {
+      background: var(--bird-gray);
+    }
+
+    .bird.sparrow .bird-head {
+      background: linear-gradient(135deg, var(--bird-gray), var(--bird-black));
+    }
+
+    .bird.sparrow .bird-wing {
+      background: linear-gradient(135deg, var(--bird-gray), var(--bird-black));
+    }
+
+    .bird.pigeon .bird-body,
+    .bird.pigeon .bird-head,
+    .bird.pigeon .bird-wing,
+    .bird.pigeon .bird-tail {
+      background: var(--bird-white);
+    }
+
+    .bird.pigeon .bird-head {
+      background: linear-gradient(135deg, var(--bird-white), #cbd5e1);
+    }
+
+    .bird.cardinal .bird-body,
+    .bird.cardinal .bird-head,
+    .bird.cardinal .bird-tail {
+      background: var(--bird-red);
+    }
+
+    .bird.cardinal .bird-wing {
+      background: linear-gradient(135deg, var(--bird-red), #dc2626);
+    }
+
+    .bird.bluejay .bird-body,
+    .bird.bluejay .bird-head,
+    .bird.bluejay .bird-tail {
+      background: var(--bird-blue);
+    }
+
+    .bird.bluejay .bird-wing {
+      background: linear-gradient(135deg, var(--bird-blue), #1d4ed8);
+    }
+
+    .bird.canary .bird-body,
+    .bird.canary .bird-head,
+    .bird.canary .bird-tail {
+      background: var(--bird-yellow);
+    }
+
+    .bird.canary .bird-wing {
+      background: linear-gradient(135deg, var(--bird-yellow), #d97706);
     }
 
     /* Card styles */
@@ -234,7 +392,7 @@
       padding: 56px 42px;
       text-align:center;
       position:relative;
-      z-index: 2;
+      z-index: 100;
       backdrop-filter: blur(25px);
       -webkit-backdrop-filter: blur(25px);
       transform: translateY(0) scale(1);
@@ -247,24 +405,6 @@
         0 35px 70px rgba(2,6,23,1),
         inset 0 1px 0 rgba(255,255,255,0.05),
         0 0 0 1px rgba(255,255,255,0.02);
-    }
-
-    .card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 20px;
-      padding: 1px;
-      background: linear-gradient(135deg, 
-        rgba(6,182,212,0.2), 
-        rgba(124,58,237,0.2), 
-        transparent 50%);
-      -webkit-mask: 
-        linear-gradient(#fff 0 0) content-box, 
-        linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events: none;
     }
 
     .title{
@@ -323,25 +463,6 @@
         rgba(255,255,255,0.1), 
         transparent);
       animation: btnShimmer 4s linear infinite;
-    }
-
-    .btn::after {
-      content: '';
-      position: absolute;
-      inset: -2px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, 
-        rgba(6,182,212,0.4), 
-        rgba(124,58,237,0.4), 
-        rgba(236,72,153,0.4));
-      z-index: -1;
-      opacity: 0;
-      transition: opacity 0.4s;
-      filter: blur(10px);
-    }
-
-    .btn:hover::after {
-      opacity: 1;
     }
 
     .btn:focus{outline:none; box-shadow: 
@@ -439,12 +560,12 @@
       }
     }
 
-    @keyframes birdFlap {
+    @keyframes birdWingFlap {
       0%, 100% {
         transform: rotate(0deg);
       }
       50% {
-        transform: rotate(30deg);
+        transform: rotate(40deg);
       }
     }
 
@@ -489,39 +610,64 @@
       }
     }
 
-    @keyframes sparkleFloat {
+    @keyframes trailFade {
       0% {
-        opacity: 0;
-        transform: translateY(0) scale(0.5);
-      }
-      10% {
-        opacity: 1;
-        transform: translateY(-10px) scale(1);
-      }
-      90% {
-        opacity: 1;
+        opacity: 0.3;
+        transform: translateX(0) scaleX(1);
       }
       100% {
         opacity: 0;
-        transform: translateY(-50px) scale(0.5);
+        transform: translateX(20px) scaleX(0.5);
       }
     }
 
-    @keyframes creatureFloat {
+    /* Butterfly random movement across entire screen */
+    @keyframes butterflyRandomFly {
       0% {
-        transform: translate(0, 0) rotate(0deg);
+        transform: translate(var(--start-x), var(--start-y)) rotate(var(--start-rotate));
+        opacity: 0;
       }
-      25% {
-        transform: translate(40px, -30px) rotate(10deg);
+      5% {
+        opacity: 1;
       }
-      50% {
-        transform: translate(-20px, 20px) rotate(-5deg);
-      }
-      75% {
-        transform: translate(30px, -15px) rotate(5deg);
+      95% {
+        opacity: 1;
       }
       100% {
-        transform: translate(0, 0) rotate(0deg);
+        transform: translate(var(--end-x), var(--end-y)) rotate(var(--end-rotate));
+        opacity: 0;
+      }
+    }
+
+    /* Bird directional movement - left to right, right to left, top to bottom, etc */
+    @keyframes birdCrossFly {
+      0% {
+        transform: translate(var(--start-x), var(--start-y)) rotate(var(--start-rotate));
+        opacity: 0;
+      }
+      5% {
+        opacity: 1;
+      }
+      95% {
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--end-x), var(--end-y)) rotate(var(--end-rotate));
+        opacity: 0;
+      }
+    }
+
+    /* Bird fleeing animation */
+    @keyframes birdFleeFly {
+      0% {
+        transform: translate(var(--flee-start-x), var(--flee-start-y)) rotate(var(--flee-start-rotate));
+        opacity: 1;
+        filter: brightness(1.3);
+      }
+      100% {
+        transform: translate(var(--flee-end-x), var(--flee-end-y)) rotate(var(--flee-end-rotate));
+        opacity: 0;
+        filter: brightness(1);
       }
     }
 
@@ -542,9 +688,35 @@
         font-size: 16px;
       }
       
-      /* Reduce number of creatures on mobile */
-      .butterfly, .bird {
-        opacity: 0.6;
+      .bird {
+        width: 70px;
+        height: 50px;
+      }
+      
+      .bird-body {
+        width: 40px;
+        height: 25px;
+        left: 15px;
+        top: 10px;
+      }
+      
+      .bird-head {
+        width: 25px;
+        height: 25px;
+      }
+      
+      .bird-wing {
+        width: 50px;
+        height: 25px;
+        left: 15px;
+        top: 15px;
+      }
+      
+      .bird-tail {
+        width: 30px;
+        height: 15px;
+        right: -15px;
+        top: 20px;
       }
       
       .butterfly {
@@ -556,11 +728,6 @@
       .butterfly .right-wing {
         width: 17px;
         height: 25px;
-      }
-      
-      .bird {
-        width: 60px;
-        height: 30px;
       }
     }
 
@@ -585,6 +752,16 @@
       .btn {
         width: 100%;
         justify-content: center;
+      }
+      
+      .bird, .butterfly {
+        opacity: 0.7;
+      }
+      
+      /* Reduce number of creatures on very small screens */
+      .butterfly:nth-child(n+15),
+      .bird:nth-child(n+8) {
+        display: none;
       }
     }
   </style>
@@ -617,94 +794,108 @@
         'var(--accent-6)'  // violet
       ];
 
-      // Create many butterflies (20-25)
-      const butterflyCount = 25;
+      // Create butterflies - Whole screen random movement (30 butterflies)
+      const butterflyCount = 30;
       for (let i = 0; i < butterflyCount; i++) {
         createButterfly(container, colors);
       }
 
-      // Create birds (10-15)
+      // Create birds - Directional movement (15 birds)
+      const birdTypes = ['sparrow', 'pigeon', 'cardinal', 'bluejay', 'canary'];
       const birdCount = 15;
+      
       for (let i = 0; i < birdCount; i++) {
-        createBird(container, colors);
+        const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
+        createBird(container, birdType);
       }
 
-      // Create sparkles around creatures
-      setInterval(() => {
-        createSparkle(container);
-      }, 100);
-
-      // Interactive movement
+      // Mouse tracking for bird fleeing behavior
       let mouseX = 0;
       let mouseY = 0;
-      
+      let fleeingBirds = new Set();
+
       document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
-        attractCreatures();
+        
+        // Check for nearby birds
+        checkMouseProximity();
       });
 
-      function attractCreatures() {
-        const creatures = container.querySelectorAll('.butterfly, .bird');
-        creatures.forEach(creature => {
-          const rect = creature.getBoundingClientRect();
-          const creatureX = rect.left + rect.width / 2;
-          const creatureY = rect.top + rect.height / 2;
+      function checkMouseProximity() {
+        const birds = container.querySelectorAll('.bird:not(.fleeing)');
+        
+        birds.forEach(bird => {
+          const rect = bird.getBoundingClientRect();
+          const birdX = rect.left + rect.width / 2;
+          const birdY = rect.top + rect.height / 2;
           
-          const dx = mouseX - creatureX;
-          const dy = mouseY - creatureY;
-          const distance = Math.sqrt(dx * dx + dy * dy);
+          const distance = Math.sqrt(Math.pow(mouseX - birdX, 2) + Math.pow(mouseY - birdY, 2));
           
-          if (distance < 400) { // Increased attraction radius
-            const force = (400 - distance) / 400 * 0.8;
-            const angle = Math.atan2(dy, dx);
-            const speed = 2 + force * 3;
-            
-            // Get current animation values
-            const currentLeft = parseFloat(creature.style.left) || Math.random() * 90 + 5;
-            const currentTop = parseFloat(creature.style.top) || Math.random() * 90 + 5;
-            
-            // Calculate new position
-            const newX = currentLeft + Math.cos(angle) * speed;
-            const newY = currentTop + Math.sin(angle) * speed;
-            
-            // Apply boundaries
-            creature.style.left = `${Math.max(2, Math.min(98, newX))}%`;
-            creature.style.top = `${Math.max(2, Math.min(98, newY))}%`;
-            
-            // Add slight rotation towards mouse
-            const rotation = (angle * 180 / Math.PI) + 90;
-            creature.style.transform = `rotate(${rotation}deg)`;
+          // If mouse is within 150px, bird flees
+          if (distance < 150 && !fleeingBirds.has(bird)) {
+            fleeBird(bird, birdX, birdY);
           }
         });
       }
 
-      // Auto movement when no mouse interaction
-      let autoMoveInterval = setInterval(() => {
-        if (mouseX === 0 && mouseY === 0) {
-          moveCreaturesRandomly();
+      function fleeBird(bird, birdX, birdY) {
+        fleeingBirds.add(bird);
+        bird.classList.add('fleeing');
+        
+        // Pause the normal animation
+        bird.style.animationPlayState = 'paused';
+        
+        // Get current position
+        const computedStyle = window.getComputedStyle(bird);
+        const currentX = parseFloat(computedStyle.left) || 50;
+        const currentY = parseFloat(computedStyle.top) || 50;
+        
+        // Calculate flee direction (away from mouse)
+        const dx = birdX - mouseX;
+        const dy = birdY - mouseY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const dirX = dx / distance;
+        const dirY = dy / distance;
+        
+        // Calculate flee distance (outside viewport)
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
+        // Determine which edge to flee to
+        let fleeX, fleeY;
+        if (Math.abs(dirX) > Math.abs(dirY)) {
+          // Flee horizontally
+          fleeX = dirX > 0 ? 150 : -150;
+          fleeY = (Math.random() - 0.5) * 100;
+        } else {
+          // Flee vertically
+          fleeX = (Math.random() - 0.5) * 100;
+          fleeY = dirY > 0 ? 150 : -150;
         }
-      }, 2000);
-
-      function moveCreaturesRandomly() {
-        const creatures = container.querySelectorAll('.butterfly, .bird');
-        creatures.forEach(creature => {
-          const currentLeft = parseFloat(creature.style.left) || Math.random() * 90 + 5;
-          const currentTop = parseFloat(creature.style.top) || Math.random() * 90 + 5;
+        
+        // Set flee animation variables
+        bird.style.setProperty('--flee-start-x', '0px');
+        bird.style.setProperty('--flee-start-y', '0px');
+        bird.style.setProperty('--flee-end-x', `${fleeX}px`);
+        bird.style.setProperty('--flee-end-y', `${fleeY}px`);
+        
+        // Calculate rotation angle
+        const fleeAngle = Math.atan2(fleeY, fleeX) * 180 / Math.PI;
+        bird.style.setProperty('--flee-start-rotate', '0deg');
+        bird.style.setProperty('--flee-end-rotate', `${fleeAngle}deg`);
+        
+        // Remove bird after fleeing and create a new one
+        setTimeout(() => {
+          bird.remove();
+          fleeingBirds.delete(bird);
           
-          const moveX = (Math.random() - 0.5) * 4;
-          const moveY = (Math.random() - 0.5) * 4;
-          
-          const newX = Math.max(2, Math.min(98, currentLeft + moveX));
-          const newY = Math.max(2, Math.min(98, currentTop + moveY));
-          
-          creature.style.left = `${newX}%`;
-          creature.style.top = `${newY}%`;
-          
-          // Gentle rotation
-          const rotation = (Math.random() - 0.5) * 20;
-          creature.style.transform = `rotate(${rotation}deg)`;
-        });
+          // Create a new bird after some delay
+          setTimeout(() => {
+            const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
+            createBird(container, birdType);
+          }, Math.random() * 5000 + 3000); // 3-8 seconds delay
+        }, 3000);
       }
     });
 
@@ -714,13 +905,42 @@
       
       const color = colors[Math.floor(Math.random() * colors.length)];
       const size = Math.random() * 0.8 + 0.6;
-      const left = Math.random() * 90 + 5;
-      const top = Math.random() * 90 + 5;
-      const duration = Math.random() * 40 + 30;
+      
+      // Random start position on edges
+      const startSide = Math.floor(Math.random() * 4); // 0: top, 1: right, 2: bottom, 3: left
+      let startX, startY, endX, endY;
+      
+      switch(startSide) {
+        case 0: // Top
+          startX = Math.random() * 100;
+          startY = -50;
+          endX = Math.random() * 100;
+          endY = 150;
+          break;
+        case 1: // Right
+          startX = 150;
+          startY = Math.random() * 100;
+          endX = -50;
+          endY = Math.random() * 100;
+          break;
+        case 2: // Bottom
+          startX = Math.random() * 100;
+          startY = 150;
+          endX = Math.random() * 100;
+          endY = -50;
+          break;
+        case 3: // Left
+          startX = -50;
+          startY = Math.random() * 100;
+          endX = 150;
+          endY = Math.random() * 100;
+          break;
+      }
+      
+      const duration = Math.random() * 30 + 30; // 30-60 seconds
       const delay = Math.random() * 20;
       const flapSpeed = Math.random() * 0.4 + 0.6;
       
-      // Create butterfly parts
       const leftWing = document.createElement('div');
       leftWing.className = 'left-wing';
       leftWing.style.setProperty('--wing-color', color);
@@ -746,102 +966,147 @@
       butterfly.appendChild(antennaLeft);
       butterfly.appendChild(antennaRight);
       
-      // Style butterfly
-      butterfly.style.left = `${left}%`;
-      butterfly.style.top = `${top}%`;
+      // Set animation properties
+      butterfly.style.setProperty('--start-x', `${startX}vw`);
+      butterfly.style.setProperty('--start-y', `${startY}vh`);
+      butterfly.style.setProperty('--end-x', `${endX}vw`);
+      butterfly.style.setProperty('--end-y', `${endY}vh`);
+      
+      const startRotate = Math.random() * 360;
+      const endRotate = startRotate + (Math.random() * 720 - 360);
+      butterfly.style.setProperty('--start-rotate', `${startRotate}deg`);
+      butterfly.style.setProperty('--end-rotate', `${endRotate}deg`);
+      
+      butterfly.style.animationDuration = `${duration}s`;
+      butterfly.style.animationDelay = `${delay}s`;
       butterfly.style.transform = `scale(${size})`;
-      butterfly.style.animation = `creatureFloat ${duration}s ease-in-out ${delay}s infinite`;
-      butterfly.style.zIndex = Math.floor(Math.random() * 5);
+      butterfly.style.opacity = '0';
       
       container.appendChild(butterfly);
+      
+      return butterfly;
     }
 
-    function createBird(container, colors) {
+    function createBird(container, type) {
       const bird = document.createElement('div');
-      bird.className = 'bird';
+      bird.className = `bird ${type}`;
       
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      const size = Math.random() * 0.7 + 0.8;
-      const left = Math.random() * 90 + 5;
-      const top = Math.random() * 90 + 5;
-      const duration = Math.random() * 50 + 40;
-      const delay = Math.random() * 30;
-      const flapSpeed = Math.random() * 0.5 + 0.8;
+      // Determine flight direction
+      const direction = Math.floor(Math.random() * 4); // 0: left->right, 1: right->left, 2: top->bottom, 3: bottom->top
+      let startX, startY, endX, endY, startRotate, endRotate;
+      
+      switch(direction) {
+        case 0: // Left to Right
+          startX = -100;
+          startY = Math.random() * 100;
+          endX = 200;
+          endY = startY + (Math.random() * 40 - 20);
+          startRotate = 0;
+          endRotate = 0;
+          break;
+        case 1: // Right to Left
+          startX = 200;
+          startY = Math.random() * 100;
+          endX = -100;
+          endY = startY + (Math.random() * 40 - 20);
+          startRotate = 180;
+          endRotate = 180;
+          break;
+        case 2: // Top to Bottom
+          startX = Math.random() * 100;
+          startY = -100;
+          endX = startX + (Math.random() * 40 - 20);
+          endY = 200;
+          startRotate = 90;
+          endRotate = 90;
+          break;
+        case 3: // Bottom to Top
+          startX = Math.random() * 100;
+          startY = 200;
+          endX = startX + (Math.random() * 40 - 20);
+          endY = -100;
+          startRotate = -90;
+          endRotate = -90;
+          break;
+      }
+      
+      const size = Math.random() * 0.6 + 0.8;
+      const duration = Math.random() * 15 + 20; // 20-35 seconds
+      const delay = Math.random() * 10;
+      const flapSpeed = Math.random() * 0.8 + 0.8;
       
       // Create bird parts
       const body = document.createElement('div');
-      body.className = 'body';
-      body.style.setProperty('--bird-color', color);
-      
-      const leftWing = document.createElement('div');
-      leftWing.className = 'wing left';
-      leftWing.style.setProperty('--bird-color', color);
-      leftWing.style.animationDuration = `${flapSpeed}s`;
-      
-      const rightWing = document.createElement('div');
-      rightWing.className = 'wing right';
-      rightWing.style.setProperty('--bird-color', color);
-      rightWing.style.animationDuration = `${flapSpeed}s`;
-      rightWing.style.animationDelay = `${flapSpeed/2}s`;
-      
-      const tail = document.createElement('div');
-      tail.className = 'tail';
-      tail.style.setProperty('--bird-color', color);
+      body.className = 'bird-body';
       
       const head = document.createElement('div');
-      head.className = 'head';
-      head.style.setProperty('--bird-color', color);
+      head.className = 'bird-head';
       
       const beak = document.createElement('div');
-      beak.className = 'beak';
+      beak.className = 'bird-beak';
       
       const eye = document.createElement('div');
-      eye.className = 'eye';
+      eye.className = 'bird-eye';
+      
+      const wing = document.createElement('div');
+      wing.className = 'bird-wing';
+      wing.style.animationDuration = `${flapSpeed}s`;
+      
+      const tail = document.createElement('div');
+      tail.className = 'bird-tail';
+      
+      const legLeft = document.createElement('div');
+      legLeft.className = 'bird-leg left';
+      
+      const legRight = document.createElement('div');
+      legRight.className = 'bird-leg right';
+      
+      const trail = document.createElement('div');
+      trail.className = 'bird-trail';
       
       bird.appendChild(body);
-      bird.appendChild(leftWing);
-      bird.appendChild(rightWing);
-      bird.appendChild(tail);
       bird.appendChild(head);
       bird.appendChild(beak);
       bird.appendChild(eye);
+      bird.appendChild(wing);
+      bird.appendChild(tail);
+      bird.appendChild(legLeft);
+      bird.appendChild(legRight);
+      bird.appendChild(trail);
       
-      // Style bird
-      bird.style.left = `${left}%`;
-      bird.style.top = `${top}%`;
+      // Set animation properties
+      bird.style.setProperty('--start-x', `${startX}vw`);
+      bird.style.setProperty('--start-y', `${startY}vh`);
+      bird.style.setProperty('--end-x', `${endX}vw`);
+      bird.style.setProperty('--end-y', `${endY}vh`);
+      bird.style.setProperty('--start-rotate', `${startRotate}deg`);
+      bird.style.setProperty('--end-rotate', `${endRotate}deg`);
+      
+      bird.style.animationDuration = `${duration}s`;
+      bird.style.animationDelay = `${delay}s`;
       bird.style.transform = `scale(${size})`;
-      bird.style.animation = `creatureFloat ${duration}s ease-in-out ${delay}s infinite`;
-      bird.style.zIndex = Math.floor(Math.random() * 3) + 2;
+      bird.style.opacity = '0';
+      
+      // Add subtle size variation for wing
+      const wingSize = Math.random() * 0.2 + 0.9;
+      wing.style.transform = `scale(${wingSize})`;
       
       container.appendChild(bird);
-    }
-
-    function createSparkle(container) {
-      if (Math.random() > 0.3) return; // 70% chance to skip for performance
       
-      const sparkle = document.createElement('div');
-      sparkle.className = 'sparkle';
-      
-      const left = Math.random() * 100;
-      const top = Math.random() * 100;
-      const size = Math.random() * 3 + 2;
-      const delay = Math.random() * 5;
-      
-      sparkle.style.left = `${left}%`;
-      sparkle.style.top = `${top}%`;
-      sparkle.style.width = `${size}px`;
-      sparkle.style.height = `${size}px`;
-      sparkle.style.animationDelay = `${delay}s`;
-      sparkle.style.background = `hsl(${Math.random() * 60 + 180}, 100%, 70%)`;
-      
-      container.appendChild(sparkle);
-      
-      // Remove after animation
+      // Remove bird after animation and create a new one
       setTimeout(() => {
-        if (sparkle.parentNode) {
-          sparkle.remove();
+        if (bird.parentNode && !bird.classList.contains('fleeing')) {
+          bird.remove();
+          
+          // Create a new bird after some delay
+          setTimeout(() => {
+            const newBirdType = type;
+            createBird(container, newBirdType);
+          }, Math.random() * 5000 + 2000); // 2-7 seconds delay
         }
-      }, 3000);
+      }, (duration + delay) * 1000);
+      
+      return bird;
     }
   </script>
 </body>
