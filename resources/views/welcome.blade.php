@@ -23,6 +23,8 @@
       --bird-yellow: #fbbf24;
       --bird-green: #10b981;
       --bird-orange: #f97316;
+      --bird-pink: #ec4899;
+      --bird-purple: #8b5cf6;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -45,25 +47,36 @@
     /* Custom cursor */
     .mouse-cursor {
       position: fixed;
-      width: 40px;
-      height: 40px;
-      background: radial-gradient(circle, rgba(6,182,212,0.2) 0%, transparent 70%);
+      width: 60px;
+      height: 60px;
+      background: radial-gradient(circle, rgba(6,182,212,0.3) 0%, transparent 70%);
       border-radius: 50%;
       pointer-events: none;
       z-index: 9999;
       transform: translate(-50%, -50%);
       transition: transform 0.1s;
       mix-blend-mode: screen;
+      animation: cursorPulse 2s ease-in-out infinite;
     }
 
     .mouse-cursor::before {
-      content: '🕊️';
+      content: '✨';
       position: absolute;
-      font-size: 20px;
+      font-size: 24px;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      animation: cursorFloat 2s ease-in-out infinite;
+      animation: cursorFloat 1.5s ease-in-out infinite;
+    }
+
+    .mouse-cursor::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 2px solid rgba(6,182,212,0.3);
+      border-radius: 50%;
+      animation: cursorRipple 1.5s ease-out infinite;
     }
 
     /* Flying creatures container */
@@ -78,22 +91,23 @@
       pointer-events: none;
     }
 
-    /* Butterfly styles - Random movement */
+    /* Butterfly styles - 50 butterflies */
     .butterfly {
       position: absolute;
-      width: 50px;
-      height: 50px;
-      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
-      opacity: 0.9;
+      width: 40px;
+      height: 40px;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+      opacity: 0.8;
       z-index: 0;
       pointer-events: none;
+      animation: butterflyRandomMove 30s linear infinite;
     }
 
     .butterfly .left-wing,
     .butterfly .right-wing {
       position: absolute;
-      width: 25px;
-      height: 35px;
+      width: 20px;
+      height: 28px;
       border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
       transform-origin: center;
       background: var(--wing-color, var(--accent));
@@ -102,121 +116,121 @@
     .butterfly .left-wing {
       left: 0;
       background: radial-gradient(circle at 70% 30%, var(--wing-color, var(--accent)), color-mix(in srgb, var(--wing-color, var(--accent)) 80%, transparent));
-      animation: butterflyFlapLeft 0.8s ease-in-out infinite;
+      animation: butterflyFlapLeft 0.6s ease-in-out infinite;
     }
 
     .butterfly .right-wing {
       right: 0;
       background: radial-gradient(circle at 30% 30%, var(--wing-color, var(--accent)), color-mix(in srgb, var(--wing-color, var(--accent)) 80%, transparent));
-      animation: butterflyFlapRight 0.8s ease-in-out infinite;
+      animation: butterflyFlapRight 0.6s ease-in-out infinite;
     }
 
     .butterfly .body {
       position: absolute;
-      width: 5px;
-      height: 35px;
+      width: 4px;
+      height: 28px;
       background: linear-gradient(to bottom, #fff, #ccc);
       left: 50%;
-      top: 7px;
+      top: 6px;
       transform: translateX(-50%);
       border-radius: 2px;
-      box-shadow: 0 0 4px rgba(255,255,255,0.3);
+      box-shadow: 0 0 3px rgba(255,255,255,0.3);
     }
 
     .butterfly .antenna {
       position: absolute;
-      width: 2px;
-      height: 15px;
+      width: 1.5px;
+      height: 12px;
       background: #fff;
       top: 0;
       transform-origin: bottom;
     }
 
     .butterfly .antenna.left {
-      left: calc(50% - 2px);
+      left: calc(50% - 1.5px);
       transform: rotate(-20deg);
     }
 
     .butterfly .antenna.right {
-      right: calc(50% - 2px);
+      right: calc(50% - 1.5px);
       transform: rotate(20deg);
     }
 
-    /* Bird styles - Generated from mouse movement */
+    /* Bird styles - Constant generation */
     .bird {
       position: absolute;
-      width: 80px;
-      height: 56px;
+      width: 70px;
+      height: 49px;
       opacity: 0;
       z-index: 1;
       pointer-events: none;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-      animation: birdFlyOut 4s ease-out forwards;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+      animation: birdFlyOut 5s ease-out forwards;
     }
 
     /* Bird body */
     .bird-body {
       position: absolute;
-      width: 48px;
-      height: 32px;
+      width: 42px;
+      height: 28px;
       background: var(--bird-body-color, var(--bird-gray));
       border-radius: 50% 50% 40% 40%;
-      left: 16px;
-      top: 12px;
+      left: 14px;
+      top: 10px;
       box-shadow: 
-        inset 0 -4px 8px rgba(0,0,0,0.2),
-        0 2px 4px rgba(0,0,0,0.1);
+        inset 0 -4px 6px rgba(0,0,0,0.2),
+        0 2px 3px rgba(0,0,0,0.1);
     }
 
     /* Bird head */
     .bird-head {
       position: absolute;
-      width: 28px;
-      height: 28px;
+      width: 24px;
+      height: 24px;
       background: var(--bird-head-color, var(--bird-gray));
       border-radius: 50%;
       left: 0;
-      top: 4px;
+      top: 3px;
       z-index: 2;
       box-shadow: 
-        inset 0 -2px 4px rgba(0,0,0,0.2),
-        0 1px 3px rgba(0,0,0,0.1);
+        inset 0 -2px 3px rgba(0,0,0,0.2),
+        0 1px 2px rgba(0,0,0,0.1);
     }
 
     /* Bird beak */
     .bird-beak {
       position: absolute;
-      width: 20px;
-      height: 10px;
+      width: 18px;
+      height: 9px;
       background: var(--bird-beak-color, #ffb347);
       border-radius: 50% 0 0 50%;
-      left: -12px;
-      top: 13px;
+      left: -10px;
+      top: 11px;
       z-index: 1;
       clip-path: polygon(0 0, 100% 25%, 100% 75%, 0 100%);
-      box-shadow: 1px 0 4px rgba(0,0,0,0.2);
+      box-shadow: 1px 0 3px rgba(0,0,0,0.2);
     }
 
     .bird-beak::after {
       content: '';
       position: absolute;
-      width: 4px;
+      width: 3px;
       height: 1px;
       background: #000;
-      top: 4px;
-      right: 4px;
+      top: 3px;
+      right: 3px;
       border-radius: 1px;
     }
 
     /* Bird eye */
     .bird-eye {
       position: absolute;
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       background: #fff;
       border-radius: 50%;
-      left: 16px;
-      top: 10px;
+      left: 14px;
+      top: 8px;
       z-index: 3;
       box-shadow: 
         0 0 0 2px rgba(0,0,0,0.1),
@@ -226,8 +240,8 @@
     .bird-eye::before {
       content: '';
       position: absolute;
-      width: 3px;
-      height: 3px;
+      width: 2.5px;
+      height: 2.5px;
       background: #000;
       border-radius: 50%;
       top: 2px;
@@ -248,17 +262,17 @@
     /* Bird wings */
     .bird-wing {
       position: absolute;
-      width: 56px;
-      height: 28px;
+      width: 49px;
+      height: 24px;
       background: var(--bird-wing-color, var(--bird-gray));
       border-radius: 50%;
-      top: 16px;
-      left: 20px;
-      transform-origin: 20px 14px;
-      animation: birdWingFlap 0.6s ease-in-out infinite;
+      top: 14px;
+      left: 17px;
+      transform-origin: 17px 12px;
+      animation: birdWingFlap 0.5s ease-in-out infinite;
       box-shadow: 
-        inset 0 -2px 8px rgba(0,0,0,0.3),
-        0 2px 4px rgba(0,0,0,0.1);
+        inset 0 -2px 6px rgba(0,0,0,0.3),
+        0 2px 3px rgba(0,0,0,0.1);
       z-index: 1;
     }
 
@@ -278,16 +292,16 @@
     /* Bird tail */
     .bird-tail {
       position: absolute;
-      width: 36px;
-      height: 20px;
+      width: 32px;
+      height: 18px;
       background: var(--bird-tail-color, var(--bird-gray));
-      right: -20px;
-      top: 24px;
+      right: -18px;
+      top: 21px;
       border-radius: 0 50% 50% 0;
       clip-path: polygon(0 0, 100% 50%, 0 100%);
       box-shadow: 
-        inset -2px 0 4px rgba(0,0,0,0.2),
-        1px 0 4px rgba(0,0,0,0.1);
+        inset -2px 0 3px rgba(0,0,0,0.2),
+        1px 0 3px rgba(0,0,0,0.1);
       z-index: 0;
     }
 
@@ -341,17 +355,18 @@
       --bird-tail-color: var(--bird-orange);
     }
 
-    /* Bird flying trail */
-    .bird-trail {
-      position: absolute;
-      width: 12px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1));
-      border-radius: 1px;
-      right: -16px;
-      top: 28px;
-      opacity: 0;
-      animation: trailFade 1s ease-out forwards;
+    .bird.flamingo {
+      --bird-body-color: var(--bird-pink);
+      --bird-head-color: var(--bird-pink);
+      --bird-wing-color: #db2777;
+      --bird-tail-color: var(--bird-pink);
+    }
+
+    .bird.peacock {
+      --bird-body-color: var(--bird-blue);
+      --bird-head-color: var(--bird-green);
+      --bird-wing-color: var(--bird-purple);
+      --bird-tail-color: var(--bird-green);
     }
 
     /* Card styles */
@@ -521,11 +536,11 @@
       transform: scaleX(1);
     }
 
-    /* Info box */
-    .info-box {
+    /* Stats display */
+    .stats {
       position: fixed;
       bottom: 20px;
-      right: 20px;
+      left: 20px;
       background: rgba(15, 23, 42, 0.8);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 10px;
@@ -537,13 +552,18 @@
       animation: fadeInUp 0.5s ease 1s both;
     }
 
+    .stats span {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
     /* Animations */
     @keyframes butterflyFlapLeft {
       0%, 100% {
         transform: rotate(0deg) translateY(0) scaleY(1);
       }
       50% {
-        transform: rotate(-30deg) translateY(-3px) scaleY(0.9);
+        transform: rotate(-25deg) translateY(-2px) scaleY(0.9);
       }
     }
 
@@ -552,7 +572,7 @@
         transform: rotate(0deg) translateY(0) scaleY(1);
       }
       50% {
-        transform: rotate(30deg) translateY(-3px) scaleY(0.9);
+        transform: rotate(25deg) translateY(-2px) scaleY(0.9);
       }
     }
 
@@ -561,7 +581,7 @@
         transform: rotate(0deg);
       }
       50% {
-        transform: rotate(40deg);
+        transform: rotate(35deg);
       }
     }
 
@@ -606,23 +626,34 @@
       }
     }
 
-    @keyframes trailFade {
-      0% {
-        opacity: 0.3;
-        transform: translateX(0) scaleX(1);
-      }
-      100% {
-        opacity: 0;
-        transform: translateX(20px) scaleX(0.5);
-      }
-    }
-
     @keyframes cursorFloat {
       0%, 100% {
         transform: translate(-50%, -50%) scale(1);
       }
       50% {
+        transform: translate(-50%, -50%) scale(1.2);
+      }
+    }
+
+    @keyframes cursorPulse {
+      0%, 100% {
+        opacity: 0.7;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      50% {
+        opacity: 1;
         transform: translate(-50%, -50%) scale(1.1);
+      }
+    }
+
+    @keyframes cursorRipple {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
       }
     }
 
@@ -637,25 +668,24 @@
       }
       100% {
         opacity: 0;
-        transform: translate(var(--fly-x), var(--fly-y)) scale(0.8) rotate(var(--fly-rotate));
+        transform: translate(var(--fly-x), var(--fly-y)) scale(0.7) rotate(var(--fly-rotate));
       }
     }
 
     @keyframes butterflyRandomMove {
       0% {
         transform: translate(var(--start-x), var(--start-y)) rotate(0deg);
+        opacity: 0;
       }
-      25% {
-        transform: translate(var(--mid-x), var(--mid-y)) rotate(90deg);
+      10% {
+        opacity: 1;
       }
-      50% {
-        transform: translate(var(--end-x), var(--end-y)) rotate(180deg);
-      }
-      75% {
-        transform: translate(var(--mid2-x), var(--mid2-y)) rotate(270deg);
+      90% {
+        opacity: 1;
       }
       100% {
-        transform: translate(var(--start-x), var(--start-y)) rotate(360deg);
+        transform: translate(var(--end-x), var(--end-y)) rotate(360deg);
+        opacity: 0;
       }
     }
 
@@ -677,48 +707,48 @@
       }
       
       .bird {
-        width: 60px;
-        height: 42px;
+        width: 50px;
+        height: 35px;
       }
       
       .bird-body {
-        width: 36px;
-        height: 24px;
-        left: 12px;
-        top: 9px;
+        width: 30px;
+        height: 20px;
+        left: 10px;
+        top: 7px;
       }
       
       .bird-head {
-        width: 21px;
-        height: 21px;
+        width: 18px;
+        height: 18px;
       }
       
       .bird-wing {
-        width: 42px;
-        height: 21px;
-        left: 15px;
-        top: 12px;
+        width: 35px;
+        height: 17px;
+        left: 12px;
+        top: 10px;
       }
       
       .bird-tail {
-        width: 27px;
-        height: 15px;
-        right: -15px;
-        top: 18px;
+        width: 23px;
+        height: 13px;
+        right: -12px;
+        top: 15px;
       }
       
       .butterfly {
-        width: 35px;
-        height: 35px;
+        width: 30px;
+        height: 30px;
       }
       
       .butterfly .left-wing,
       .butterfly .right-wing {
-        width: 17px;
-        height: 25px;
+        width: 15px;
+        height: 21px;
       }
       
-      .info-box {
+      .stats {
         display: none;
       }
       
@@ -753,6 +783,11 @@
         width: 100%;
         justify-content: center;
       }
+      
+      /* Reduce butterflies on very small screens */
+      .butterfly:nth-child(n+30) {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -763,10 +798,11 @@
   <!-- Flying creatures container -->
   <div class="flying-creatures" id="creatures"></div>
 
-  <!-- Info box -->
-  <div class="info-box">
-    🎯 Move mouse to create birds!<br>
-    🦋 Butterflies move randomly
+  <!-- Stats display -->
+  <div class="stats" id="stats">
+    Butterflies: <span id="butterflyCount">0</span><br>
+    Birds: <span id="birdCount">0</span><br>
+    Total: <span id="totalCount">0</span>
   </div>
 
   <main class="card" role="main">
@@ -785,6 +821,12 @@
     document.addEventListener('DOMContentLoaded', function() {
       const container = document.getElementById('creatures');
       const cursor = document.getElementById('cursor');
+      const stats = {
+        butterflyCount: document.getElementById('butterflyCount'),
+        birdCount: document.getElementById('birdCount'),
+        totalCount: document.getElementById('totalCount')
+      };
+      
       const colors = [
         'var(--accent)',   // cyan
         'var(--accent-2)', // purple
@@ -794,71 +836,92 @@
         'var(--accent-6)'  // violet
       ];
 
-      // Bird types - More varieties
-      const birdTypes = ['sparrow', 'pigeon', 'cardinal', 'bluejay', 'canary', 'parrot', 'robin'];
+      // Bird types - 9 varieties
+      const birdTypes = ['sparrow', 'pigeon', 'cardinal', 'bluejay', 'canary', 'parrot', 'robin', 'flamingo', 'peacock'];
       
-      // Initial butterflies (12-15)
-      const initialButterflyCount = 15;
+      // Initial 50 butterflies
+      const initialButterflyCount = 50;
       for (let i = 0; i < initialButterflyCount; i++) {
-        createRandomButterfly(container, colors);
+        setTimeout(() => {
+          createRandomButterfly(container, colors);
+          updateStats();
+        }, i * 100); // Stagger creation for performance
       }
 
-      // Initial birds on load (10-12)
-      const initialBirdCount = 12;
-      for (let i = 0; i < initialBirdCount; i++) {
-        const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
-        createRandomBird(container, birdType);
+      // Variables for bird generation
+      let mouseX = window.innerWidth / 2;
+      let mouseY = window.innerHeight / 2;
+      let birdGenerationInterval;
+      let centerGenerationInterval;
+      let isGeneratingFromCenter = true;
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+
+      // Update stats function
+      function updateStats() {
+        const butterflies = container.querySelectorAll('.butterfly').length;
+        const birds = container.querySelectorAll('.bird').length;
+        const total = butterflies + birds;
+        
+        stats.butterflyCount.textContent = butterflies;
+        stats.birdCount.textContent = birds;
+        stats.totalCount.textContent = total;
+      }
+
+      // Create birds from center continuously
+      function startCenterGeneration() {
+        centerGenerationInterval = setInterval(() => {
+          if (isGeneratingFromCenter) {
+            const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
+            createBirdFromPoint(container, birdType, centerX, centerY, true);
+            updateStats();
+          }
+        }, 800); // Create bird every 800ms from center
+      }
+
+      // Create birds from mouse position continuously
+      function startMouseGeneration() {
+        birdGenerationInterval = setInterval(() => {
+          const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
+          createBirdFromPoint(container, birdType, mouseX, mouseY, false);
+          updateStats();
+        }, 300); // Create bird every 300ms from mouse
       }
 
       // Mouse movement tracking
-      let lastMouseX = 0;
-      let lastMouseY = 0;
-      let mouseMoveCount = 0;
-      let lastBirdCreationTime = 0;
-      const BIRD_CREATION_COOLDOWN = 100; // ms between bird creations
-      const MOUSE_MOVE_THRESHOLD = 5; // pixels to move before creating bird
-
-      // Mouse cursor movement
       document.addEventListener('mousemove', (e) => {
         // Update cursor position
         cursor.style.left = `${e.clientX}px`;
         cursor.style.top = `${e.clientY}px`;
         
-        // Calculate mouse movement distance
-        const deltaX = Math.abs(e.clientX - lastMouseX);
-        const deltaY = Math.abs(e.clientY - lastMouseY);
-        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        // Update mouse position
+        mouseX = e.clientX;
+        mouseY = e.clientY;
         
-        // Update last position
-        lastMouseX = e.clientX;
-        lastMouseY = e.clientY;
-        mouseMoveCount++;
-        
-        // Create bird based on mouse movement
-        if (distance > MOUSE_MOVE_THRESHOLD) {
-          const now = Date.now();
-          if (now - lastBirdCreationTime > BIRD_CREATION_COOLDOWN) {
-            createBirdFromMouse(e.clientX, e.clientY);
-            lastBirdCreationTime = now;
-            
-            // Occasionally create a butterfly too
-            if (Math.random() < 0.2) { // 20% chance
-              createButterflyFromMouse(e.clientX, e.clientY, colors);
-            }
-          }
+        // Switch from center generation to mouse generation
+        if (isGeneratingFromCenter) {
+          isGeneratingFromCenter = false;
+          clearInterval(centerGenerationInterval);
+          startMouseGeneration();
         }
         
-        // Create extra birds on significant movement (every 50 moves)
-        if (mouseMoveCount % 50 === 0) {
-          createBirdFromMouse(e.clientX, e.clientY);
-        }
+        // Create extra birds based on mouse speed
+        createExtraBirdsOnMove(e.movementX, e.movementY);
       });
 
       // Touch support for mobile/tablet
       document.addEventListener('touchmove', (e) => {
         if (e.touches.length > 0) {
           const touch = e.touches[0];
-          createBirdFromMouse(touch.clientX, touch.clientY);
+          mouseX = touch.clientX;
+          mouseY = touch.clientY;
+          
+          // Switch from center generation to touch generation
+          if (isGeneratingFromCenter) {
+            isGeneratingFromCenter = false;
+            clearInterval(centerGenerationInterval);
+            startMouseGeneration();
+          }
           
           // Show cursor at touch point
           cursor.style.left = `${touch.clientX}px`;
@@ -869,87 +932,32 @@
           setTimeout(() => {
             cursor.style.opacity = '0';
           }, 1000);
+          
+          // Create birds from touch
+          const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
+          createBirdFromPoint(container, birdType, mouseX, mouseY, false);
+          updateStats();
         }
       });
 
-      function createBirdFromMouse(x, y) {
-        const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
-        const bird = createBirdAtPosition(container, birdType, x, y);
+      function createExtraBirdsOnMove(movementX, movementY) {
+        // Calculate movement speed
+        const speed = Math.sqrt(movementX * movementX + movementY * movementY);
         
-        // Random flying direction
-        const angle = Math.random() * Math.PI * 2; // 0 to 360 degrees in radians
-        const distance = 200 + Math.random() * 300; // 200-500px
-        
-        const flyX = Math.cos(angle) * distance;
-        const flyY = Math.sin(angle) * distance;
-        
-        // Random rotation for visual effect
-        const rotate = (Math.random() * 60) - 30; // -30 to +30 degrees
-        
-        // Set CSS custom properties for animation
-        bird.style.setProperty('--fly-x', `${flyX}px`);
-        bird.style.setProperty('--fly-y', `${flyY}px`);
-        bird.style.setProperty('--fly-rotate', `${rotate}deg`);
-        
-        // Random size for variety
-        const size = 0.7 + Math.random() * 0.6; // 0.7 to 1.3
-        bird.style.transform = `scale(${size})`;
-        
-        // Random wing flap speed
-        const wing = bird.querySelector('.bird-wing');
-        if (wing) {
-          wing.style.animationDuration = `${0.4 + Math.random() * 0.4}s`; // 0.4 to 0.8s
+        // Create extra birds based on speed
+        if (speed > 10) {
+          const extraBirds = Math.floor(speed / 20);
+          for (let i = 0; i < extraBirds && i < 3; i++) {
+            setTimeout(() => {
+              const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
+              createBirdFromPoint(container, birdType, mouseX, mouseY, false);
+              updateStats();
+            }, i * 50);
+          }
         }
-        
-        // Remove bird after animation completes
-        setTimeout(() => {
-          if (bird.parentNode) {
-            bird.remove();
-          }
-        }, 4000);
-        
-        return bird;
       }
 
-      function createButterflyFromMouse(x, y, colors) {
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        const butterfly = createButterflyAtPosition(container, color, x, y);
-        
-        // Butterfly random movement
-        const startX = x;
-        const startY = y;
-        const endX = x + (Math.random() * 400 - 200);
-        const endY = y + (Math.random() * 400 - 200);
-        const midX = startX + (endX - startX) / 2 + (Math.random() * 100 - 50);
-        const midY = startY + (endY - startY) / 2 + (Math.random() * 100 - 50);
-        const mid2X = startX + (endX - startX) * 0.75 + (Math.random() * 100 - 50);
-        const mid2Y = startY + (endY - startY) * 0.75 + (Math.random() * 100 - 50);
-        
-        butterfly.style.setProperty('--start-x', `${startX}px`);
-        butterfly.style.setProperty('--start-y', `${startY}px`);
-        butterfly.style.setProperty('--mid-x', `${midX}px`);
-        butterfly.style.setProperty('--mid-y', `${midY}px`);
-        butterfly.style.setProperty('--end-x', `${endX}px`);
-        butterfly.style.setProperty('--end-y', `${endY}px`);
-        butterfly.style.setProperty('--mid2-x', `${mid2X}px`);
-        butterfly.style.setProperty('--mid2-y', `${mid2Y}px`);
-        
-        const duration = 8 + Math.random() * 12; // 8-20 seconds
-        butterfly.style.animation = `butterflyRandomMove ${duration}s ease-in-out infinite`;
-        
-        // Remove butterfly after some time
-        setTimeout(() => {
-          if (butterfly.parentNode) {
-            butterfly.remove();
-            // Create new random butterfly to maintain count
-            createRandomButterfly(container, colors);
-          }
-        }, 30000);
-        
-        return butterfly;
-      }
-
-      function createBirdAtPosition(container, type, x, y) {
+      function createBirdFromPoint(container, type, x, y, fromCenter = false) {
         const bird = document.createElement('div');
         bird.className = `bird ${type}`;
         
@@ -975,27 +983,61 @@
         const tail = document.createElement('div');
         tail.className = 'bird-tail';
         
-        const trail = document.createElement('div');
-        trail.className = 'bird-trail';
-        
         bird.appendChild(body);
         bird.appendChild(head);
         bird.appendChild(beak);
         bird.appendChild(eye);
         bird.appendChild(wing);
         bird.appendChild(tail);
-        bird.appendChild(trail);
+        
+        // Random flying direction
+        let angle;
+        if (fromCenter) {
+          // From center, fly outwards in all directions
+          angle = Math.random() * Math.PI * 2;
+        } else {
+          // From mouse, random direction
+          angle = Math.random() * Math.PI * 2;
+        }
+        
+        const distance = 300 + Math.random() * 400; // 300-700px
+        const flyX = Math.cos(angle) * distance;
+        const flyY = Math.sin(angle) * distance;
+        
+        // Random rotation for visual effect
+        const rotate = (Math.random() * 60) - 30; // -30 to +30 degrees
+        
+        // Set CSS custom properties for animation
+        bird.style.setProperty('--fly-x', `${flyX}px`);
+        bird.style.setProperty('--fly-y', `${flyY}px`);
+        bird.style.setProperty('--fly-rotate', `${rotate}deg`);
+        
+        // Random size for variety
+        const size = 0.6 + Math.random() * 0.8; // 0.6 to 1.4
+        bird.style.transform = `scale(${size})`;
+        
+        // Random wing flap speed
+        wing.style.animationDuration = `${0.3 + Math.random() * 0.4}s`; // 0.3 to 0.7s
         
         container.appendChild(bird);
+        
+        // Remove bird after animation completes
+        setTimeout(() => {
+          if (bird.parentNode) {
+            bird.remove();
+            updateStats();
+          }
+        }, 5000);
         
         return bird;
       }
 
-      function createButterflyAtPosition(container, color, x, y) {
+      function createRandomButterfly(container, colors) {
+        const color = colors[Math.floor(Math.random() * colors.length)];
         const butterfly = document.createElement('div');
         butterfly.className = 'butterfly';
         
-        const size = 0.6 + Math.random() * 0.8; // 0.6 to 1.4
+        const size = 0.5 + Math.random() * 0.7; // 0.5 to 1.2
         
         const leftWing = document.createElement('div');
         leftWing.className = 'left-wing';
@@ -1020,52 +1062,55 @@
         butterfly.appendChild(antennaLeft);
         butterfly.appendChild(antennaRight);
         
-        butterfly.style.left = `${x}px`;
-        butterfly.style.top = `${y}px`;
+        // Random start and end positions for butterfly
+        const startX = Math.random() * 120 - 10; // -10% to 110%
+        const startY = Math.random() * 120 - 10;
+        const endX = Math.random() * 120 - 10;
+        const endY = Math.random() * 120 - 10;
+        
+        butterfly.style.setProperty('--start-x', `${startX}vw`);
+        butterfly.style.setProperty('--start-y', `${startY}vh`);
+        butterfly.style.setProperty('--end-x', `${endX}vw`);
+        butterfly.style.setProperty('--end-y', `${endY}vh`);
+        
+        const duration = 20 + Math.random() * 40; // 20-60 seconds
+        butterfly.style.animationDuration = `${duration}s`;
+        butterfly.style.animationDelay = `${Math.random() * 20}s`;
         butterfly.style.transform = `scale(${size})`;
+        butterfly.style.opacity = '0';
         
         container.appendChild(butterfly);
+        
+        // Remove and recreate butterfly after animation
+        setTimeout(() => {
+          if (butterfly.parentNode) {
+            butterfly.remove();
+            createRandomButterfly(container, colors);
+            updateStats();
+          }
+        }, (duration + 5) * 1000);
         
         return butterfly;
       }
 
-      function createRandomButterfly(container, colors) {
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        const x = Math.random() * window.innerWidth;
-        const y = Math.random() * window.innerHeight;
-        
-        return createButterflyFromMouse(x, y, colors);
-      }
-
-      function createRandomBird(container, type) {
-        const x = Math.random() * window.innerWidth;
-        const y = Math.random() * window.innerHeight;
-        
-        return createBirdFromMouse(x, y);
-      }
+      // Start center generation on load
+      startCenterGeneration();
 
       // Auto-cleanup to prevent too many elements
       setInterval(() => {
         const birds = container.querySelectorAll('.bird');
-        const butterflies = container.querySelectorAll('.butterfly');
         
-        // Keep reasonable limits
-        if (birds.length > 30) {
-          for (let i = 0; i < birds.length - 25; i++) {
+        // Keep reasonable limits for birds
+        if (birds.length > 50) {
+          const birdsToRemove = birds.length - 40;
+          for (let i = 0; i < birdsToRemove && i < birds.length; i++) {
             if (birds[i].parentNode) {
               birds[i].remove();
+              updateStats();
             }
           }
         }
-        
-        if (butterflies.length > 25) {
-          for (let i = 0; i < butterflies.length - 20; i++) {
-            if (butterflies[i].parentNode) {
-              butterflies[i].remove();
-            }
-          }
-        }
-      }, 5000);
+      }, 10000);
     });
   </script>
 </body>
