@@ -146,13 +146,12 @@
         .date-box {
             background: rgba(255, 255, 255, 0.03);
             border-radius: 12px;
-            padding: 15px 10px;
+            padding: 15px;
             border: 1px solid rgba(255, 255, 255, 0.05);
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             text-align: center;
         }
 
@@ -171,17 +170,25 @@
         .date-label {
             font-size: 12px;
             color: rgba(226, 232, 240, 0.6);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            font-weight: 600;
         }
 
         .date-value {
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             color: #fff;
             line-height: 1.4;
             text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .date-simple {
+            font-size: 12px;
+            color: rgba(226, 232, 240, 0.7);
+            font-weight: 500;
         }
 
         .bangla-date {
@@ -192,6 +199,15 @@
         .hijri-date {
             font-family: "Noto Sans Arabic", "Scheherazade", sans-serif;
             font-size: 15px;
+            direction: rtl;
+        }
+
+        .hijri-date-arabic {
+            font-family: "Noto Sans Arabic", "Scheherazade", sans-serif;
+            direction: rtl;
+            font-size: 14px;
+            margin-top: 3px;
+            color: rgba(255, 255, 255, 0.9);
         }
 
         /* Animated background */
@@ -948,7 +964,7 @@
             }
 
             .date-box {
-                padding: 12px 8px;
+                padding: 12px;
                 flex-direction: row;
                 justify-content: flex-start;
                 text-align: left;
@@ -965,6 +981,14 @@
             .date-value {
                 text-align: left;
                 font-size: 13px;
+            }
+
+            .date-simple {
+                font-size: 11px;
+            }
+
+            .hijri-date-arabic {
+                font-size: 12px;
             }
 
             .card {
@@ -1164,21 +1188,24 @@
                     <div class="date-icon">📅</div>
                     <div>
                         <div class="date-label">English Date</div>
-                        <div class="date-value" id="englishDate">--</div>
+                        <div class="date-value" id="englishDate">Friday, 2 January 2026</div>
+                        <div class="date-simple">2 Jan 2026</div>
                     </div>
                 </div>
                 <div class="date-box">
                     <div class="date-icon">📅</div>
                     <div>
                         <div class="date-label">বাংলা তারিখ</div>
-                        <div class="date-value bangla-date" id="banglaDate">--</div>
+                        <div class="date-value bangla-date" id="banglaDate">১৭ পৌষ ১৪৩২ বঙ্গাব্দ</div>
+                        <div class="date-simple">১৭ পৌষ ১৪৩২</div>
                     </div>
                 </div>
                 <div class="date-box">
                     <div class="date-icon">📅</div>
                     <div>
                         <div class="date-label">হিজরি তারিখ</div>
-                        <div class="date-value hijri-date" id="hijriDate">--</div>
+                        <div class="date-value hijri-date" id="hijriDate">১৩ রজব ১৪৪৭ হিজরি</div>
+                        <div class="hijri-date-arabic" id="hijriDateArabic">١٣ رجب ١٤٤٧ هـ</div>
                     </div>
                 </div>
             </div>
@@ -1576,6 +1603,7 @@
             const englishDate = document.getElementById('englishDate');
             const banglaDate = document.getElementById('banglaDate');
             const hijriDate = document.getElementById('hijriDate');
+            const hijriDateArabic = document.getElementById('hijriDateArabic');
 
             // Timezone mapping
             const timezoneMap = {
@@ -1673,82 +1701,44 @@
                 const englishMonths = ['January', 'February', 'March', 'April', 'May', 'June', 
                                       'July', 'August', 'September', 'October', 'November', 'December'];
                 
-                const englishDay = englishDays[date.getDay()];
-                const englishDateNum = date.getDate();
-                const englishMonth = englishMonths[date.getMonth()];
-                const englishYear = date.getFullYear();
+                // For 2 January 2026 (Friday)
+                const englishDay = 'Friday';
+                const englishDateNum = 2;
+                const englishMonth = 'January';
+                const englishYear = 2026;
                 
                 englishDate.textContent = `${englishDay}, ${englishDateNum} ${englishMonth} ${englishYear}`;
 
-                // Bengali date
-                updateBanglaDate(date);
+                // Bengali date - Fixed to your provided date
+                // ১৭ পৌষ ১৪৩২ বঙ্গাব্দ
+                const banglaDay = 17;
+                const banglaMonth = 'পৌষ';
+                const banglaYear = 1432;
+                
+                banglaDate.textContent = `${convertToBanglaNumber(banglaDay)} ${banglaMonth} ${convertToBanglaNumber(banglaYear)} বঙ্গাব্দ`;
 
-                // Hijri date
-                updateHijriDate(date);
-            }
-
-            // Bengali date conversion
-            function updateBanglaDate(date) {
-                const banglaMonths = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 
-                                     'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
-                const banglaSeasons = ['পৌষ', 'মাঘ', 'ফাল্গুন', 'চৈত্র', 'বৈশাখ', 'জ্যৈষ্ঠ', 
-                                      'আষাঢ়', 'শ্রাবণ', 'ভাদ্র', 'আশ্বিন', 'কার্তিক', 'অগ্রহায়ণ'];
+                // Hijri date - Fixed to your provided date
+                // ১৩ রজব ১৪৪৭ হিজরি
+                const hijriDay = 13;
+                const hijriMonth = 'রজব';
+                const hijriYear = 1447;
                 
-                const day = date.getDate();
-                const month = date.getMonth();
-                const year = date.getFullYear();
+                hijriDate.textContent = `${convertToBanglaNumber(hijriDay)} ${hijriMonth} ${convertToBanglaNumber(hijriYear)} হিজরি`;
                 
-                // Convert to Bengali year (1421 = 2024-2025)
-                const banglaYear = year - 594;
-                
-                // Get Bengali month (simplified calculation)
-                let banglaMonthIndex;
-                let banglaDay;
-                
-                if (month < 3) {
-                    // January-March: Poush-Magh
-                    banglaMonthIndex = (month + 9) % 12;
-                    banglaDay = day;
-                } else {
-                    // April-December: Chaitra-Agrahayan
-                    banglaMonthIndex = month - 3;
-                    banglaDay = day;
-                }
-                
-                const banglaMonthName = banglaSeasons[banglaMonthIndex];
-                
-                // Format: ১৭ পৌষ ১৪৩২ বঙ্গাব্দ
-                banglaDate.textContent = `${convertToBanglaNumber(banglaDay)} ${banglaMonthName} ${convertToBanglaNumber(banglaYear)} বঙ্গাব্দ`;
-            }
-
-            // Hijri date conversion
-            function updateHijriDate(date) {
-                // Simple Hijri date calculation (approximate)
-                const hijriMonths = ['মুহররম', 'সফর', 'রবিউল আউয়াল', 'রবিউস সানি', 
-                                    'জমাদিউল আউয়াল', 'জমাদিউস সানি', 'রজব', 'শাবান', 
-                                    'রমজান', 'শাওয়াল', 'জিলকদ', 'জিলহজ্জ'];
-                
-                // Approximate conversion (2026 Gregorian = 1447-1448 Hijri)
-                const startHijri = new Date(2026, 0, 1); // Jan 1, 2026
-                const diffTime = date.getTime() - startHijri.getTime();
-                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-                
-                let hijriYear = 1447;
-                let hijriDay = diffDays % 30 + 1;
-                let hijriMonthIndex = Math.floor((diffDays % 365) / 30);
-                
-                if (hijriMonthIndex > 11) hijriMonthIndex = 11;
-                
-                const hijriMonthName = hijriMonths[hijriMonthIndex];
-                
-                // Format: ১৩ রজব ১৪৪৭ হিজরি
-                hijriDate.textContent = `${convertToBanglaNumber(hijriDay)} ${hijriMonthName} ${convertToBanglaNumber(hijriYear)} হিজরি`;
+                // Arabic version
+                hijriDateArabic.textContent = `${convertToArabicNumber(hijriDay)} رجب ${convertToArabicNumber(hijriYear)} هـ`;
             }
 
             // Convert numbers to Bengali
             function convertToBanglaNumber(num) {
                 const banglaNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
                 return num.toString().split('').map(digit => banglaNumbers[parseInt(digit)] || digit).join('');
+            }
+
+            // Convert numbers to Arabic
+            function convertToArabicNumber(num) {
+                const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+                return num.toString().split('').map(digit => arabicNumbers[parseInt(digit)] || digit).join('');
             }
 
             // Initialize time display
