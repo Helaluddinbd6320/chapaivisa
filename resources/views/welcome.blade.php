@@ -7,22 +7,15 @@
     <title>Go To Login</title>
     <style>
         :root {
-            --bg-1: #0f172a;
-            /* dark navy */
+            --bg-1: #0f172a; /* dark navy */
             --bg-2: #0b1220;
             --card: rgba(255, 255, 255, 0.03);
-            --accent: #06b6d4;
-            /* teal/cyan */
-            --accent-2: #7c3aed;
-            /* purple */
-            --accent-3: #ec4899;
-            /* pink */
-            --accent-4: #10b981;
-            /* emerald */
-            --accent-5: #f59e0b;
-            /* amber */
-            --accent-6: #8b5cf6;
-            /* violet */
+            --accent: #06b6d4; /* teal/cyan */
+            --accent-2: #7c3aed; /* purple */
+            --accent-3: #ec4899; /* pink */
+            --accent-4: #10b981; /* emerald */
+            --accent-5: #f59e0b; /* amber */
+            --accent-6: #8b5cf6; /* violet */
             --bird-white: #e0f2fe;
             --bird-gray: #94a3b8;
             --bird-black: #1e293b;
@@ -41,13 +34,16 @@
 
         html,
         body {
-            height: 100%
+            height: 100%;
+            overflow-x: hidden;
         }
 
         body {
             margin: 0;
             font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-            background: radial-gradient(1200px 600px at 10% 20%, rgba(124, 58, 237, 0.15), transparent),
+            /* Animated background */
+            background: 
+                radial-gradient(1200px 600px at 10% 20%, rgba(124, 58, 237, 0.15), transparent),
                 radial-gradient(1000px 500px at 90% 80%, rgba(6, 182, 212, 0.12), transparent),
                 radial-gradient(800px 400px at 50% 50%, rgba(236, 72, 153, 0.08), transparent),
                 linear-gradient(180deg, var(--bg-1), var(--bg-2));
@@ -55,9 +51,52 @@
             display: grid;
             place-items: center;
             padding: 32px;
-            overflow: hidden;
+            overflow-y: auto; /* মোবাইলে স্ক্রল করার জন্য */
             position: relative;
             cursor: none;
+            /* Background animation */
+            animation: gradientBackground 30s ease infinite;
+            background-size: 400% 400%;
+            min-height: 100vh; /* মোবাইলের জন্য minimum height */
+        }
+
+        /* Animated background */
+        @keyframes gradientBackground {
+            0% {
+                background: 
+                    radial-gradient(1200px 600px at 10% 20%, rgba(124, 58, 237, 0.15), transparent),
+                    radial-gradient(1000px 500px at 90% 80%, rgba(6, 182, 212, 0.12), transparent),
+                    radial-gradient(800px 400px at 50% 50%, rgba(236, 72, 153, 0.08), transparent),
+                    linear-gradient(180deg, #0f172a, #0b1220);
+            }
+            25% {
+                background: 
+                    radial-gradient(1200px 600px at 20% 30%, rgba(124, 58, 237, 0.2), transparent),
+                    radial-gradient(1000px 500px at 80% 70%, rgba(6, 182, 212, 0.18), transparent),
+                    radial-gradient(800px 400px at 60% 40%, rgba(236, 72, 153, 0.12), transparent),
+                    linear-gradient(180deg, #1e293b, #0f172a);
+            }
+            50% {
+                background: 
+                    radial-gradient(1200px 600px at 30% 40%, rgba(124, 58, 237, 0.25), transparent),
+                    radial-gradient(1000px 500px at 70% 60%, rgba(6, 182, 212, 0.22), transparent),
+                    radial-gradient(800px 400px at 40% 60%, rgba(236, 72, 153, 0.15), transparent),
+                    linear-gradient(180deg, #334155, #1e293b);
+            }
+            75% {
+                background: 
+                    radial-gradient(1200px 600px at 40% 50%, rgba(124, 58, 237, 0.2), transparent),
+                    radial-gradient(1000px 500px at 60% 50%, rgba(6, 182, 212, 0.18), transparent),
+                    radial-gradient(800px 400px at 50% 50%, rgba(236, 72, 153, 0.12), transparent),
+                    linear-gradient(180deg, #1e293b, #0f172a);
+            }
+            100% {
+                background: 
+                    radial-gradient(1200px 600px at 10% 20%, rgba(124, 58, 237, 0.15), transparent),
+                    radial-gradient(1000px 500px at 90% 80%, rgba(6, 182, 212, 0.12), transparent),
+                    radial-gradient(800px 400px at 50% 50%, rgba(236, 72, 153, 0.08), transparent),
+                    linear-gradient(180deg, #0f172a, #0b1220);
+            }
         }
 
         /* Custom cursor */
@@ -97,7 +136,7 @@
 
         /* Flying creatures container */
         .flying-creatures {
-            position: absolute;
+            position: fixed; /* changed from absolute to fixed */
             width: 100%;
             height: 100%;
             top: 0;
@@ -405,6 +444,7 @@
             transform: translateY(0) scale(1);
             transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
             cursor: auto;
+            margin: auto; /* মোবাইলে সেন্টার করার জন্য */
         }
 
         .card:hover {
@@ -724,10 +764,26 @@
 
         /* Performance optimization */
         @media (max-width: 768px) {
+            body {
+                padding: 24px 16px;
+                display: block; /* grid থেকে block */
+                overflow-y: auto; /* স্ক্রল করার জন্য */
+                min-height: 100vh;
+                height: auto;
+            }
+
             .card {
                 padding: 36px 24px;
-                margin: 20px;
+                margin: 20px auto; /* সেন্টার এবং ম্যারজিন */
                 backdrop-filter: blur(15px);
+                max-width: 95%; /* মোবাইলে পূর্ণ প্রস্থ */
+                position: relative;
+                top: 0;
+                transform: none !important; /* হোভার ইফেক্ট ওভাররাইড */
+            }
+
+            .card:hover {
+                transform: none !important; /* মোবাইলে হোভার ইফেক্ট বন্ধ */
             }
 
             .title {
@@ -737,6 +793,8 @@
             .btn {
                 padding: 16px 28px;
                 font-size: 16px;
+                width: 100%; /* মোবাইলে ফুল width */
+                justify-content: center;
             }
 
             .bird {
@@ -793,16 +851,21 @@
             .butterfly:nth-child(n+40) {
                 display: none;
             }
+
+            .flying-creatures {
+                position: fixed; /* মোবাইলে fixed রাখা */
+            }
         }
 
         @media (max-width: 480px) {
             body {
-                padding: 20px;
+                padding: 20px 12px;
             }
 
             .card {
                 padding: 28px 20px;
                 border-radius: 16px;
+                margin: 10px auto;
             }
 
             .title {
@@ -811,16 +874,60 @@
 
             .subtitle {
                 font-size: 15px;
+                line-height: 1.6;
+                margin-bottom: 28px;
             }
 
             .btn {
-                width: 100%;
-                justify-content: center;
+                padding: 16px 24px;
+                font-size: 15px;
+            }
+
+            .muted {
+                font-size: 13px;
+                margin-top: 24px;
             }
 
             /* Reduce butterflies on very small screens */
             .butterfly:nth-child(n+30) {
                 display: none;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 360px) {
+            .card {
+                padding: 24px 16px;
+            }
+
+            .title {
+                font-size: 20px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+            }
+
+            .btn {
+                padding: 14px 20px;
+                font-size: 14px;
+            }
+
+            .muted {
+                font-size: 12px;
+            }
+        }
+
+        /* Prevent horizontal scroll on all devices */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            
+            .card {
+                width: calc(100% - 32px);
+                max-width: none;
             }
         }
     </style>
@@ -1194,6 +1301,28 @@
                     }
                 }
             }, 20000); // Less frequent cleanup
+
+            // Fix for mobile scrolling
+            function fixMobileScrolling() {
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                if (isMobile) {
+                    // Prevent default touch behavior that might block scrolling
+                    document.addEventListener('touchmove', function(e) {
+                        if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
+                            // Allow scrolling
+                            return;
+                        }
+                    }, { passive: true });
+                    
+                    // Ensure body is scrollable
+                    document.body.style.overflowY = 'auto';
+                    document.body.style.height = 'auto';
+                    document.body.style.minHeight = '100vh';
+                }
+            }
+            
+            // Call the fix
+            fixMobileScrolling();
         });
     </script>
 </body>
