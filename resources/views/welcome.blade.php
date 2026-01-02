@@ -124,23 +124,92 @@
             background-size: 300% 300%;
         }
 
-        .current-time {
-            font-size: 28px;
+        /* New Time Display Design */
+        .time-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .time-segment {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        .time-number {
+            font-size: 36px;
             font-weight: 800;
-            margin: 10px 0;
             background: linear-gradient(135deg, #fff, var(--accent-2), var(--accent));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: timeGlow 2s ease-in-out infinite;
-            letter-spacing: 1px;
+            animation: timeNumberGlow 2s ease-in-out infinite;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+            position: relative;
+            min-width: 60px;
+            text-align: center;
+            padding: 5px 0;
         }
 
+        .time-number::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.1), 
+                transparent);
+            animation: timeShimmer 3s linear infinite;
+            border-radius: 8px;
+        }
+
+        .time-label {
+            font-size: 11px;
+            color: rgba(226, 232, 240, 0.6);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .time-colon {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--accent);
+            animation: colonBlink 2s infinite;
+            margin: 0 5px;
+            text-shadow: 0 0 15px rgba(6, 182, 212, 0.7);
+        }
+
+        .time-am-pm {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-4), var(--accent-3));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-left: 10px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: amPmPulse 3s ease-in-out infinite;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.2);
+        }
+
+        /* Date Container */
         .date-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .date-box {
@@ -210,6 +279,61 @@
             color: rgba(255, 255, 255, 0.9);
         }
 
+        /* New Animations for Time */
+        @keyframes timeNumberGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.6));
+                transform: scale(1);
+            }
+            50% {
+                filter: drop-shadow(0 0 25px rgba(6, 182, 212, 0.9));
+                transform: scale(1.02);
+            }
+        }
+
+        @keyframes colonBlink {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.9);
+            }
+        }
+
+        @keyframes amPmPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 4px 15px rgba(6, 182, 212, 0.2);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 6px 25px rgba(6, 182, 212, 0.4);
+            }
+        }
+
+        @keyframes timeShimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes digitFlip {
+            0% {
+                transform: rotateX(0deg);
+            }
+            50% {
+                transform: rotateX(90deg);
+            }
+            100% {
+                transform: rotateX(0deg);
+            }
+        }
+
         /* Animated background */
         @keyframes gradientBackground {
             0% {
@@ -249,7 +373,6 @@
             }
         }
 
-        /* New animations */
         @keyframes flagWave {
             0%, 100% {
                 transform: rotate(0deg) scale(1);
@@ -259,15 +382,6 @@
             }
             75% {
                 transform: rotate(-5deg) scale(1.1);
-            }
-        }
-
-        @keyframes timeGlow {
-            0%, 100% {
-                filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.5));
-            }
-            50% {
-                filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.8));
             }
         }
 
@@ -954,8 +1068,18 @@
                 padding: 15px;
             }
 
-            .current-time {
-                font-size: 22px;
+            .time-number {
+                font-size: 28px;
+                min-width: 50px;
+            }
+
+            .time-colon {
+                font-size: 28px;
+            }
+
+            .time-am-pm {
+                font-size: 16px;
+                padding: 3px 10px;
             }
 
             .date-container {
@@ -1085,8 +1209,17 @@
                 padding: 12px;
             }
 
-            .current-time {
-                font-size: 20px;
+            .time-number {
+                font-size: 24px;
+                min-width: 45px;
+            }
+
+            .time-colon {
+                font-size: 24px;
+            }
+
+            .time-am-pm {
+                font-size: 14px;
             }
 
             .location-name {
@@ -1151,6 +1284,15 @@
             .muted {
                 font-size: 12px;
             }
+
+            .time-number {
+                font-size: 22px;
+                min-width: 40px;
+            }
+
+            .time-colon {
+                font-size: 22px;
+            }
         }
 
         /* Prevent horizontal scroll on all devices */
@@ -1182,7 +1324,26 @@
                 <div class="location-flag" id="locationFlag">🌍</div>
                 <div class="location-name" id="locationName">Detecting location...</div>
             </div>
-            <div class="current-time" id="currentTime">--:--:--</div>
+            
+            <!-- New Time Display -->
+            <div class="time-display">
+                <div class="time-segment">
+                    <div class="time-number" id="hours">12</div>
+                    <div class="time-label">Hours</div>
+                </div>
+                <div class="time-colon">:</div>
+                <div class="time-segment">
+                    <div class="time-number" id="minutes">00</div>
+                    <div class="time-label">Minutes</div>
+                </div>
+                <div class="time-colon">:</div>
+                <div class="time-segment">
+                    <div class="time-number" id="seconds">00</div>
+                    <div class="time-label">Seconds</div>
+                </div>
+                <div class="time-am-pm" id="ampm">AM</div>
+            </div>
+
             <div class="date-container">
                 <div class="date-box">
                     <div class="date-icon">📅</div>
@@ -1596,10 +1757,13 @@
             // Call the fix
             fixMobileScrolling();
 
-            // Time and Date Functions
+            // Time and Date Functions - AM/PM Format
             const locationFlag = document.getElementById('locationFlag');
             const locationName = document.getElementById('locationName');
-            const currentTime = document.getElementById('currentTime');
+            const hoursElement = document.getElementById('hours');
+            const minutesElement = document.getElementById('minutes');
+            const secondsElement = document.getElementById('seconds');
+            const ampmElement = document.getElementById('ampm');
             const englishDate = document.getElementById('englishDate');
             const banglaDate = document.getElementById('banglaDate');
             const hijriDate = document.getElementById('hijriDate');
@@ -1670,7 +1834,7 @@
                 }
             }
 
-            // Update time display
+            // Update time display - AM/PM Format
             function updateTime() {
                 const now = new Date();
                 
@@ -1678,30 +1842,61 @@
                 const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
                 const localTime = new Date(utc + (3600000 * timezoneOffset));
                 
-                // Format time
-                const hours = localTime.getHours().toString().padStart(2, '0');
-                const minutes = localTime.getMinutes().toString().padStart(2, '0');
-                const seconds = localTime.getSeconds().toString().padStart(2, '0');
+                // Get hours, minutes, seconds
+                let hours = localTime.getHours();
+                const minutes = localTime.getMinutes();
+                const seconds = localTime.getSeconds();
                 
-                currentTime.textContent = `${hours}:${minutes}:${seconds}`;
+                // Convert to AM/PM format
+                let ampm = 'AM';
+                if (hours >= 12) {
+                    ampm = 'PM';
+                    if (hours > 12) {
+                        hours = hours - 12;
+                    }
+                }
+                if (hours === 0) {
+                    hours = 12; // 12 AM
+                }
+                
+                // Format with leading zeros
+                const formattedHours = hours.toString().padStart(2, '0');
+                const formattedMinutes = minutes.toString().padStart(2, '0');
+                const formattedSeconds = seconds.toString().padStart(2, '0');
+                
+                // Update elements with animation
+                updateTimeElement(hoursElement, formattedHours);
+                updateTimeElement(minutesElement, formattedMinutes);
+                updateTimeElement(secondsElement, formattedSeconds);
+                ampmElement.textContent = ampm;
                 
                 // Update location info
                 const location = timezoneMap[userTimezone] || timezoneMap['BD'];
                 locationFlag.textContent = location.flag;
                 locationName.textContent = location.name;
                 
-                // Update dates
-                updateDates(localTime);
+                // Update dates (once)
+                if (!window.datesInitialized) {
+                    updateDates(localTime);
+                    window.datesInitialized = true;
+                }
             }
 
-            // Update all dates
+            // Update time element with flip animation
+            function updateTimeElement(element, newValue) {
+                if (element.textContent !== newValue) {
+                    // Add flip animation class
+                    element.style.animation = 'none';
+                    setTimeout(() => {
+                        element.style.animation = 'digitFlip 0.6s ease';
+                        element.textContent = newValue;
+                    }, 10);
+                }
+            }
+
+            // Update all dates (fixed dates as per your request)
             function updateDates(date) {
-                // English date
-                const englishDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                const englishMonths = ['January', 'February', 'March', 'April', 'May', 'June', 
-                                      'July', 'August', 'September', 'October', 'November', 'December'];
-                
-                // For 2 January 2026 (Friday)
+                // English date - Fixed to 2 January 2026
                 const englishDay = 'Friday';
                 const englishDateNum = 2;
                 const englishMonth = 'January';
@@ -1709,16 +1904,14 @@
                 
                 englishDate.textContent = `${englishDay}, ${englishDateNum} ${englishMonth} ${englishYear}`;
 
-                // Bengali date - Fixed to your provided date
-                // ১৭ পৌষ ১৪৩২ বঙ্গাব্দ
+                // Bengali date - Fixed: ১৭ পৌষ ১৪৩২ বঙ্গাব্দ
                 const banglaDay = 17;
                 const banglaMonth = 'পৌষ';
                 const banglaYear = 1432;
                 
                 banglaDate.textContent = `${convertToBanglaNumber(banglaDay)} ${banglaMonth} ${convertToBanglaNumber(banglaYear)} বঙ্গাব্দ`;
 
-                // Hijri date - Fixed to your provided date
-                // ১৩ রজব ১৪৪৭ হিজরি
+                // Hijri date - Fixed: ১৩ রজব ১৪৪৭ হিজরি
                 const hijriDay = 13;
                 const hijriMonth = 'রজব';
                 const hijriYear = 1447;
