@@ -40,7 +40,8 @@
 
         body {
             margin: 0;
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, 
+                         "Noto Sans Bengali", "Kalpurush", "SolaimanLipi", sans-serif;
             /* Animated background */
             background: 
                 radial-gradient(1200px 600px at 10% 20%, rgba(124, 58, 237, 0.15), transparent),
@@ -48,16 +49,149 @@
                 radial-gradient(800px 400px at 50% 50%, rgba(236, 72, 153, 0.08), transparent),
                 linear-gradient(180deg, var(--bg-1), var(--bg-2));
             color: #e6eef8;
-            display: grid;
-            place-items: center;
-            padding: 32px;
-            overflow-y: auto; /* মোবাইলে স্ক্রল করার জন্য */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 20px;
+            overflow-y: auto;
             position: relative;
             cursor: none;
             /* Background animation */
             animation: gradientBackground 30s ease infinite;
             background-size: 400% 400%;
-            min-height: 100vh; /* মোবাইলের জন্য minimum height */
+            min-height: 100vh;
+        }
+
+        /* Time display container */
+        .time-container {
+            position: relative;
+            width: 100%;
+            max-width: 540px;
+            margin-bottom: 30px;
+            z-index: 100;
+            animation: fadeInUp 0.8s ease 0.1s both;
+        }
+
+        .time-card {
+            background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.05) 0%,
+                    rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow:
+                0 15px 35px rgba(2, 6, 23, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 0 0 1px rgba(255, 255, 255, 0.02);
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .time-card:hover {
+            transform: translateY(-5px);
+            box-shadow:
+                0 25px 50px rgba(2, 6, 23, 0.8),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 0 0 1px rgba(255, 255, 255, 0.02);
+        }
+
+        .location-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .location-flag {
+            font-size: 24px;
+            animation: flagWave 3s ease-in-out infinite;
+        }
+
+        .location-name {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-4), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 4s ease infinite;
+            background-size: 300% 300%;
+        }
+
+        .current-time {
+            font-size: 28px;
+            font-weight: 800;
+            margin: 10px 0;
+            background: linear-gradient(135deg, #fff, var(--accent-2), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: timeGlow 2s ease-in-out infinite;
+            letter-spacing: 1px;
+        }
+
+        .date-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .date-box {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 15px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .date-box:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .date-icon {
+            font-size: 20px;
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+
+        .date-label {
+            font-size: 12px;
+            color: rgba(226, 232, 240, 0.6);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .date-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .bangla-date {
+            font-family: "Noto Sans Bengali", "Kalpurush", "SolaimanLipi", sans-serif;
+            font-size: 15px;
+        }
+
+        .hijri-date {
+            font-family: "Noto Sans Arabic", "Scheherazade", sans-serif;
+            font-size: 15px;
         }
 
         /* Animated background */
@@ -99,6 +233,28 @@
             }
         }
 
+        /* New animations */
+        @keyframes flagWave {
+            0%, 100% {
+                transform: rotate(0deg) scale(1);
+            }
+            25% {
+                transform: rotate(5deg) scale(1.1);
+            }
+            75% {
+                transform: rotate(-5deg) scale(1.1);
+            }
+        }
+
+        @keyframes timeGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.5));
+            }
+            50% {
+                filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.8));
+            }
+        }
+
         /* Custom cursor */
         .mouse-cursor {
             position: fixed;
@@ -136,7 +292,7 @@
 
         /* Flying creatures container */
         .flying-creatures {
-            position: fixed; /* changed from absolute to fixed */
+            position: fixed;
             width: 100%;
             height: 100%;
             top: 0;
@@ -444,7 +600,7 @@
             transform: translateY(0) scale(1);
             transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
             cursor: auto;
-            margin: auto; /* মোবাইলে সেন্টার করার জন্য */
+            margin: 0 auto;
         }
 
         .card:hover {
@@ -766,24 +922,63 @@
         @media (max-width: 768px) {
             body {
                 padding: 24px 16px;
-                display: block; /* grid থেকে block */
-                overflow-y: auto; /* স্ক্রল করার জন্য */
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
                 min-height: 100vh;
                 height: auto;
             }
 
+            .time-container {
+                margin-bottom: 20px;
+                max-width: 95%;
+            }
+
+            .time-card {
+                padding: 15px;
+            }
+
+            .current-time {
+                font-size: 22px;
+            }
+
+            .date-container {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .date-box {
+                padding: 12px 8px;
+                flex-direction: row;
+                justify-content: flex-start;
+                text-align: left;
+                gap: 15px;
+            }
+
+            .date-icon {
+                margin-bottom: 0;
+                font-size: 18px;
+                min-width: 30px;
+                text-align: center;
+            }
+
+            .date-value {
+                text-align: left;
+                font-size: 13px;
+            }
+
             .card {
                 padding: 36px 24px;
-                margin: 20px auto; /* সেন্টার এবং ম্যারজিন */
+                margin: 0 auto;
                 backdrop-filter: blur(15px);
-                max-width: 95%; /* মোবাইলে পূর্ণ প্রস্থ */
+                max-width: 95%;
                 position: relative;
                 top: 0;
-                transform: none !important; /* হোভার ইফেক্ট ওভাররাইড */
+                transform: none !important;
             }
 
             .card:hover {
-                transform: none !important; /* মোবাইলে হোভার ইফেক্ট বন্ধ */
+                transform: none !important;
             }
 
             .title {
@@ -793,7 +988,7 @@
             .btn {
                 padding: 16px 28px;
                 font-size: 16px;
-                width: 100%; /* মোবাইলে ফুল width */
+                width: 100%;
                 justify-content: center;
             }
 
@@ -853,7 +1048,7 @@
             }
 
             .flying-creatures {
-                position: fixed; /* মোবাইলে fixed রাখা */
+                position: fixed;
             }
         }
 
@@ -862,10 +1057,26 @@
                 padding: 20px 12px;
             }
 
+            .time-card {
+                padding: 12px;
+            }
+
+            .current-time {
+                font-size: 20px;
+            }
+
+            .location-name {
+                font-size: 16px;
+            }
+
+            .date-value {
+                font-size: 12px;
+            }
+
             .card {
                 padding: 28px 20px;
                 border-radius: 16px;
-                margin: 10px auto;
+                margin: 0 auto;
             }
 
             .title {
@@ -939,6 +1150,40 @@
 
     <!-- Flying creatures container -->
     <div class="flying-creatures" id="creatures"></div>
+
+    <!-- Time display container -->
+    <div class="time-container">
+        <div class="time-card">
+            <div class="location-info">
+                <div class="location-flag" id="locationFlag">🌍</div>
+                <div class="location-name" id="locationName">Detecting location...</div>
+            </div>
+            <div class="current-time" id="currentTime">--:--:--</div>
+            <div class="date-container">
+                <div class="date-box">
+                    <div class="date-icon">📅</div>
+                    <div>
+                        <div class="date-label">English Date</div>
+                        <div class="date-value" id="englishDate">--</div>
+                    </div>
+                </div>
+                <div class="date-box">
+                    <div class="date-icon">📅</div>
+                    <div>
+                        <div class="date-label">বাংলা তারিখ</div>
+                        <div class="date-value bangla-date" id="banglaDate">--</div>
+                    </div>
+                </div>
+                <div class="date-box">
+                    <div class="date-icon">📅</div>
+                    <div>
+                        <div class="date-label">হিজরি তারিখ</div>
+                        <div class="date-value hijri-date" id="hijriDate">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <main class="card" role="main">
         <h1 class="title">Welcome back</h1>
@@ -1323,6 +1568,192 @@
             
             // Call the fix
             fixMobileScrolling();
+
+            // Time and Date Functions
+            const locationFlag = document.getElementById('locationFlag');
+            const locationName = document.getElementById('locationName');
+            const currentTime = document.getElementById('currentTime');
+            const englishDate = document.getElementById('englishDate');
+            const banglaDate = document.getElementById('banglaDate');
+            const hijriDate = document.getElementById('hijriDate');
+
+            // Timezone mapping
+            const timezoneMap = {
+                'BD': { flag: '🇧🇩', name: 'Bangladesh Time', offset: 6 },
+                'SA': { flag: '🇸🇦', name: 'Saudi Arabia Time', offset: 3 },
+                'IN': { flag: '🇮🇳', name: 'India Time', offset: 5.5 },
+                'PK': { flag: '🇵🇰', name: 'Pakistan Time', offset: 5 },
+                'US': { flag: '🇺🇸', name: 'US Time', offset: -5 },
+                'GB': { flag: '🇬🇧', name: 'UK Time', offset: 0 },
+                'AU': { flag: '🇦🇺', name: 'Australia Time', offset: 10 },
+                'JP': { flag: '🇯🇵', name: 'Japan Time', offset: 9 },
+                'CN': { flag: '🇨🇳', name: 'China Time', offset: 8 },
+                'RU': { flag: '🇷🇺', name: 'Russia Time', offset: 3 }
+            };
+
+            // Default to Bangladesh time
+            let userTimezone = 'BD';
+            let timezoneOffset = 6;
+
+            // Try to detect user location
+            function detectLocation() {
+                // Try to get location from browser
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            // Get country code from coordinates (simplified)
+                            fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&localityLanguage=en`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.countryCode) {
+                                        const countryCode = data.countryCode.toUpperCase();
+                                        if (timezoneMap[countryCode]) {
+                                            userTimezone = countryCode;
+                                            timezoneOffset = timezoneMap[countryCode].offset;
+                                        }
+                                    }
+                                    updateTime();
+                                })
+                                .catch(() => {
+                                    updateTime();
+                                });
+                        },
+                        () => {
+                            // Fallback to IP-based detection
+                            fetch('https://ipapi.co/json/')
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.country_code) {
+                                        const countryCode = data.country_code.toUpperCase();
+                                        if (timezoneMap[countryCode]) {
+                                            userTimezone = countryCode;
+                                            timezoneOffset = timezoneMap[countryCode].offset;
+                                        }
+                                    }
+                                    updateTime();
+                                })
+                                .catch(() => {
+                                    updateTime();
+                                });
+                        }
+                    );
+                } else {
+                    updateTime();
+                }
+            }
+
+            // Update time display
+            function updateTime() {
+                const now = new Date();
+                
+                // Calculate local time based on detected timezone
+                const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+                const localTime = new Date(utc + (3600000 * timezoneOffset));
+                
+                // Format time
+                const hours = localTime.getHours().toString().padStart(2, '0');
+                const minutes = localTime.getMinutes().toString().padStart(2, '0');
+                const seconds = localTime.getSeconds().toString().padStart(2, '0');
+                
+                currentTime.textContent = `${hours}:${minutes}:${seconds}`;
+                
+                // Update location info
+                const location = timezoneMap[userTimezone] || timezoneMap['BD'];
+                locationFlag.textContent = location.flag;
+                locationName.textContent = location.name;
+                
+                // Update dates
+                updateDates(localTime);
+            }
+
+            // Update all dates
+            function updateDates(date) {
+                // English date
+                const englishDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const englishMonths = ['January', 'February', 'March', 'April', 'May', 'June', 
+                                      'July', 'August', 'September', 'October', 'November', 'December'];
+                
+                const englishDay = englishDays[date.getDay()];
+                const englishDateNum = date.getDate();
+                const englishMonth = englishMonths[date.getMonth()];
+                const englishYear = date.getFullYear();
+                
+                englishDate.textContent = `${englishDay}, ${englishDateNum} ${englishMonth} ${englishYear}`;
+
+                // Bengali date
+                updateBanglaDate(date);
+
+                // Hijri date
+                updateHijriDate(date);
+            }
+
+            // Bengali date conversion
+            function updateBanglaDate(date) {
+                const banglaMonths = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 
+                                     'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
+                const banglaSeasons = ['পৌষ', 'মাঘ', 'ফাল্গুন', 'চৈত্র', 'বৈশাখ', 'জ্যৈষ্ঠ', 
+                                      'আষাঢ়', 'শ্রাবণ', 'ভাদ্র', 'আশ্বিন', 'কার্তিক', 'অগ্রহায়ণ'];
+                
+                const day = date.getDate();
+                const month = date.getMonth();
+                const year = date.getFullYear();
+                
+                // Convert to Bengali year (1421 = 2024-2025)
+                const banglaYear = year - 594;
+                
+                // Get Bengali month (simplified calculation)
+                let banglaMonthIndex;
+                let banglaDay;
+                
+                if (month < 3) {
+                    // January-March: Poush-Magh
+                    banglaMonthIndex = (month + 9) % 12;
+                    banglaDay = day;
+                } else {
+                    // April-December: Chaitra-Agrahayan
+                    banglaMonthIndex = month - 3;
+                    banglaDay = day;
+                }
+                
+                const banglaMonthName = banglaSeasons[banglaMonthIndex];
+                
+                // Format: ১৭ পৌষ ১৪৩২ বঙ্গাব্দ
+                banglaDate.textContent = `${convertToBanglaNumber(banglaDay)} ${banglaMonthName} ${convertToBanglaNumber(banglaYear)} বঙ্গাব্দ`;
+            }
+
+            // Hijri date conversion
+            function updateHijriDate(date) {
+                // Simple Hijri date calculation (approximate)
+                const hijriMonths = ['মুহররম', 'সফর', 'রবিউল আউয়াল', 'রবিউস সানি', 
+                                    'জমাদিউল আউয়াল', 'জমাদিউস সানি', 'রজব', 'শাবান', 
+                                    'রমজান', 'শাওয়াল', 'জিলকদ', 'জিলহজ্জ'];
+                
+                // Approximate conversion (2026 Gregorian = 1447-1448 Hijri)
+                const startHijri = new Date(2026, 0, 1); // Jan 1, 2026
+                const diffTime = date.getTime() - startHijri.getTime();
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                
+                let hijriYear = 1447;
+                let hijriDay = diffDays % 30 + 1;
+                let hijriMonthIndex = Math.floor((diffDays % 365) / 30);
+                
+                if (hijriMonthIndex > 11) hijriMonthIndex = 11;
+                
+                const hijriMonthName = hijriMonths[hijriMonthIndex];
+                
+                // Format: ১৩ রজব ১৪৪৭ হিজরি
+                hijriDate.textContent = `${convertToBanglaNumber(hijriDay)} ${hijriMonthName} ${convertToBanglaNumber(hijriYear)} হিজরি`;
+            }
+
+            // Convert numbers to Bengali
+            function convertToBanglaNumber(num) {
+                const banglaNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+                return num.toString().split('').map(digit => banglaNumbers[parseInt(digit)] || digit).join('');
+            }
+
+            // Initialize time display
+            detectLocation();
+            setInterval(updateTime, 1000);
         });
     </script>
 </body>
