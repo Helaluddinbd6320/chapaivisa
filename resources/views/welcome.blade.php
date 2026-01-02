@@ -100,7 +100,6 @@
       opacity: 0.8;
       z-index: 0;
       pointer-events: none;
-      animation: butterflyRandomMove 30s linear infinite;
     }
 
     .butterfly .left-wing,
@@ -165,7 +164,6 @@
       z-index: 1;
       pointer-events: none;
       filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-      animation: birdFlyOut 5s ease-out forwards;
     }
 
     /* Bird body */
@@ -602,6 +600,7 @@
       }
       100% {
         transform: translateX(100%);
+      }
     }
 
     @keyframes cursorFloat {
@@ -786,16 +785,21 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      console.log('Document loaded, starting animations...');
+      
       const container = document.getElementById('creatures');
       const cursor = document.getElementById('cursor');
       
+      // Show cursor initially
+      cursor.style.display = 'block';
+      
       const colors = [
-        'var(--accent)',   // cyan
-        'var(--accent-2)', // purple
-        'var(--accent-3)', // pink
-        'var(--accent-4)', // emerald
-        'var(--accent-5)', // amber
-        'var(--accent-6)'  // violet
+        '#06b6d4',   // cyan
+        '#7c3aed', // purple
+        '#ec4899', // pink
+        '#10b981', // emerald
+        '#f59e0b', // amber
+        '#8b5cf6'  // violet
       ];
 
       // Bird types - 9 varieties
@@ -803,10 +807,12 @@
       
       // Initial 50 butterflies - staggered for performance
       const initialButterflyCount = 50;
+      console.log(`Creating ${initialButterflyCount} butterflies...`);
+      
       for (let i = 0; i < initialButterflyCount; i++) {
         setTimeout(() => {
           createRandomButterfly(container, colors);
-        }, i * 100);
+        }, i * 50);
       }
 
       // Variables for bird generation
@@ -820,6 +826,7 @@
 
       // Create birds from center continuously
       function startCenterGeneration() {
+        console.log('Starting center bird generation...');
         centerGenerationInterval = setInterval(() => {
           if (isGeneratingFromCenter) {
             const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
@@ -830,6 +837,7 @@
 
       // Create birds from mouse position continuously
       function startMouseGeneration() {
+        console.log('Switching to mouse bird generation...');
         birdGenerationInterval = setInterval(() => {
           const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
           createBirdFromPoint(container, birdType, mouseX, mouseY, false);
@@ -962,8 +970,8 @@
         const size = 0.6 + Math.random() * 0.8; // 0.6 to 1.4
         bird.style.transform = `scale(${size})`;
         
-        // Random wing flap speed
-        wing.style.animationDuration = `${0.3 + Math.random() * 0.4}s`; // 0.3 to 0.7s
+        // Add fly animation
+        bird.style.animation = `birdFlyOut 5s ease-out forwards`;
         
         container.appendChild(bird);
         
@@ -1019,7 +1027,7 @@
         butterfly.style.setProperty('--end-y', `${endY}vh`);
         
         const duration = 20 + Math.random() * 40; // 20-60 seconds
-        butterfly.style.animationDuration = `${duration}s`;
+        butterfly.style.animation = `butterflyRandomMove ${duration}s linear infinite`;
         butterfly.style.animationDelay = `${Math.random() * 20}s`;
         butterfly.style.transform = `scale(${size})`;
         butterfly.style.opacity = '0';
@@ -1038,7 +1046,10 @@
       }
 
       // Start center generation on load
-      startCenterGeneration();
+      setTimeout(() => {
+        startCenterGeneration();
+        console.log('Center bird generation started');
+      }, 1000);
 
       // Auto-cleanup to prevent too many elements
       setInterval(() => {
