@@ -536,27 +536,6 @@
       transform: scaleX(1);
     }
 
-    /* Stats display */
-    .stats {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px;
-      padding: 12px 16px;
-      font-size: 12px;
-      color: rgba(226,232,240,0.7);
-      z-index: 101;
-      backdrop-filter: blur(10px);
-      animation: fadeInUp 0.5s ease 1s both;
-    }
-
-    .stats span {
-      color: var(--accent);
-      font-weight: bold;
-    }
-
     /* Animations */
     @keyframes butterflyFlapLeft {
       0%, 100% {
@@ -623,7 +602,6 @@
       }
       100% {
         transform: translateX(100%);
-      }
     }
 
     @keyframes cursorFloat {
@@ -748,10 +726,6 @@
         height: 21px;
       }
       
-      .stats {
-        display: none;
-      }
-      
       body {
         cursor: auto;
       }
@@ -798,13 +772,6 @@
   <!-- Flying creatures container -->
   <div class="flying-creatures" id="creatures"></div>
 
-  <!-- Stats display -->
-  <div class="stats" id="stats">
-    Butterflies: <span id="butterflyCount">0</span><br>
-    Birds: <span id="birdCount">0</span><br>
-    Total: <span id="totalCount">0</span>
-  </div>
-
   <main class="card" role="main">
     <h1 class="title">Welcome back</h1>
     <p class="subtitle">Click the button below to continue to the login page.</p>
@@ -821,11 +788,6 @@
     document.addEventListener('DOMContentLoaded', function() {
       const container = document.getElementById('creatures');
       const cursor = document.getElementById('cursor');
-      const stats = {
-        butterflyCount: document.getElementById('butterflyCount'),
-        birdCount: document.getElementById('birdCount'),
-        totalCount: document.getElementById('totalCount')
-      };
       
       const colors = [
         'var(--accent)',   // cyan
@@ -839,13 +801,12 @@
       // Bird types - 9 varieties
       const birdTypes = ['sparrow', 'pigeon', 'cardinal', 'bluejay', 'canary', 'parrot', 'robin', 'flamingo', 'peacock'];
       
-      // Initial 50 butterflies
+      // Initial 50 butterflies - staggered for performance
       const initialButterflyCount = 50;
       for (let i = 0; i < initialButterflyCount; i++) {
         setTimeout(() => {
           createRandomButterfly(container, colors);
-          updateStats();
-        }, i * 100); // Stagger creation for performance
+        }, i * 100);
       }
 
       // Variables for bird generation
@@ -857,24 +818,12 @@
       const centerX = window.innerWidth / 2;
       const centerY = window.innerHeight / 2;
 
-      // Update stats function
-      function updateStats() {
-        const butterflies = container.querySelectorAll('.butterfly').length;
-        const birds = container.querySelectorAll('.bird').length;
-        const total = butterflies + birds;
-        
-        stats.butterflyCount.textContent = butterflies;
-        stats.birdCount.textContent = birds;
-        stats.totalCount.textContent = total;
-      }
-
       // Create birds from center continuously
       function startCenterGeneration() {
         centerGenerationInterval = setInterval(() => {
           if (isGeneratingFromCenter) {
             const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
             createBirdFromPoint(container, birdType, centerX, centerY, true);
-            updateStats();
           }
         }, 800); // Create bird every 800ms from center
       }
@@ -884,7 +833,6 @@
         birdGenerationInterval = setInterval(() => {
           const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
           createBirdFromPoint(container, birdType, mouseX, mouseY, false);
-          updateStats();
         }, 300); // Create bird every 300ms from mouse
       }
 
@@ -936,7 +884,6 @@
           // Create birds from touch
           const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
           createBirdFromPoint(container, birdType, mouseX, mouseY, false);
-          updateStats();
         }
       });
 
@@ -951,7 +898,6 @@
             setTimeout(() => {
               const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
               createBirdFromPoint(container, birdType, mouseX, mouseY, false);
-              updateStats();
             }, i * 50);
           }
         }
@@ -1025,7 +971,6 @@
         setTimeout(() => {
           if (bird.parentNode) {
             bird.remove();
-            updateStats();
           }
         }, 5000);
         
@@ -1086,7 +1031,6 @@
           if (butterfly.parentNode) {
             butterfly.remove();
             createRandomButterfly(container, colors);
-            updateStats();
           }
         }, (duration + 5) * 1000);
         
@@ -1106,7 +1050,6 @@
           for (let i = 0; i < birdsToRemove && i < birds.length; i++) {
             if (birds[i].parentNode) {
               birds[i].remove();
-              updateStats();
             }
           }
         }
