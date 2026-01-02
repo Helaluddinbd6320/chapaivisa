@@ -6,32 +6,150 @@
 <title>Go To Login</title>
 
 <style>
-/* ================== YOUR ORIGINAL CSS (UNCHANGED) ================== */
-/* ⚠️ এখানে আপনার দেওয়া CSS 100% একই রাখা হয়েছে */
-
-/* 🌊 NEW: Butterfly wave effect (DESIGN SAFE) */
-@keyframes butterflyWave {
-    0% {
-        transform: translateX(0) scale(var(--base-scale));
-    }
-    25% {
-        transform: translateX(-12px) scale(var(--base-scale));
-    }
-    50% {
-        transform: translateX(12px) scale(var(--base-scale));
-    }
-    75% {
-        transform: translateX(-6px) scale(var(--base-scale));
-    }
-    100% {
-        transform: translateX(0) scale(var(--base-scale));
-    }
+/* ===================== ROOT ===================== */
+:root{
+--bg-1:#0f172a;
+--bg-2:#0b1220;
+--accent:#06b6d4;
+--accent-2:#7c3aed;
+--accent-3:#ec4899;
 }
 
-.butterfly.wave {
-    animation:
-        butterflyWave 1.2s ease-in-out,
-        butterflyRandomMove var(--fly-duration) linear infinite;
+/* ===================== BASE ===================== */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+margin:0;
+background:linear-gradient(180deg,var(--bg-1),var(--bg-2));
+overflow:hidden;
+font-family:system-ui;
+color:#fff;
+cursor:none;
+}
+
+/* ===================== CURSOR ===================== */
+.mouse-cursor{
+position:fixed;
+width:50px;height:50px;
+background:radial-gradient(circle,rgba(6,182,212,.4),transparent 70%);
+border-radius:50%;
+pointer-events:none;
+transform:translate(-50%,-50%);
+z-index:9999;
+}
+
+/* ===================== CONTAINER ===================== */
+.flying-creatures{
+position:absolute;
+inset:0;
+pointer-events:none;
+overflow:hidden;
+}
+
+/* ===================== BUTTERFLY ===================== */
+.butterfly{
+position:absolute;
+width:35px;height:35px;
+opacity:.7;
+--base-scale:1;
+}
+
+.left-wing,.right-wing{
+position:absolute;
+width:17px;height:24px;
+border-radius:50%;
+background:var(--wing-color);
+top:5px;
+}
+
+.left-wing{left:0;animation:flapL .8s infinite}
+.right-wing{right:0;animation:flapR .8s infinite}
+
+.body{
+position:absolute;
+width:3px;height:24px;
+background:#fff;
+left:50%;
+top:5px;
+transform:translateX(-50%);
+}
+
+@keyframes flapL{50%{transform:rotate(-25deg)}}
+@keyframes flapR{50%{transform:rotate(25deg)}}
+
+/* ---- butterfly normal flight ---- */
+@keyframes butterflyMove{
+0%{transform:translate(var(--sx),var(--sy)) scale(var(--base-scale));opacity:0}
+10%,90%{opacity:1}
+100%{transform:translate(var(--ex),var(--ey)) rotate(360deg) scale(var(--base-scale));opacity:0}
+}
+
+/* ---- butterfly wave when bird passes ---- */
+@keyframes butterflyWave{
+0%{transform:translateX(0) scale(var(--base-scale))}
+25%{transform:translateX(-12px) rotate(-8deg) scale(var(--base-scale))}
+50%{transform:translateX(12px) rotate(8deg) scale(var(--base-scale))}
+75%{transform:translateX(-6px) rotate(-4deg) scale(var(--base-scale))}
+100%{transform:translateX(0) scale(var(--base-scale))}
+}
+.butterfly.wave{animation:butterflyWave 1.2s ease-in-out}
+
+/* ===================== BIRD ===================== */
+.bird{
+position:absolute;
+width:60px;height:42px;
+opacity:0;
+}
+
+.bird-body{
+position:absolute;
+width:36px;height:24px;
+background:#94a3b8;
+border-radius:50%;
+left:12px;top:9px;
+}
+.bird-head{
+position:absolute;
+width:21px;height:21px;
+background:#1e293b;
+border-radius:50%;
+left:0;top:3px;
+}
+.bird-wing{
+position:absolute;
+width:42px;height:21px;
+background:#1e293b;
+border-radius:50%;
+top:12px;left:15px;
+animation:wing .5s infinite;
+}
+@keyframes wing{50%{transform:rotate(35deg)}}
+
+@keyframes birdFly{
+0%{opacity:0;transform:translate(0,0) scale(.8)}
+10%{opacity:1}
+100%{opacity:0;transform:translate(var(--fx),var(--fy)) scale(.8)}
+}
+
+/* ===================== CARD ===================== */
+.card{
+position:relative;
+z-index:10;
+background:rgba(255,255,255,.05);
+padding:40px;
+border-radius:20px;
+text-align:center;
+backdrop-filter:blur(20px);
+}
+.btn{
+display:inline-block;
+margin-top:20px;
+padding:15px 30px;
+background:linear-gradient(135deg,var(--accent),var(--accent-2));
+border-radius:12px;
+color:#fff;
+text-decoration:none;
+font-weight:bold;
 }
 </style>
 </head>
@@ -42,153 +160,84 @@
 <div class="flying-creatures" id="creatures"></div>
 
 <main class="card">
-    <h1 class="title">Welcome back</h1>
-    <p class="subtitle">Click the button below to continue to the login page.</p>
-
-    <a class="btn" href="/admin">
-        <span>Go To Login</span>
-        <span class="arrow">➜</span>
-    </a>
-
-    <p class="muted">Need help? Contact support — Helal Uddin ❤️</p>
+<h1>Welcome back</h1>
+<a class="btn" href="/admin">Go To Login</a>
 </main>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+const container=document.getElementById('creatures');
+const cursor=document.getElementById('cursor');
+let mouseX=innerWidth/2,mouseY=innerHeight/2;
 
-const container = document.getElementById('creatures');
-const cursor = document.getElementById('cursor');
-
-/* ================= CURSOR ================= */
-document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top = e.clientY + 'px';
-});
-
-/* ================= BUTTERFLIES ================= */
-const colors = ['#06b6d4','#7c3aed','#ec4899','#10b981','#f59e0b','#8b5cf6'];
-
-function getButterflyAnimationDuration(){
-    return 40 + Math.random() * 40;
-}
-
-function createRandomButterfly(){
-    const butterfly = document.createElement('div');
-    butterfly.className = 'butterfly';
-
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    const size = 0.4 + Math.random() * 0.8;
-
-    butterfly.style.setProperty('--base-scale', size);
-    butterfly.style.transform = `scale(${size})`;
-
-    const duration = getButterflyAnimationDuration();
-    butterfly.style.setProperty('--fly-duration', `${duration}s`);
-
-    butterfly.innerHTML = `
-        <div class="left-wing" style="--wing-color:${color}"></div>
-        <div class="right-wing" style="--wing-color:${color}"></div>
-        <div class="body"></div>
-        <div class="antenna left"></div>
-        <div class="antenna right"></div>
-    `;
-
-    butterfly.style.setProperty('--start-x', `${Math.random()*130-15}vw`);
-    butterfly.style.setProperty('--start-y', `${Math.random()*130-15}vh`);
-    butterfly.style.setProperty('--end-x', `${Math.random()*130-15}vw`);
-    butterfly.style.setProperty('--end-y', `${Math.random()*130-15}vh`);
-
-    butterfly.style.animation = `butterflyRandomMove ${duration}s linear infinite`;
-    butterfly.style.animationDelay = `${Math.random()*30}s`;
-
-    container.appendChild(butterfly);
-
-    return butterfly;
-}
-
-/* Create initial butterflies */
-for(let i=0;i<80;i++){
-    setTimeout(createRandomButterfly, i*30);
-}
-
-/* 🌊 WAVE LOGIC */
-function triggerButterflyWave(x,y){
-    document.querySelectorAll('.butterfly').forEach(b=>{
-        const r=b.getBoundingClientRect();
-        const bx=r.left+r.width/2;
-        const by=r.top+r.height/2;
-
-        if(Math.hypot(bx-x,by-y)<220){
-            b.classList.remove('wave');
-            void b.offsetWidth;
-            b.classList.add('wave');
-        }
-    });
-}
-
-/* ================= BIRDS ================= */
-const birdTypes=['sparrow','pigeon','cardinal','bluejay','canary','parrot','robin','flamingo','peacock'];
-
-function getBirdFlyDistance(){
-    return Math.hypot(innerWidth,innerHeight)*2;
-}
-
-function createBirdFromPoint(x,y){
-    const bird=document.createElement('div');
-    bird.className=`bird ${birdTypes[Math.floor(Math.random()*birdTypes.length)]}`;
-    bird.style.left=x+'px';
-    bird.style.top=y+'px';
-
-    bird.innerHTML=`
-        <div class="bird-body"></div>
-        <div class="bird-head"></div>
-        <div class="bird-beak"></div>
-        <div class="bird-eye"></div>
-        <div class="bird-wing"></div>
-        <div class="bird-tail"></div>
-    `;
-
-    const angle=Math.random()*Math.PI*2;
-    const dist=getBirdFlyDistance();
-    const dx=Math.cos(angle)*dist;
-    const dy=Math.sin(angle)*dist;
-
-    bird.style.setProperty('--fly-x',`${dx}px`);
-    bird.style.setProperty('--fly-y',`${dy}px`);
-    bird.style.setProperty('--fly-rotate',`${(Math.random()*40-20)}deg`);
-
-    const duration=12+Math.random()*6;
-    bird.style.animation=`birdFlyOut ${duration}s ease-out forwards`;
-
-    container.appendChild(bird);
-
-    /* 🔥 Track bird path */
-    let start=null;
-    function track(t){
-        if(!start) start=t;
-        const p=Math.min((t-start)/(duration*1000),1);
-
-        const cx=x+dx*p;
-        const cy=y+dy*p;
-
-        triggerButterflyWave(cx,cy);
-
-        if(p<1) requestAnimationFrame(track);
-        else bird.remove();
-    }
-    requestAnimationFrame(track);
-}
-
-/* Auto birds */
-setInterval(()=>{
-    createBirdFromPoint(innerWidth/2,innerHeight/2);
-},800);
-
+/* ===================== CURSOR ===================== */
 document.addEventListener('mousemove',e=>{
-    if(Math.random()<0.1) createBirdFromPoint(e.clientX,e.clientY);
+cursor.style.left=e.clientX+'px';
+cursor.style.top=e.clientY+'px';
+mouseX=e.clientX;mouseY=e.clientY;
+createBird(mouseX,mouseY);
 });
 
+/* ===================== BUTTERFLY ===================== */
+const colors=['#06b6d4','#7c3aed','#ec4899','#10b981','#f59e0b'];
+
+function createButterfly(){
+const b=document.createElement('div');
+b.className='butterfly';
+const color=colors[Math.random()*colors.length|0];
+b.innerHTML=`
+<div class="left-wing" style="--wing-color:${color}"></div>
+<div class="right-wing" style="--wing-color:${color}"></div>
+<div class="body"></div>`;
+const scale=.4+Math.random()*.8;
+b.style.setProperty('--base-scale',scale);
+b.style.setProperty('--sx',`${Math.random()*120-10}vw`);
+b.style.setProperty('--sy',`${Math.random()*120-10}vh`);
+b.style.setProperty('--ex',`${Math.random()*120-10}vw`);
+b.style.setProperty('--ey',`${Math.random()*120-10}vh`);
+b.style.animation=`butterflyMove ${40+Math.random()*40}s linear infinite`;
+container.appendChild(b);
+}
+for(let i=0;i<80;i++)createButterfly();
+
+/* ===================== BIRD ===================== */
+function createBird(x,y){
+const bird=document.createElement('div');
+bird.className='bird';
+bird.style.left=x+'px';
+bird.style.top=y+'px';
+bird.innerHTML=`
+<div class="bird-body"></div>
+<div class="bird-head"></div>
+<div class="bird-wing"></div>`;
+const angle=Math.random()*Math.PI*2;
+const dist=Math.hypot(innerWidth,innerHeight)*1.5;
+const fx=Math.cos(angle)*dist;
+const fy=Math.sin(angle)*dist;
+bird.style.setProperty('--fx',fx+'px');
+bird.style.setProperty('--fy',fy+'px');
+bird.style.animation=`birdFly 10s ease-out forwards`;
+container.appendChild(bird);
+
+/* ---- trigger butterfly wave along path ---- */
+triggerWave(x,y);
+
+setTimeout(()=>bird.remove(),12000);
+}
+
+/* ===================== WAVE LOGIC ===================== */
+function triggerWave(x,y){
+document.querySelectorAll('.butterfly').forEach(b=>{
+const r=b.getBoundingClientRect();
+const dx=r.left+r.width/2-x;
+const dy=r.top+r.height/2-y;
+if(Math.hypot(dx,dy)<200){
+b.classList.remove('wave');
+void b.offsetWidth;
+b.classList.add('wave');
+}
 });
+}
 </script>
+
 </body>
 </html>
