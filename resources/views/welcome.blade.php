@@ -7,15 +7,15 @@
     <title>Go To Login</title>
     <style>
         :root {
-            --bg-1: #0f172a; /* dark navy */
+            --bg-1: #0f172a;
             --bg-2: #0b1220;
             --card: rgba(255, 255, 255, 0.03);
-            --accent: #06b6d4; /* teal/cyan */
-            --accent-2: #7c3aed; /* purple */
-            --accent-3: #ec4899; /* pink */
-            --accent-4: #10b981; /* emerald */
-            --accent-5: #f59e0b; /* amber */
-            --accent-6: #8b5cf6; /* violet */
+            --accent: #06b6d4;
+            --accent-2: #7c3aed;
+            --accent-3: #ec4899;
+            --accent-4: #10b981;
+            --accent-5: #f59e0b;
+            --accent-6: #8b5cf6;
             --bird-white: #e0f2fe;
             --bird-gray: #94a3b8;
             --bird-black: #1e293b;
@@ -45,7 +45,6 @@
             margin: 0;
             font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, 
                          "Noto Sans Bengali", "Kalpurush", "SolaimanLipi", sans-serif;
-            /* Animated background */
             background: 
                 radial-gradient(1200px 600px at 10% 20%, rgba(124, 58, 237, 0.15), transparent),
                 radial-gradient(1000px 500px at 90% 80%, rgba(6, 182, 212, 0.12), transparent),
@@ -56,7 +55,6 @@
             overflow-y: auto;
             position: relative;
             cursor: none;
-            /* Background animation */
             animation: gradientBackground 30s ease infinite;
             background-size: 400% 400%;
             min-height: 100vh;
@@ -65,7 +63,7 @@
             align-items: center;
         }
 
-        /* Main layout for all devices */
+        /* Main layout */
         .main-container {
             width: 100%;
             max-width: 1200px;
@@ -73,9 +71,11 @@
             display: flex;
             flex-direction: column;
             gap: 40px;
+            position: relative;
+            z-index: 1000;
         }
 
-        /* Mobile layout - shown by default */
+        /* Mobile layout */
         .mobile-layout {
             width: 100%;
             display: flex;
@@ -83,7 +83,7 @@
             gap: 30px;
         }
 
-        /* Desktop layout - hidden on mobile */
+        /* Desktop layout */
         .desktop-layout {
             display: none;
             width: 100%;
@@ -111,11 +111,11 @@
             }
         }
 
-        /* Time display container with integrated date slider */
+        /* Time container */
         .time-container {
             position: relative;
             width: 100%;
-            z-index: 100;
+            z-index: 1000;
             animation: fadeInUp 0.8s ease 0.1s both;
         }
 
@@ -171,7 +171,7 @@
             background-size: 300% 300%;
         }
 
-        /* Time Display Design - WHITE COLOR */
+        /* Time Display Design */
         .time-display {
             display: flex;
             align-items: center;
@@ -308,15 +308,70 @@
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
-        /* Desktop Date Container - Three dates in one card */
+        /* Desktop Date Container */
+        .date-container-full {
+            position: relative;
+            z-index: 1000;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .date-card {
+            background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.05) 0%,
+                    rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow:
+                0 15px 35px rgba(2, 6, 23, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 0 0 1px rgba(255, 255, 255, 0.02);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            height: 100%;
+        }
+
+        .date-card:hover {
+            transform: translateY(-5px);
+            box-shadow:
+                0 25px 50px rgba(2, 6, 23, 0.8),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 0 0 1px rgba(255, 255, 255, 0.02);
+        }
+
         .date-container-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            margin-top: 10px;
         }
 
-        /* Mobile Date Slider Container - Now inside time card */
+        @media (max-width: 1024px) {
+            .date-container-grid {
+                gap: 15px;
+            }
+        }
+
+        .date-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .date-box:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        /* Mobile Date Slider Container */
         .date-slider-container {
             position: relative;
             width: 100%;
@@ -412,17 +467,18 @@
         }
 
         .hijri-date {
-            font-family: "Noto Sans Arabic", "Scheherazade", sans-serif;
-            direction: rtl;
+            font-family: "Noto Sans Bengali", "Kalpurush", "SolaimanLipi", sans-serif;
         }
 
-        /* Center card for login - Now higher up on mobile */
+        /* Center card for login */
         .center-card-container {
             width: 100%;
             display: flex;
             justify-content: center;
             animation: fadeInUp 0.8s ease 0.4s both;
             margin-top: 20px;
+            position: relative;
+            z-index: 1000;
         }
 
         @media (min-width: 1024px) {
@@ -431,7 +487,7 @@
             }
         }
 
-        /* Card styles - Center */
+        /* Card styles */
         .card {
             width: 100%;
             max-width: 540px;
@@ -447,7 +503,7 @@
             padding: 56px 42px;
             text-align: center;
             position: relative;
-            z-index: 100;
+            z-index: 1000;
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             transform: translateY(0) scale(1);
@@ -626,7 +682,7 @@
             transform: scaleX(1);
         }
 
-        /* New Animations - WHITE VERSION */
+        /* Animations */
         @keyframes timeGlowWhite {
             0%, 100% {
                 filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.6))
@@ -710,7 +766,6 @@
             }
         }
 
-        /* Animated background */
         @keyframes gradientBackground {
             0% {
                 background: 
@@ -796,26 +851,26 @@
             animation: cursorRipple 1.5s ease-out infinite;
         }
 
-        /* Flying creatures container - FIXED POSITION */
+        /* Flying creatures container */
         .flying-creatures {
             position: fixed;
             width: 100%;
             height: 100%;
             top: 0;
             left: 0;
-            z-index: 1;
+            z-index: 10; /* টেক্সটের নিচে থাকবে */
             overflow: hidden;
             pointer-events: none;
         }
 
-        /* Butterfly styles - MULTICOLOR butterflies */
+        /* Butterfly styles */
         .butterfly {
             position: absolute;
             width: 35px;
             height: 35px;
             filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
             opacity: 0.7;
-            z-index: 1;
+            z-index: 10;
             pointer-events: none;
         }
 
@@ -872,18 +927,17 @@
             transform: rotate(20deg);
         }
 
-        /* Bird styles - FIXED */
+        /* Bird styles */
         .bird {
             position: absolute;
             width: 60px;
             height: 42px;
             opacity: 0;
-            z-index: 2;
+            z-index: 10;
             pointer-events: none;
             filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
         }
 
-        /* Bird body */
         .bird-body {
             position: absolute;
             width: 36px;
@@ -897,7 +951,6 @@
                 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
-        /* Bird head */
         .bird-head {
             position: absolute;
             width: 21px;
@@ -912,7 +965,6 @@
                 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
-        /* Bird beak */
         .bird-beak {
             position: absolute;
             width: 15px;
@@ -926,7 +978,6 @@
             box-shadow: 1px 0 2px rgba(0, 0, 0, 0.2);
         }
 
-        /* Bird eye */
         .bird-eye {
             position: absolute;
             width: 6px;
@@ -952,7 +1003,6 @@
             left: 2px;
         }
 
-        /* Bird wings */
         .bird-wing {
             position: absolute;
             width: 42px;
@@ -982,7 +1032,6 @@
             border-radius: 50%;
         }
 
-        /* Bird tail */
         .bird-tail {
             position: absolute;
             width: 27px;
@@ -1099,7 +1148,6 @@
             }
         }
 
-        /* Animations */
         @keyframes butterflyFlapLeft {
             0%, 100% {
                 transform: rotate(0deg) translateY(0) scaleY(1);
@@ -1204,6 +1252,7 @@
             body {
                 padding: 24px 16px;
                 gap: 20px;
+                cursor: auto;
             }
 
             .time-container {
@@ -1236,6 +1285,15 @@
                 height: 130px;
             }
 
+            .date-container-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .date-box {
+                padding: 15px;
+            }
+
             .card {
                 padding: 36px 24px;
                 max-width: 95%;
@@ -1251,10 +1309,6 @@
                 font-size: 16px;
                 width: 100%;
                 justify-content: center;
-            }
-
-            body {
-                cursor: auto;
             }
 
             .mouse-cursor {
@@ -1330,12 +1384,12 @@
     <!-- Custom cursor -->
     <div class="mouse-cursor" id="cursor"></div>
 
-    <!-- Flying creatures container - FIXED POSITION -->
+    <!-- Flying creatures container - টেক্সটের নিচে থাকবে -->
     <div class="flying-creatures" id="creatures"></div>
 
     <!-- Main Container -->
     <div class="main-container">
-        <!-- Mobile Layout (shown by default) -->
+        <!-- Mobile Layout -->
         <div class="mobile-layout">
             <!-- Time Container with integrated Date Slider -->
             <div class="time-container">
@@ -1387,11 +1441,11 @@
                                 <div class="date-simple bangla-date" id="banglaSimple">বঙ্গাব্দ</div>
                             </div>
                             
-                            <!-- Hijri Date Slide -->
+                            <!-- Hijri Date Slide - বাংলায় দেখানো হবে -->
                             <div class="date-slide" data-index="2">
-                                <div class="date-type">التاريخ الهجري</div>
-                                <div class="date-value hijri-date" id="hijriDate">١٤ رجب ١٤٤٧</div>
-                                <div class="date-simple hijri-date" id="hijriSimple">هـ</div>
+                                <div class="date-type">হিজরি তারিখ</div>
+                                <div class="date-value hijri-date" id="hijriDate">১৪ রজব ১৪৪৭</div>
+                                <div class="date-simple hijri-date" id="hijriSimple">হিজরি</div>
                             </div>
                         </div>
                     </div>
@@ -1405,7 +1459,7 @@
                 </div>
             </div>
 
-            <!-- Center Card for Login - Now higher up -->
+            <!-- Center Card for Login -->
             <div class="center-card-container">
                 <main class="card" role="main">
                     <h1 class="title">Welcome back</h1>
@@ -1423,10 +1477,10 @@
             </div>
         </div>
 
-        <!-- Desktop Layout (hidden on mobile) -->
+        <!-- Desktop Layout -->
         <div class="desktop-layout">
             <div class="datetime-container">
-                <!-- Date Card -->
+                <!-- Date Card - এখন বর্ডার সহ দেখাবে -->
                 <div class="date-container-full">
                     <div class="date-card">
                         <div class="date-container-grid">
@@ -1441,9 +1495,9 @@
                                 <div class="date-simple bangla-date" id="desktopBanglaSimple">বঙ্গাব্দ</div>
                             </div>
                             <div class="date-box">
-                                <div class="date-type">التاريخ الهجري</div>
-                                <div class="date-value hijri-date" id="desktopHijriDate">١٤ رجب ١٤٤٧</div>
-                                <div class="date-simple hijri-date" id="desktopHijriSimple">هـ</div>
+                                <div class="date-type">হিজরি তারিখ</div>
+                                <div class="date-value hijri-date" id="desktopHijriDate">১৪ রজব ১৪৪৭</div>
+                                <div class="date-simple hijri-date" id="desktopHijriSimple">হিজরি</div>
                             </div>
                         </div>
                     </div>
@@ -1518,7 +1572,7 @@
             createCreatures();
 
             // ============================================
-            // CREATE CREATURES FUNCTION (FIXED)
+            // CREATE CREATURES FUNCTION
             // ============================================
             function createCreatures() {
                 console.log('Creating creatures...');
@@ -2161,9 +2215,9 @@
                 banglaDate.textContent = banglaFull;
                 desktopBanglaDate.textContent = banglaFull;
 
-                // Hijri date
-                const hijriDateResult = getHijriDate(date);
-                const hijriFull = hijriDateResult.arabicFull;
+                // Hijri date in Bengali
+                const hijriDateResult = getHijriDateBangla(date);
+                const hijriFull = `${hijriDateResult.day} ${hijriDateResult.month} ${hijriDateResult.year}`;
                 
                 hijriDate.textContent = hijriFull;
                 desktopHijriDate.textContent = hijriFull;
@@ -2214,52 +2268,52 @@
                 };
             }
 
-            function getHijriDate(gregorianDate) {
+            function getHijriDateBangla(gregorianDate) {
+                // হিজরি মাসের নাম বাংলায়
+                const hijriMonthsBangla = [
+                    'মুহররম', 'সফর', 'রবিউল আউয়াল', 'রবিউস সানি',
+                    'জুমাদাল উলা', 'জুমাদাস সানি', 'রজব', 'শাবান',
+                    'রমজান', 'শাওয়াল', 'জিলকদ', 'জিলহজ'
+                ];
+                
                 const gregorianYear = gregorianDate.getFullYear();
                 const gregorianMonth = gregorianDate.getMonth() + 1;
                 const gregorianDay = gregorianDate.getDate();
                 
-                let hijriDay, hijriMonth, hijriYear;
+                // সরলীকৃত হিসাব (সঠিক হিসাব জটিল)
+                // 1 Jan 2026 = 11 Jumada al-Thani 1447 (আনুমানিক)
+                const baseHijri = {
+                    year: 1447,
+                    month: 6, // রজব মাসের আগে
+                    day: 11
+                };
                 
-                if (gregorianYear === 2026 && gregorianMonth === 1) {
-                    hijriYear = 1447;
-                    hijriMonth = "رجب";
+                // দিনের পার্থক্য
+                const baseDate = new Date(2026, 0, 1); // 1 Jan 2026
+                const diffDays = Math.floor((gregorianDate - baseDate) / (1000 * 60 * 60 * 24));
+                
+                let hijriDay = baseHijri.day + diffDays;
+                let hijriMonthIndex = baseHijri.month;
+                let hijriYear = baseHijri.year;
+                
+                // হিজরি মাস 29-30 দিনের হয়
+                while (hijriDay > 30) {
+                    hijriDay -= 30;
+                    hijriMonthIndex += 1;
                     
-                    hijriDay = 10 + gregorianDay;
-                    
-                    if (hijriDay > 30) {
-                        hijriDay = hijriDay - 30;
-                        hijriMonth = "شعبان";
-                    }
-                } else {
-                    const baseDate = new Date(2026, 0, 1);
-                    const diffDays = Math.floor((gregorianDate - baseDate) / (1000 * 60 * 60 * 24));
-                    
-                    hijriYear = 1447;
-                    hijriMonth = "رجب";
-                    hijriDay = 11 + diffDays;
-                    
-                    while (hijriDay > 30) {
-                        hijriDay -= 30;
-                        if (hijriMonth === "رجب") {
-                            hijriMonth = "شعبان";
-                        } else if (hijriMonth === "شعبان") {
-                            hijriMonth = "رمضان";
-                        } else if (hijriMonth === "رمضان") {
-                            hijriMonth = "شوال";
-                            hijriYear = 1448;
-                        }
+                    if (hijriMonthIndex >= 12) {
+                        hijriMonthIndex = 0;
+                        hijriYear += 1;
                     }
                 }
                 
-                const arabicDay = convertToArabicNumber(hijriDay);
-                const arabicYear = convertToArabicNumber(hijriYear);
+                // হিজরি মাসের নাম
+                const hijriMonth = hijriMonthsBangla[hijriMonthIndex];
                 
                 return {
-                    arabicFull: `${arabicDay} ${hijriMonth} ${arabicYear}`,
                     day: convertToBanglaNumber(hijriDay),
                     month: hijriMonth,
-                    year: hijriYear
+                    year: convertToBanglaNumber(hijriYear)
                 };
             }
 
