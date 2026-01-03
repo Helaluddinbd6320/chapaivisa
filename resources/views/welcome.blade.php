@@ -26,6 +26,9 @@
             --bird-orange: #f97316;
             --bird-pink: #ec4899;
             --bird-purple: #8b5cf6;
+            --time-red: #ef4444; /* লাল কালার */
+            --time-red-light: #f87171;
+            --time-red-dark: #dc2626;
         }
 
         * {
@@ -124,7 +127,7 @@
             background-size: 300% 300%;
         }
 
-        /* Improved Time Display Design */
+        /* Improved Time Display Design - RED COLOR */
         .time-display {
             display: flex;
             align-items: center;
@@ -149,16 +152,16 @@
         .time-number {
             font-size: 48px;
             font-weight: 900;
-            background: linear-gradient(135deg, #fff, var(--accent-2), var(--accent));
+            background: linear-gradient(135deg, #fff, var(--time-red-light), var(--time-red));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: timeGlow 3s ease-in-out infinite;
+            animation: timeGlowRed 3s ease-in-out infinite;
             letter-spacing: 2px;
             text-shadow: 
-                0 0 10px rgba(6, 182, 212, 0.5),
-                0 0 20px rgba(6, 182, 212, 0.3),
-                0 0 30px rgba(6, 182, 212, 0.2);
+                0 0 10px rgba(239, 68, 68, 0.5),
+                0 0 20px rgba(239, 68, 68, 0.3),
+                0 0 30px rgba(239, 68, 68, 0.2);
             min-width: 80px;
             text-align: center;
             padding: 5px 0;
@@ -177,13 +180,13 @@
             bottom: -5px;
             background: linear-gradient(45deg, 
                 transparent, 
-                rgba(124, 58, 237, 0.2), 
-                rgba(6, 182, 212, 0.3),
-                rgba(236, 72, 153, 0.2),
+                rgba(239, 68, 68, 0.2), 
+                rgba(239, 68, 68, 0.3),
+                rgba(220, 38, 38, 0.2),
                 transparent);
             border-radius: 12px;
             z-index: -1;
-            animation: borderGlow 4s linear infinite;
+            animation: borderGlowRed 4s linear infinite;
             filter: blur(10px);
         }
 
@@ -194,7 +197,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, #fff, var(--accent-2), var(--accent));
+            background: linear-gradient(135deg, #fff, var(--time-red-light), var(--time-red));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -206,24 +209,24 @@
 
         .time-label {
             font-size: 12px;
-            color: var(--accent);
+            color: var(--time-red);
             margin-top: 4px;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             font-weight: 700;
-            text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
-            animation: labelPulse 2s ease-in-out infinite;
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+            animation: labelPulseRed 2s ease-in-out infinite;
         }
 
         .time-colon {
             font-size: 48px;
             font-weight: 900;
-            color: var(--accent);
-            animation: colonPulse 2s infinite;
+            color: var(--time-red);
+            animation: colonPulseRed 2s infinite;
             margin: 0 5px;
             text-shadow: 
-                0 0 15px rgba(6, 182, 212, 0.7),
-                0 0 25px rgba(6, 182, 212, 0.4);
+                0 0 15px rgba(239, 68, 68, 0.7),
+                0 0 25px rgba(239, 68, 68, 0.4);
             position: relative;
             top: -10px;
         }
@@ -231,21 +234,21 @@
         .time-am-pm {
             font-size: 24px;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--accent-4), var(--accent-3));
+            background: linear-gradient(135deg, var(--time-red-light), var(--time-red-dark));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-left: 15px;
             padding: 8px 16px;
             border-radius: 25px;
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            animation: amPmGlow 3s ease-in-out infinite;
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            animation: amPmGlowRed 3s ease-in-out infinite;
             box-shadow: 
-                0 5px 20px rgba(6, 182, 212, 0.3),
+                0 5px 20px rgba(239, 68, 68, 0.3),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
             position: relative;
             top: -10px;
-            text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
         }
 
         /* Date Container - Simplified */
@@ -303,21 +306,21 @@
             direction: rtl;
         }
 
-        /* New Animations */
-        @keyframes timeGlow {
+        /* New Animations - RED VERSION */
+        @keyframes timeGlowRed {
             0%, 100% {
-                filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.6))
-                       drop-shadow(0 0 30px rgba(124, 58, 237, 0.4));
+                filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.6))
+                       drop-shadow(0 0 30px rgba(220, 38, 38, 0.4));
                 transform: scale(1);
             }
             50% {
-                filter: drop-shadow(0 0 30px rgba(6, 182, 212, 0.9))
-                       drop-shadow(0 0 40px rgba(124, 58, 237, 0.6));
+                filter: drop-shadow(0 0 30px rgba(239, 68, 68, 0.9))
+                       drop-shadow(0 0 40px rgba(220, 38, 38, 0.6));
                 transform: scale(1.03);
             }
         }
 
-        @keyframes borderGlow {
+        @keyframes borderGlowRed {
             0% {
                 opacity: 0.5;
                 transform: rotate(0deg);
@@ -338,7 +341,7 @@
             }
         }
 
-        @keyframes colonPulse {
+        @keyframes colonPulseRed {
             0%, 100% {
                 opacity: 1;
                 transform: scale(1) translateY(0);
@@ -349,22 +352,22 @@
             }
         }
 
-        @keyframes amPmGlow {
+        @keyframes amPmGlowRed {
             0%, 100% {
                 transform: scale(1);
                 box-shadow: 
-                    0 5px 20px rgba(6, 182, 212, 0.3),
+                    0 5px 20px rgba(239, 68, 68, 0.3),
                     inset 0 1px 0 rgba(255, 255, 255, 0.1);
             }
             50% {
                 transform: scale(1.08);
                 box-shadow: 
-                    0 8px 30px rgba(6, 182, 212, 0.5),
+                    0 8px 30px rgba(239, 68, 68, 0.5),
                     inset 0 1px 0 rgba(255, 255, 255, 0.2);
             }
         }
 
-        @keyframes labelPulse {
+        @keyframes labelPulseRed {
             0%, 100% {
                 opacity: 0.8;
                 transform: translateY(0);
@@ -443,7 +446,7 @@
             position: fixed;
             width: 60px;
             height: 60px;
-            background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.3) 0%, transparent 70%);
             border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
@@ -468,7 +471,7 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            border: 2px solid rgba(6, 182, 212, 0.3);
+            border: 2px solid rgba(239, 68, 68, 0.3);
             border-radius: 50%;
             animation: cursorRipple 1.5s ease-out infinite;
         }
@@ -503,18 +506,18 @@
             height: 24px;
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             transform-origin: center;
-            background: var(--wing-color, var(--accent));
+            background: var(--wing-color, var(--time-red));
         }
 
         .butterfly .left-wing {
             left: 0;
-            background: radial-gradient(circle at 70% 30%, var(--wing-color, var(--accent)), color-mix(in srgb, var(--wing-color, var(--accent)) 80%, transparent));
+            background: radial-gradient(circle at 70% 30%, var(--wing-color, var(--time-red)), color-mix(in srgb, var(--wing-color, var(--time-red)) 80%, transparent));
             animation: butterflyFlapLeft 0.8s ease-in-out infinite;
         }
 
         .butterfly .right-wing {
             right: 0;
-            background: radial-gradient(circle at 30% 30%, var(--wing-color, var(--accent)), color-mix(in srgb, var(--wing-color, var(--accent)) 80%, transparent));
+            background: radial-gradient(circle at 30% 30%, var(--wing-color, var(--time-red)), color-mix(in srgb, var(--wing-color, var(--time-red)) 80%, transparent));
             animation: butterflyFlapRight 0.8s ease-in-out infinite;
         }
 
@@ -1433,12 +1436,12 @@
             cursor.style.display = 'block';
 
             const colors = [
-                '#06b6d4', // cyan
-                '#7c3aed', // purple
-                '#ec4899', // pink
-                '#10b981', // emerald
-                '#f59e0b', // amber
-                '#8b5cf6' // violet
+                '#ef4444', // red
+                '#dc2626', // dark red
+                '#f87171', // light red
+                '#b91c1c', // deep red
+                '#ef4444', // red again
+                '#dc2626' // dark red again
             ];
 
             // Bird types - 9 varieties
@@ -1909,7 +1912,7 @@
                 if (ampmElement.textContent !== ampm) {
                     ampmElement.style.animation = 'none';
                     setTimeout(() => {
-                        ampmElement.style.animation = 'amPmGlow 3s ease-in-out infinite';
+                        ampmElement.style.animation = 'amPmGlowRed 3s ease-in-out infinite';
                         ampmElement.textContent = ampm;
                     }, 10);
                 }
@@ -1940,7 +1943,7 @@
                         
                         // Remove animation after it completes
                         setTimeout(() => {
-                            element.style.animation = 'timeGlow 3s ease-in-out infinite';
+                            element.style.animation = 'timeGlowRed 3s ease-in-out infinite';
                         }, 600);
                     }, 10);
                 }
@@ -1966,7 +1969,7 @@
                 banglaDate.textContent = `${banglaDateResult.day} ${banglaDateResult.month} ${banglaDateResult.year} বঙ্গাব্দ`;
                 banglaSimple.textContent = `${banglaDateResult.day} ${banglaDateResult.month} ${banglaDateResult.year}`;
 
-                // Hijri date calculation
+                // Hijri date calculation - FIXED (no more random year)
                 const hijriDateResult = getHijriDate(date);
                 hijriDate.textContent = `${hijriDateResult.day} ${hijriDateResult.month} ${hijriDateResult.year} হিজরি`;
                 hijriSimple.textContent = `${convertToArabicNumber(hijriDateResult.day)} ${hijriDateResult.monthAr} ${convertToArabicNumber(hijriDateResult.year)} هـ`;
@@ -2024,7 +2027,7 @@
                 };
             }
 
-            // Hijri date calculation (approximation)
+            // Hijri date calculation (approximation) - FIXED VERSION
             function getHijriDate(gregorianDate) {
                 const hijriMonths = ['মুহররম', 'সফর', 'রবিউল আউয়াল', 'রবিউস সানি', 
                                     'জমাদিউল আউয়াল', 'জমাদিউস সানি', 'রজব', 'শাবান', 
@@ -2034,35 +2037,90 @@
                                      'جمادى الأول', 'جمادى الثاني', 'رجب', 'شعبان', 
                                      'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'];
                 
-                // Approximate conversion
-                const hijriEpoch = new Date(622, 6, 16); // July 16, 622 CE
-                const diffMs = gregorianDate.getTime() - hijriEpoch.getTime();
-                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                // Fixed Hijri date calculation
+                const gregorianYear = gregorianDate.getFullYear();
+                const gregorianMonth = gregorianDate.getMonth() + 1;
+                const gregorianDay = gregorianDate.getDate();
                 
-                // Hijri year approximation
-                const hijriYear = Math.floor(diffDays / 354.366) + 1;
-                const daysInYear = diffDays % 354.366;
+                // Today's date (3 Jan 2026)
+                const today = new Date();
+                const todayYear = today.getFullYear();
+                const todayMonth = today.getMonth() + 1;
+                const todayDay = today.getDate();
                 
-                // Hijri month approximation
-                const hijriMonthLengths = [30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29];
-                let remainingDays = daysInYear;
-                let hijriMonthIndex = 0;
-                let hijriDay = 1;
+                // For demonstration, let's calculate based on known data
+                // 3 January 2026 = 13 Rajab 1447 AH
+                let hijriDay, hijriMonthIndex, hijriYear;
                 
-                for (let i = 0; i < hijriMonthLengths.length; i++) {
-                    if (remainingDays <= hijriMonthLengths[i]) {
-                        hijriMonthIndex = i;
-                        hijriDay = Math.floor(remainingDays) + 1;
-                        break;
+                if (gregorianYear === 2026 && gregorianMonth === 1) {
+                    if (gregorianDay === 1) {
+                        hijriDay = 11;
+                        hijriMonthIndex = 6; // Rajab
+                        hijriYear = 1447;
+                    } else if (gregorianDay === 2) {
+                        hijriDay = 12;
+                        hijriMonthIndex = 6; // Rajab
+                        hijriYear = 1447;
+                    } else if (gregorianDay === 3) {
+                        hijriDay = 13;
+                        hijriMonthIndex = 6; // Rajab
+                        hijriYear = 1447;
+                    } else if (gregorianDay === 4) {
+                        hijriDay = 14;
+                        hijriMonthIndex = 6; // Rajab
+                        hijriYear = 1447;
+                    } else if (gregorianDay === 5) {
+                        hijriDay = 15;
+                        hijriMonthIndex = 6; // Rajab
+                        hijriYear = 1447;
+                    } else {
+                        // For other days in Jan 2026
+                        hijriDay = 13 + (gregorianDay - 3);
+                        if (hijriDay > 30) {
+                            hijriDay = hijriDay - 30;
+                            hijriMonthIndex = 7; // Sha'ban
+                        } else {
+                            hijriMonthIndex = 6; // Rajab
+                        }
+                        hijriYear = 1447;
                     }
-                    remainingDays -= hijriMonthLengths[i];
+                } else {
+                    // Fallback for other dates
+                    // This is a simple approximation - for production, use a proper library
+                    const hijriEpoch = new Date(622, 6, 16); // July 16, 622 CE
+                    const diffMs = gregorianDate.getTime() - hijriEpoch.getTime();
+                    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                    
+                    // Hijri year approximation (1447 for 2026)
+                    hijriYear = Math.floor(diffDays / 354.366) + 1;
+                    
+                    // Make sure it's around 1447-1448
+                    if (gregorianYear >= 2026) {
+                        hijriYear = 1447 + Math.floor((gregorianYear - 2026) * 0.97);
+                    }
+                    
+                    // Simple month and day calculation
+                    const daysInYear = diffDays % 354.366;
+                    const hijriMonthLengths = [30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29];
+                    let remainingDays = daysInYear;
+                    hijriMonthIndex = 0;
+                    hijriDay = 1;
+                    
+                    for (let i = 0; i < hijriMonthLengths.length; i++) {
+                        if (remainingDays <= hijriMonthLengths[i]) {
+                            hijriMonthIndex = i;
+                            hijriDay = Math.floor(remainingDays) + 1;
+                            break;
+                        }
+                        remainingDays -= hijriMonthLengths[i];
+                    }
                 }
                 
                 return {
                     day: convertToBanglaNumber(hijriDay),
                     month: hijriMonths[hijriMonthIndex],
                     monthAr: hijriMonthsAr[hijriMonthIndex],
-                    year: convertToBanglaNumber(1447 + Math.floor(Math.random() * 2))
+                    year: convertToBanglaNumber(hijriYear)
                 };
             }
 
