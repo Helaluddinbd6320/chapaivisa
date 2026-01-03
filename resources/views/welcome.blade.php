@@ -60,76 +60,71 @@
             animation: gradientBackground 30s ease infinite;
             background-size: 400% 400%;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        /* Main layout for desktop */
-        .desktop-layout {
-            display: none;
+        /* Main layout for all devices */
+        .main-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
         }
 
-        /* Time display container for mobile */
+        /* Top section - Date and Time side by side */
+        .top-section {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            width: 100%;
+        }
+
+        /* Date-Time container for side by side layout */
+        .datetime-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            width: 100%;
+        }
+
+        @media (min-width: 1024px) {
+            .datetime-container {
+                flex-direction: row;
+                gap: 40px;
+            }
+            
+            .datetime-container > div {
+                flex: 1;
+            }
+        }
+
+        /* Time display container */
         .time-container {
             position: relative;
             width: 100%;
-            max-width: 540px;
-            margin-bottom: 30px;
             z-index: 100;
             animation: fadeInUp 0.8s ease 0.1s both;
         }
 
-        /* For desktop: hide mobile time container */
-        @media (min-width: 1024px) {
-            .time-container {
-                display: none;
-            }
-            
-            body {
-                padding: 40px;
-            }
-            
-            .desktop-layout {
-                display: flex;
-                width: 100%;
-                max-width: 1400px;
-                margin: 0 auto;
-                gap: 40px;
-                align-items: flex-start;
-                justify-content: center;
-                min-height: 100vh;
-            }
-            
-            .desktop-left {
-                flex: 1;
-                max-width: 400px;
-                position: sticky;
-                top: 40px;
-                animation: fadeInLeft 0.8s ease 0.1s both;
-            }
-            
-            .desktop-right {
-                flex: 1;
-                max-width: 400px;
-                position: sticky;
-                top: 40px;
-                animation: fadeInRight 0.8s ease 0.2s both;
-            }
-            
-            .desktop-center {
-                flex: 0 0 auto;
-                width: 540px;
-                animation: fadeInUp 0.8s ease 0.3s both;
-                position: relative;
-                z-index: 110;
-            }
+        /* Date container */
+        .date-container-full {
+            position: relative;
+            width: 100%;
+            z-index: 100;
+            animation: fadeInUp 0.8s ease 0.2s both;
         }
 
-        .time-card {
+        .time-card, .date-card {
             background: linear-gradient(135deg,
                     rgba(255, 255, 255, 0.05) 0%,
                     rgba(255, 255, 255, 0.02) 100%);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 16px;
-            padding: 20px;
+            padding: 25px;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             box-shadow:
@@ -141,7 +136,7 @@
             height: 100%;
         }
 
-        .time-card:hover {
+        .time-card:hover, .date-card:hover {
             transform: translateY(-5px);
             box-shadow:
                 0 25px 50px rgba(2, 6, 23, 0.8),
@@ -154,18 +149,18 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-bottom: 15px;
-            padding-bottom: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .location-flag {
-            font-size: 24px;
+            font-size: 28px;
             animation: flagWave 3s ease-in-out infinite;
         }
 
         .location-name {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
             background: linear-gradient(135deg, var(--accent-4), var(--accent));
             -webkit-background-clip: text;
@@ -181,7 +176,7 @@
             align-items: center;
             justify-content: center;
             gap: 5px;
-            margin: 20px 0;
+            margin: 25px 0;
         }
 
         .time-segment {
@@ -198,7 +193,7 @@
         }
 
         .time-number {
-            font-size: 48px;
+            font-size: 52px;
             font-weight: 900;
             background: linear-gradient(135deg, var(--time-white), var(--time-light), var(--time-gray));
             -webkit-background-clip: text;
@@ -210,13 +205,20 @@
                 0 0 10px rgba(255, 255, 255, 0.5),
                 0 0 20px rgba(255, 255, 255, 0.3),
                 0 0 30px rgba(255, 255, 255, 0.2);
-            min-width: 80px;
+            min-width: 85px;
             text-align: center;
             padding: 5px 0;
             position: relative;
             z-index: 2;
             transform-style: preserve-3d;
             transition: transform 0.5s ease;
+        }
+
+        @media (min-width: 1024px) {
+            .time-number {
+                font-size: 60px;
+                min-width: 100px;
+            }
         }
 
         .time-number::before {
@@ -256,9 +258,9 @@
         }
 
         .time-label {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--time-light);
-            margin-top: 4px;
+            margin-top: 5px;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             font-weight: 700;
@@ -267,7 +269,7 @@
         }
 
         .time-colon {
-            font-size: 48px;
+            font-size: 52px;
             font-weight: 900;
             color: var(--time-white);
             animation: colonPulseWhite 2s infinite;
@@ -279,15 +281,21 @@
             top: -10px;
         }
 
+        @media (min-width: 1024px) {
+            .time-colon {
+                font-size: 60px;
+            }
+        }
+
         .time-am-pm {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 800;
             background: linear-gradient(135deg, var(--time-light), var(--time-white));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-left: 15px;
-            padding: 8px 16px;
+            padding: 10px 20px;
             border-radius: 25px;
             border: 2px solid rgba(255, 255, 255, 0.2);
             animation: amPmGlowWhite 3s ease-in-out infinite;
@@ -299,52 +307,32 @@
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
-        /* Date Container */
-        .date-container {
+        /* Date Container - Three dates in one card */
+        .date-container-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 25px;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 10px;
         }
 
-        /* For desktop left panel: vertical layout */
-        @media (min-width: 1024px) {
-            .desktop-left .date-container {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .desktop-left .date-box {
-                height: auto;
-                min-height: 120px;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                padding: 20px;
-                text-align: center;
-            }
-            
-            .desktop-left .date-value {
-                font-size: 16px;
-                margin-bottom: 8px;
-            }
-            
-            .desktop-left .date-simple {
-                font-size: 13px;
+        @media (min-width: 768px) {
+            .date-container-grid {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
 
         .date-box {
             background: rgba(255, 255, 255, 0.03);
             border-radius: 12px;
-            padding: 15px;
+            padding: 20px;
             border: 1px solid rgba(255, 255, 255, 0.05);
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             text-align: center;
+            min-height: 140px;
         }
 
         .date-box:hover {
@@ -354,545 +342,50 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
+        .date-type {
+            font-size: 12px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
         .date-value {
-            font-size: 15px;
+            font-size: 18px;
             font-weight: 700;
             color: #fff;
             line-height: 1.4;
             text-align: center;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .date-simple {
-            font-size: 12px;
+            font-size: 14px;
             color: rgba(226, 232, 240, 0.7);
             font-weight: 500;
-            margin-top: 3px;
+            margin-top: 5px;
         }
 
         .bangla-date {
             font-family: "Noto Sans Bengali", "Kalpurush", "SolaimanLipi", sans-serif;
-            font-size: 16px;
         }
 
         .hijri-date {
             font-family: "Noto Sans Arabic", "Scheherazade", sans-serif;
-            font-size: 16px;
             direction: rtl;
         }
 
-        /* Desktop time display (right panel) */
-        @media (min-width: 1024px) {
-            .desktop-right .time-card {
-                height: 100%;
-                min-height: 400px;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-            }
-            
-            .desktop-right .time-number {
-                font-size: 56px;
-                min-width: 90px;
-            }
-            
-            .desktop-right .time-colon {
-                font-size: 56px;
-            }
-            
-            .desktop-right .time-am-pm {
-                font-size: 28px;
-                padding: 10px 20px;
-            }
-            
-            .desktop-right .location-name {
-                font-size: 20px;
-            }
-        }
-
-        /* New Animations - WHITE VERSION */
-        @keyframes timeGlowWhite {
-            0%, 100% {
-                filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.6))
-                       drop-shadow(0 0 30px rgba(241, 245, 249, 0.4));
-                transform: scale(1);
-            }
-            50% {
-                filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.9))
-                       drop-shadow(0 0 40px rgba(241, 245, 249, 0.6));
-                transform: scale(1.03);
-            }
-        }
-
-        @keyframes borderGlowWhite {
-            0% {
-                opacity: 0.5;
-                transform: rotate(0deg);
-            }
-            25% {
-                opacity: 0.8;
-            }
-            50% {
-                opacity: 0.5;
-                transform: rotate(180deg);
-            }
-            75% {
-                opacity: 0.8;
-            }
-            100% {
-                opacity: 0.5;
-                transform: rotate(360deg);
-            }
-        }
-
-        @keyframes colonPulseWhite {
-            0%, 100% {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-            50% {
-                opacity: 0.7;
-                transform: scale(1.1) translateY(-2px);
-            }
-        }
-
-        @keyframes amPmGlowWhite {
-            0%, 100% {
-                transform: scale(1);
-                box-shadow: 
-                    0 5px 20px rgba(255, 255, 255, 0.2),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            }
-            50% {
-                transform: scale(1.08);
-                box-shadow: 
-                    0 8px 30px rgba(255, 255, 255, 0.3),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            }
-        }
-
-        @keyframes labelPulseWhite {
-            0%, 100% {
-                opacity: 0.8;
-                transform: translateY(0);
-            }
-            50% {
-                opacity: 1;
-                transform: translateY(-2px);
-            }
-        }
-
-        @keyframes digitFlip {
-            0% {
-                transform: rotateX(0deg);
-            }
-            50% {
-                transform: rotateX(90deg);
-            }
-            100% {
-                transform: rotateX(0deg);
-            }
-        }
-
-        /* Desktop animations */
-        @keyframes fadeInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes fadeInRight {
-            from {
-                opacity: 0;
-                transform: translateX(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        /* Animated background */
-        @keyframes gradientBackground {
-            0% {
-                background: 
-                    radial-gradient(1200px 600px at 10% 20%, rgba(124, 58, 237, 0.15), transparent),
-                    radial-gradient(1000px 500px at 90% 80%, rgba(6, 182, 212, 0.12), transparent),
-                    radial-gradient(800px 400px at 50% 50%, rgba(236, 72, 153, 0.08), transparent),
-                    linear-gradient(180deg, #0f172a, #0b1220);
-            }
-            25% {
-                background: 
-                    radial-gradient(1200px 600px at 20% 30%, rgba(124, 58, 237, 0.2), transparent),
-                    radial-gradient(1000px 500px at 80% 70%, rgba(6, 182, 212, 0.18), transparent),
-                    radial-gradient(800px 400px at 60% 40%, rgba(236, 72, 153, 0.12), transparent),
-                    linear-gradient(180deg, #1e293b, #0f172a);
-            }
-            50% {
-                background: 
-                    radial-gradient(1200px 600px at 30% 40%, rgba(124, 58, 237, 0.25), transparent),
-                    radial-gradient(1000px 500px at 70% 60%, rgba(6, 182, 212, 0.22), transparent),
-                    radial-gradient(800px 400px at 40% 60%, rgba(236, 72, 153, 0.15), transparent),
-                    linear-gradient(180deg, #334155, #1e293b);
-            }
-            75% {
-                background: 
-                    radial-gradient(1200px 600px at 40% 50%, rgba(124, 58, 237, 0.2), transparent),
-                    radial-gradient(1000px 500px at 60% 50%, rgba(6, 182, 212, 0.18), transparent),
-                    radial-gradient(800px 400px at 50% 50%, rgba(236, 72, 153, 0.12), transparent),
-                    linear-gradient(180deg, #1e293b, #0f172a);
-            }
-            100% {
-                background: 
-                    radial-gradient(1200px 600px at 10% 20%, rgba(124, 58, 237, 0.15), transparent),
-                    radial-gradient(1000px 500px at 90% 80%, rgba(6, 182, 212, 0.12), transparent),
-                    radial-gradient(800px 400px at 50% 50%, rgba(236, 72, 153, 0.08), transparent),
-                    linear-gradient(180deg, #0f172a, #0b1220);
-            }
-        }
-
-        @keyframes flagWave {
-            0%, 100% {
-                transform: rotate(0deg) scale(1);
-            }
-            25% {
-                transform: rotate(5deg) scale(1.1);
-            }
-            75% {
-                transform: rotate(-5deg) scale(1.1);
-            }
-        }
-
-        /* Custom cursor */
-        .mouse-cursor {
-            position: fixed;
-            width: 60px;
-            height: 60px;
-            background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, transparent 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            transition: transform 0.1s;
-            mix-blend-mode: screen;
-            animation: cursorPulse 2s ease-in-out infinite;
-        }
-
-        .mouse-cursor::before {
-            content: '✨';
-            position: absolute;
-            font-size: 24px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: cursorFloat 1.5s ease-in-out infinite;
-        }
-
-        .mouse-cursor::after {
-            content: '';
-            position: absolute;
+        /* Center card for login */
+        .center-card-container {
             width: 100%;
-            height: 100%;
-            border: 2px solid rgba(6, 182, 212, 0.3);
-            border-radius: 50%;
-            animation: cursorRipple 1.5s ease-out infinite;
+            display: flex;
+            justify-content: center;
+            animation: fadeInUp 0.8s ease 0.4s both;
         }
 
-        /* Flying creatures container */
-        .flying-creatures {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: -1;
-            overflow: hidden;
-            pointer-events: none;
-        }
-
-        /* Butterfly styles - MULTICOLOR butterflies */
-        .butterfly {
-            position: absolute;
-            width: 35px;
-            height: 35px;
-            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
-            opacity: 0.7;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .butterfly .left-wing,
-        .butterfly .right-wing {
-            position: absolute;
-            width: 17px;
-            height: 24px;
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            transform-origin: center;
-            background: var(--wing-color, #06b6d4);
-        }
-
-        .butterfly .left-wing {
-            left: 0;
-            background: radial-gradient(circle at 70% 30%, var(--wing-color), color-mix(in srgb, var(--wing-color) 80%, transparent));
-            animation: butterflyFlapLeft 0.8s ease-in-out infinite;
-        }
-
-        .butterfly .right-wing {
-            right: 0;
-            background: radial-gradient(circle at 30% 30%, var(--wing-color), color-mix(in srgb, var(--wing-color) 80%, transparent));
-            animation: butterflyFlapRight 0.8s ease-in-out infinite;
-        }
-
-        .butterfly .body {
-            position: absolute;
-            width: 3px;
-            height: 24px;
-            background: linear-gradient(to bottom, #fff, #ccc);
-            left: 50%;
-            top: 5px;
-            transform: translateX(-50%);
-            border-radius: 1.5px;
-            box-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
-        }
-
-        .butterfly .antenna {
-            position: absolute;
-            width: 1px;
-            height: 10px;
-            background: #fff;
-            top: 0;
-            transform-origin: bottom;
-        }
-
-        .butterfly .antenna.left {
-            left: calc(50% - 1px);
-            transform: rotate(-20deg);
-        }
-
-        .butterfly .antenna.right {
-            right: calc(50% - 1px);
-            transform: rotate(20deg);
-        }
-
-        /* Bird styles */
-        .bird {
-            position: absolute;
-            width: 60px;
-            height: 42px;
-            opacity: 0;
-            z-index: 1;
-            pointer-events: none;
-            filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
-        }
-
-        /* Bird body */
-        .bird-body {
-            position: absolute;
-            width: 36px;
-            height: 24px;
-            background: var(--bird-body-color, var(--bird-gray));
-            border-radius: 50% 50% 40% 40%;
-            left: 12px;
-            top: 9px;
-            box-shadow:
-                inset 0 -3px 5px rgba(0, 0, 0, 0.2),
-                0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Bird head */
-        .bird-head {
-            position: absolute;
-            width: 21px;
-            height: 21px;
-            background: var(--bird-head-color, var(--bird-gray));
-            border-radius: 50%;
-            left: 0;
-            top: 3px;
-            z-index: 2;
-            box-shadow:
-                inset 0 -2px 3px rgba(0, 0, 0, 0.2),
-                0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Bird beak */
-        .bird-beak {
-            position: absolute;
-            width: 15px;
-            height: 8px;
-            background: var(--bird-beak-color, #ffb347);
-            border-radius: 50% 0 0 50%;
-            left: -8px;
-            top: 9px;
-            z-index: 1;
-            clip-path: polygon(0 0, 100% 25%, 100% 75%, 0 100%);
-            box-shadow: 1px 0 2px rgba(0, 0, 0, 0.2);
-        }
-
-        .bird-beak::after {
-            content: '';
-            position: absolute;
-            width: 2px;
-            height: 1px;
-            background: #000;
-            top: 3px;
-            right: 3px;
-            border-radius: 1px;
-        }
-
-        /* Bird eye */
-        .bird-eye {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #fff;
-            border-radius: 50%;
-            left: 12px;
-            top: 7px;
-            z-index: 3;
-            box-shadow:
-                0 0 0 2px rgba(0, 0, 0, 0.1),
-                inset 0 1px 2px rgba(0, 0, 0, 0.3);
-        }
-
-        .bird-eye::before {
-            content: '';
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: #000;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-        }
-
-        .bird-eye::after {
-            content: '';
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            background: #fff;
-            border-radius: 50%;
-            top: 3px;
-            left: 3px;
-        }
-
-        /* Bird wings */
-        .bird-wing {
-            position: absolute;
-            width: 42px;
-            height: 21px;
-            background: var(--bird-wing-color, var(--bird-gray));
-            border-radius: 50%;
-            top: 12px;
-            left: 15px;
-            transform-origin: 15px 10px;
-            animation: birdWingFlap 0.5s ease-in-out infinite;
-            box-shadow:
-                inset 0 -2px 5px rgba(0, 0, 0, 0.3),
-                0 1px 2px rgba(0, 0, 0, 0.1);
-            z-index: 1;
-        }
-
-        .bird-wing::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg,
-                    transparent 20%,
-                    rgba(255, 255, 255, 0.1) 30%,
-                    rgba(0, 0, 0, 0.1) 70%,
-                    transparent 80%);
-            border-radius: 50%;
-        }
-
-        /* Bird tail */
-        .bird-tail {
-            position: absolute;
-            width: 27px;
-            height: 15px;
-            background: var(--bird-tail-color, var(--bird-gray));
-            right: -15px;
-            top: 18px;
-            border-radius: 0 50% 50% 0;
-            clip-path: polygon(0 0, 100% 50%, 0 100%);
-            box-shadow:
-                inset -2px 0 3px rgba(0, 0, 0, 0.2),
-                1px 0 2px rgba(0, 0, 0, 0.1);
-            z-index: 0;
-        }
-
-        /* Bird types */
-        .bird.sparrow {
-            --bird-body-color: var(--bird-gray);
-            --bird-head-color: var(--bird-black);
-            --bird-wing-color: var(--bird-black);
-            --bird-tail-color: var(--bird-gray);
-        }
-
-        .bird.pigeon {
-            --bird-body-color: var(--bird-white);
-            --bird-head-color: #cbd5e1;
-            --bird-wing-color: var(--bird-white);
-            --bird-tail-color: var(--bird-white);
-        }
-
-        .bird.cardinal {
-            --bird-body-color: var(--bird-red);
-            --bird-head-color: var(--bird-red);
-            --bird-wing-color: #dc2626;
-            --bird-tail-color: var(--bird-red);
-        }
-
-        .bird.bluejay {
-            --bird-body-color: var(--bird-blue);
-            --bird-head-color: var(--bird-blue);
-            --bird-wing-color: #1d4ed8;
-            --bird-tail-color: var(--bird-blue);
-        }
-
-        .bird.canary {
-            --bird-body-color: var(--bird-yellow);
-            --bird-head-color: var(--bird-yellow);
-            --bird-wing-color: #d97706;
-            --bird-tail-color: var(--bird-yellow);
-        }
-
-        .bird.parrot {
-            --bird-body-color: var(--bird-green);
-            --bird-head-color: var(--bird-green);
-            --bird-wing-color: #059669;
-            --bird-tail-color: var(--bird-green);
-        }
-
-        .bird.robin {
-            --bird-body-color: var(--bird-orange);
-            --bird-head-color: var(--bird-orange);
-            --bird-wing-color: #ea580c;
-            --bird-tail-color: var(--bird-orange);
-        }
-
-        .bird.flamingo {
-            --bird-body-color: var(--bird-pink);
-            --bird-head-color: var(--bird-pink);
-            --bird-wing-color: #db2777;
-            --bird-tail-color: var(--bird-pink);
-        }
-
-        .bird.peacock {
-            --bird-body-color: var(--bird-blue);
-            --bird-head-color: var(--bird-green);
-            --bird-wing-color: var(--bird-purple);
-            --bird-tail-color: var(--bird-green);
-        }
-
-        /* Card styles - Center for desktop */
+        /* Card styles - Center */
         .card {
             width: 100%;
             max-width: 540px;
@@ -914,14 +407,10 @@
             transform: translateY(0) scale(1);
             transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
             cursor: auto;
-            margin: 0 auto;
         }
 
-        /* For desktop center */
         @media (min-width: 1024px) {
             .card {
-                margin: 0;
-                transform: translateY(0);
                 animation: cardFloat 3s ease-in-out infinite;
             }
             
@@ -942,14 +431,6 @@
             50% {
                 transform: translateY(-10px);
             }
-        }
-
-        .card:hover {
-            transform: translateY(-12px) scale(1.01);
-            box-shadow:
-                0 35px 70px rgba(2, 6, 23, 1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05),
-                0 0 0 1px rgba(255, 255, 255, 0.02);
         }
 
         .title {
@@ -1091,50 +572,244 @@
             transform: scaleX(1);
         }
 
+        /* New Animations - WHITE VERSION */
+        @keyframes timeGlowWhite {
+            0%, 100% {
+                filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.6))
+                       drop-shadow(0 0 30px rgba(241, 245, 249, 0.4));
+                transform: scale(1);
+            }
+            50% {
+                filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.9))
+                       drop-shadow(0 0 40px rgba(241, 245, 249, 0.6));
+                transform: scale(1.03);
+            }
+        }
+
+        @keyframes borderGlowWhite {
+            0% {
+                opacity: 0.5;
+                transform: rotate(0deg);
+            }
+            25% {
+                opacity: 0.8;
+            }
+            50% {
+                opacity: 0.5;
+                transform: rotate(180deg);
+            }
+            75% {
+                opacity: 0.8;
+            }
+            100% {
+                opacity: 0.5;
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes colonPulseWhite {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(1.1) translateY(-2px);
+            }
+        }
+
+        @keyframes amPmGlowWhite {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 
+                    0 5px 20px rgba(255, 255, 255, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            }
+            50% {
+                transform: scale(1.08);
+                box-shadow: 
+                    0 8px 30px rgba(255, 255, 255, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            }
+        }
+
+        @keyframes labelPulseWhite {
+            0%, 100% {
+                opacity: 0.8;
+                transform: translateY(0);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-2px);
+            }
+        }
+
+        @keyframes digitFlip {
+            0% {
+                transform: rotateX(0deg);
+            }
+            50% {
+                transform: rotateX(90deg);
+            }
+            100% {
+                transform: rotateX(0deg);
+            }
+        }
+
+        /* Animated background */
+        @keyframes gradientBackground {
+            0% {
+                background: 
+                    radial-gradient(1200px 600px at 10% 20%, rgba(124, 58, 237, 0.15), transparent),
+                    radial-gradient(1000px 500px at 90% 80%, rgba(6, 182, 212, 0.12), transparent),
+                    radial-gradient(800px 400px at 50% 50%, rgba(236, 72, 153, 0.08), transparent),
+                    linear-gradient(180deg, #0f172a, #0b1220);
+            }
+            25% {
+                background: 
+                    radial-gradient(1200px 600px at 20% 30%, rgba(124, 58, 237, 0.2), transparent),
+                    radial-gradient(1000px 500px at 80% 70%, rgba(6, 182, 212, 0.18), transparent),
+                    radial-gradient(800px 400px at 60% 40%, rgba(236, 72, 153, 0.12), transparent),
+                    linear-gradient(180deg, #1e293b, #0f172a);
+            }
+            50% {
+                background: 
+                    radial-gradient(1200px 600px at 30% 40%, rgba(124, 58, 237, 0.25), transparent),
+                    radial-gradient(1000px 500px at 70% 60%, rgba(6, 182, 212, 0.22), transparent),
+                    radial-gradient(800px 400px at 40% 60%, rgba(236, 72, 153, 0.15), transparent),
+                    linear-gradient(180deg, #334155, #1e293b);
+            }
+            75% {
+                background: 
+                    radial-gradient(1200px 600px at 40% 50%, rgba(124, 58, 237, 0.2), transparent),
+                    radial-gradient(1000px 500px at 60% 50%, rgba(6, 182, 212, 0.18), transparent),
+                    radial-gradient(800px 400px at 50% 50%, rgba(236, 72, 153, 0.12), transparent),
+                    linear-gradient(180deg, #1e293b, #0f172a);
+            }
+            100% {
+                background: 
+                    radial-gradient(1200px 600px at 10% 20%, rgba(124, 58, 237, 0.15), transparent),
+                    radial-gradient(1000px 500px at 90% 80%, rgba(6, 182, 212, 0.12), transparent),
+                    radial-gradient(800px 400px at 50% 50%, rgba(236, 72, 153, 0.08), transparent),
+                    linear-gradient(180deg, #0f172a, #0b1220);
+            }
+        }
+
+        @keyframes flagWave {
+            0%, 100% {
+                transform: rotate(0deg) scale(1);
+            }
+            25% {
+                transform: rotate(5deg) scale(1.1);
+            }
+            75% {
+                transform: rotate(-5deg) scale(1.1);
+            }
+        }
+
+        /* Custom cursor */
+        .mouse-cursor {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s;
+            mix-blend-mode: screen;
+            animation: cursorPulse 2s ease-in-out infinite;
+        }
+
+        .mouse-cursor::before {
+            content: '✨';
+            position: absolute;
+            font-size: 24px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: cursorFloat 1.5s ease-in-out infinite;
+        }
+
+        .mouse-cursor::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid rgba(6, 182, 212, 0.3);
+            border-radius: 50%;
+            animation: cursorRipple 1.5s ease-out infinite;
+        }
+
+        /* Flying creatures container */
+        .flying-creatures {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        /* Butterfly styles - MULTICOLOR butterflies */
+        .butterfly {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
+            opacity: 0.7;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .butterfly .left-wing,
+        .butterfly .right-wing {
+            position: absolute;
+            width: 17px;
+            height: 24px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            transform-origin: center;
+            background: var(--wing-color, #06b6d4);
+        }
+
+        .butterfly .left-wing {
+            left: 0;
+            background: radial-gradient(circle at 70% 30%, var(--wing-color), color-mix(in srgb, var(--wing-color) 80%, transparent));
+            animation: butterflyFlapLeft 0.8s ease-in-out infinite;
+        }
+
+        .butterfly .right-wing {
+            right: 0;
+            background: radial-gradient(circle at 30% 30%, var(--wing-color), color-mix(in srgb, var(--wing-color) 80%, transparent));
+            animation: butterflyFlapRight 0.8s ease-in-out infinite;
+        }
+
         /* Animations */
         @keyframes butterflyFlapLeft {
-
-            0%,
-            100% {
+            0%, 100% {
                 transform: rotate(0deg) translateY(0) scaleY(1);
             }
-
             50% {
                 transform: rotate(-25deg) translateY(-2px) scaleY(0.9);
             }
         }
 
         @keyframes butterflyFlapRight {
-
-            0%,
-            100% {
+            0%, 100% {
                 transform: rotate(0deg) translateY(0) scaleY(1);
             }
-
             50% {
                 transform: rotate(25deg) translateY(-2px) scaleY(0.9);
             }
         }
 
-        @keyframes birdWingFlap {
-
-            0%,
-            100% {
-                transform: rotate(0deg);
-            }
-
-            50% {
-                transform: rotate(35deg);
-            }
-        }
-
         @keyframes gradientShift {
-
-            0%,
-            100% {
+            0%, 100% {
                 background-position: 0% 50%;
             }
-
             50% {
                 background-position: 100% 50%;
             }
@@ -1145,7 +820,6 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -1153,16 +827,12 @@
         }
 
         @keyframes arrowFloat {
-
-            0%,
-            100% {
+            0%, 100% {
                 transform: translateX(0) rotate(0deg);
             }
-
             33% {
                 transform: translateX(2px) rotate(5deg);
             }
-
             66% {
                 transform: translateX(-1px) rotate(-5deg);
             }
@@ -1172,32 +842,25 @@
             0% {
                 transform: translateX(-100%);
             }
-
             100% {
                 transform: translateX(100%);
             }
         }
 
         @keyframes cursorFloat {
-
-            0%,
-            100% {
+            0%, 100% {
                 transform: translate(-50%, -50%) scale(1);
             }
-
             50% {
                 transform: translate(-50%, -50%) scale(1.2);
             }
         }
 
         @keyframes cursorPulse {
-
-            0%,
-            100% {
+            0%, 100% {
                 opacity: 0.7;
                 transform: translate(-50%, -50%) scale(1);
             }
-
             50% {
                 opacity: 1;
                 transform: translate(-50%, -50%) scale(1.1);
@@ -1209,132 +872,60 @@
                 transform: translate(-50%, -50%) scale(1);
                 opacity: 1;
             }
-
             100% {
                 transform: translate(-50%, -50%) scale(2);
                 opacity: 0;
             }
         }
 
-        /* Bird animation */
-        @keyframes birdFlyOut {
-            0% {
-                opacity: 0;
-                transform: translate(0, 0) scale(0.7) rotate(0deg);
-            }
-
-            10% {
-                opacity: 1;
-                transform: translate(0, 0) scale(1) rotate(0deg);
-            }
-
-            85% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0;
-                transform: translate(var(--fly-x), var(--fly-y)) scale(0.8) rotate(var(--fly-rotate));
-            }
-        }
-
-        /* Butterfly animation */
-        @keyframes butterflyRandomMove {
-            0% {
-                transform: translate(var(--start-x), var(--start-y)) rotate(0deg);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 1;
-            }
-
-            90% {
-                opacity: 1;
-            }
-
-            100% {
-                transform: translate(var(--end-x), var(--end-y)) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
         /* Performance optimization */
-        @media (max-width: 1023px) {
-            .desktop-layout {
-                display: none;
-            }
-            
-            .time-container {
-                display: block;
-            }
-        }
-
         @media (max-width: 768px) {
             body {
                 padding: 24px 16px;
-                display: flex;
-                flex-direction: column;
-                overflow-y: auto;
-                min-height: 100vh;
-                height: auto;
             }
 
-            .time-container {
-                margin-bottom: 20px;
+            .time-container, .date-container-full {
                 max-width: 95%;
             }
 
-            .time-card {
-                padding: 15px;
+            .time-card, .date-card {
+                padding: 20px;
             }
 
             .time-number {
-                font-size: 36px;
-                min-width: 60px;
+                font-size: 42px;
+                min-width: 70px;
             }
 
             .time-colon {
-                font-size: 36px;
-                top: -5px;
+                font-size: 42px;
             }
 
             .time-am-pm {
-                font-size: 18px;
-                padding: 6px 12px;
-                top: -5px;
+                font-size: 22px;
+                padding: 8px 16px;
             }
 
-            .date-container {
-                grid-template-columns: 1fr;
-                gap: 10px;
+            .location-name {
+                font-size: 18px;
             }
 
             .date-box {
-                padding: 12px;
-                flex-direction: row;
-                justify-content: flex-start;
-                text-align: left;
-                gap: 15px;
+                padding: 15px;
+                min-height: 120px;
             }
 
             .date-value {
-                text-align: left;
-                font-size: 14px;
+                font-size: 16px;
+            }
+
+            .date-simple {
+                font-size: 13px;
             }
 
             .card {
                 padding: 36px 24px;
-                margin: 0 auto;
-                backdrop-filter: blur(15px);
                 max-width: 95%;
-                position: relative;
-                top: 0;
-                transform: none !important;
-            }
-
-            .card:hover {
-                transform: none !important;
             }
 
             .title {
@@ -1348,63 +939,12 @@
                 justify-content: center;
             }
 
-            .bird {
-                width: 45px;
-                height: 32px;
-            }
-
-            .bird-body {
-                width: 27px;
-                height: 18px;
-                left: 9px;
-                top: 6px;
-            }
-
-            .bird-head {
-                width: 16px;
-                height: 16px;
-            }
-
-            .bird-wing {
-                width: 31px;
-                height: 16px;
-                left: 11px;
-                top: 9px;
-            }
-
-            .bird-tail {
-                width: 20px;
-                height: 12px;
-                right: -11px;
-                top: 13px;
-            }
-
-            .butterfly {
-                width: 25px;
-                height: 25px;
-            }
-
-            .butterfly .left-wing,
-            .butterfly .right-wing {
-                width: 12px;
-                height: 17px;
-            }
-
             body {
                 cursor: auto;
             }
 
             .mouse-cursor {
                 display: none;
-            }
-
-            /* Reduce numbers on mobile */
-            .butterfly:nth-child(n+40) {
-                display: none;
-            }
-
-            .flying-creatures {
-                position: fixed;
             }
         }
 
@@ -1413,35 +953,31 @@
                 padding: 20px 12px;
             }
 
-            .time-card {
-                padding: 12px;
+            .time-card, .date-card {
+                padding: 15px;
             }
 
             .time-number {
-                font-size: 28px;
-                min-width: 50px;
+                font-size: 36px;
+                min-width: 60px;
             }
 
             .time-colon {
-                font-size: 28px;
+                font-size: 36px;
             }
 
             .time-am-pm {
-                font-size: 16px;
+                font-size: 20px;
             }
 
-            .location-name {
-                font-size: 16px;
-            }
-
-            .date-value {
-                font-size: 13px;
+            .date-container-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
             }
 
             .card {
                 padding: 28px 20px;
                 border-radius: 16px;
-                margin: 0 auto;
             }
 
             .title {
@@ -1463,57 +999,6 @@
                 font-size: 13px;
                 margin-top: 24px;
             }
-
-            /* Reduce butterflies on very small screens */
-            .butterfly:nth-child(n+30) {
-                display: none;
-            }
-        }
-
-        /* Extra small devices */
-        @media (max-width: 360px) {
-            .card {
-                padding: 24px 16px;
-            }
-
-            .title {
-                font-size: 20px;
-            }
-
-            .subtitle {
-                font-size: 14px;
-            }
-
-            .btn {
-                padding: 14px 20px;
-                font-size: 14px;
-            }
-
-            .muted {
-                font-size: 12px;
-            }
-
-            .time-number {
-                font-size: 24px;
-                min-width: 45px;
-            }
-
-            .time-colon {
-                font-size: 24px;
-            }
-        }
-
-        /* Prevent horizontal scroll on all devices */
-        @media (max-width: 768px) {
-            html, body {
-                overflow-x: hidden;
-                width: 100%;
-            }
-            
-            .card {
-                width: calc(100% - 32px);
-                max-width: none;
-            }
         }
     </style>
 </head>
@@ -1525,79 +1010,73 @@
     <!-- Flying creatures container -->
     <div class="flying-creatures" id="creatures"></div>
 
-    <!-- Mobile layout -->
-    <div class="time-container">
-        <div class="time-card">
-            <div class="location-info">
-                <div class="location-flag" id="locationFlag">🌍</div>
-                <div class="location-name" id="locationName">Detecting location...</div>
-            </div>
-            
-            <!-- Time Display -->
-            <div class="time-display">
-                <div class="time-segment">
-                    <div class="time-number-container">
-                        <div class="time-number" id="hours" data-value="12">12</div>
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Top Section - Date and Time side by side -->
+        <div class="top-section">
+            <div class="datetime-container">
+                <!-- Date Card -->
+                <div class="date-container-full">
+                    <div class="date-card">
+                        <div class="date-container-grid">
+                            <div class="date-box">
+                                <div class="date-type">English Date</div>
+                                <div class="date-value" id="englishDate">Friday, 3 January 2026</div>
+                                <div class="date-simple" id="englishSimple">3 Jan 2026</div>
+                            </div>
+                            <div class="date-box">
+                                <div class="date-type">বাংলা তারিখ</div>
+                                <div class="date-value bangla-date" id="banglaDate">১৮ পৌষ ১৪৩২</div>
+                                <div class="date-simple bangla-date" id="banglaSimple">বঙ্গাব্দ</div>
+                            </div>
+                            <div class="date-box">
+                                <div class="date-type">التاريخ الهجري</div>
+                                <div class="date-value hijri-date" id="hijriDate">١٤ رجب ١٤٤٧</div>
+                                <div class="date-simple hijri-date" id="hijriSimple">هـ</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="time-label">Hours</div>
                 </div>
-                <div class="time-colon">:</div>
-                <div class="time-segment">
-                    <div class="time-number-container">
-                        <div class="time-number" id="minutes" data-value="00">00</div>
-                    </div>
-                    <div class="time-label">Minutes</div>
-                </div>
-                <div class="time-colon">:</div>
-                <div class="time-segment">
-                    <div class="time-number-container">
-                        <div class="time-number" id="seconds" data-value="00">00</div>
-                    </div>
-                    <div class="time-label">Seconds</div>
-                </div>
-                <div class="time-am-pm" id="ampm">AM</div>
-            </div>
 
-            <!-- Date Container -->
-            <div class="date-container">
-                <div class="date-box">
-                    <div class="date-value" id="englishDate">Friday, 2 January 2026</div>
-                    <div class="date-simple" id="englishSimple">2 Jan 2026</div>
-                </div>
-                <div class="date-box">
-                    <div class="date-value bangla-date" id="banglaDate">১৭ পৌষ ১৪৩২ বঙ্গাব্দ</div>
-                    <div class="date-simple bangla-date" id="banglaSimple">১৭ পৌষ ১৪৩২</div>
-                </div>
-                <div class="date-box">
-                    <div class="date-value hijri-date" id="hijriDate">১৩ রজব ১৪৪৭ হিজরি</div>
-                    <div class="date-simple hijri-date" id="hijriSimple">١٣ رجب ١٤٤٧ هـ</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Desktop layout -->
-    <div class="desktop-layout">
-        <div class="desktop-left">
-            <div class="time-card">
-                <div class="date-container">
-                    <div class="date-box">
-                        <div class="date-value" id="desktopEnglishDate">Friday, 2 January 2026</div>
-                        <div class="date-simple" id="desktopEnglishSimple">2 Jan 2026</div>
-                    </div>
-                    <div class="date-box">
-                        <div class="date-value bangla-date" id="desktopBanglaDate">১৭ পৌষ ১৪৩২ বঙ্গাব্দ</div>
-                        <div class="date-simple bangla-date" id="desktopBanglaSimple">১৭ পৌষ ১৪৩২</div>
-                    </div>
-                    <div class="date-box">
-                        <div class="date-value hijri-date" id="desktopHijriDate">১৩ রজব ১৪৪৭ হিজরি</div>
-                        <div class="date-simple hijri-date" id="desktopHijriSimple">١٣ رجب ١٤٤٧ هـ</div>
+                <!-- Time Card -->
+                <div class="time-container">
+                    <div class="time-card">
+                        <div class="location-info">
+                            <div class="location-flag" id="locationFlag">🌍</div>
+                            <div class="location-name" id="locationName">Detecting location...</div>
+                        </div>
+                        
+                        <!-- Time Display -->
+                        <div class="time-display">
+                            <div class="time-segment">
+                                <div class="time-number-container">
+                                    <div class="time-number" id="hours" data-value="12">12</div>
+                                </div>
+                                <div class="time-label">Hours</div>
+                            </div>
+                            <div class="time-colon">:</div>
+                            <div class="time-segment">
+                                <div class="time-number-container">
+                                    <div class="time-number" id="minutes" data-value="00">00</div>
+                                </div>
+                                <div class="time-label">Minutes</div>
+                            </div>
+                            <div class="time-colon">:</div>
+                            <div class="time-segment">
+                                <div class="time-number-container">
+                                    <div class="time-number" id="seconds" data-value="00">00</div>
+                                </div>
+                                <div class="time-label">Seconds</div>
+                            </div>
+                            <div class="time-am-pm" id="ampm">AM</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="desktop-center">
+
+        <!-- Center Card for Login -->
+        <div class="center-card-container">
             <main class="card" role="main">
                 <h1 class="title">Welcome back</h1>
                 <p class="subtitle">Click the button below to continue to the login page.</p>
@@ -1612,56 +1091,7 @@
                         target="_blank">Contact support on WhatsApp</a> — and say Hi to Helal Uddin ❤️</p>
             </main>
         </div>
-        
-        <div class="desktop-right">
-            <div class="time-card">
-                <div class="location-info">
-                    <div class="location-flag" id="desktopLocationFlag">🌍</div>
-                    <div class="location-name" id="desktopLocationName">Detecting location...</div>
-                </div>
-                
-                <!-- Desktop Time Display -->
-                <div class="time-display">
-                    <div class="time-segment">
-                        <div class="time-number-container">
-                            <div class="time-number" id="desktopHours" data-value="12">12</div>
-                        </div>
-                        <div class="time-label">Hours</div>
-                    </div>
-                    <div class="time-colon">:</div>
-                    <div class="time-segment">
-                        <div class="time-number-container">
-                            <div class="time-number" id="desktopMinutes" data-value="00">00</div>
-                        </div>
-                        <div class="time-label">Minutes</div>
-                    </div>
-                    <div class="time-colon">:</div>
-                    <div class="time-segment">
-                        <div class="time-number-container">
-                            <div class="time-number" id="desktopSeconds" data-value="00">00</div>
-                        </div>
-                        <div class="time-label">Seconds</div>
-                    </div>
-                    <div class="time-am-pm" id="desktopAmpm">AM</div>
-                </div>
-            </div>
-        </div>
     </div>
-
-    <!-- Mobile card (shown only on mobile) -->
-    <main class="card" role="main" style="display: none;" id="mobileCard">
-        <h1 class="title">Welcome back</h1>
-        <p class="subtitle">Click the button below to continue to the login page.</p>
-
-        <a class="btn" href="/admin" role="button" aria-label="Go To Login">
-            <span>Go To Login</span>
-            <span class="arrow" aria-hidden="true">➜</span>
-        </a>
-
-        <p class="muted">Need help? <a
-                href="https://wa.me/8801841484885?text=Login%20করতে%20প্রবলেম%20হচ্ছে.%20দয়া%20করে%20সহায়তা%20করুন.%20Website%20URL:%20https://chapaivisa.com/"
-                target="_blank">Contact support on WhatsApp</a> — and say Hi to Helal Uddin ❤️</p>
-    </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -1713,7 +1143,6 @@
             const centerX = window.innerWidth / 2;
             const centerY = window.innerHeight / 2;
 
-            // Calculate animation duration based on screen size
             function getBirdAnimationDuration() {
                 const screenWidth = window.innerWidth;
                 const screenHeight = window.innerHeight;
@@ -2004,26 +1433,6 @@
                 }
             }, 20000);
 
-            // Fix for mobile scrolling and show/hide appropriate cards
-            function setupLayout() {
-                const isDesktop = window.innerWidth >= 1024;
-                const mobileCard = document.getElementById('mobileCard');
-                const timeContainer = document.querySelector('.time-container');
-                
-                if (isDesktop) {
-                    // Hide mobile card and show desktop layout
-                    if (mobileCard) mobileCard.style.display = 'none';
-                    if (timeContainer) timeContainer.style.display = 'none';
-                } else {
-                    // Show mobile card and hide desktop layout
-                    if (mobileCard) mobileCard.style.display = 'block';
-                    if (timeContainer) timeContainer.style.display = 'block';
-                }
-            }
-            
-            setupLayout();
-            window.addEventListener('resize', setupLayout);
-
             // Time and Date Functions
             const locationFlag = document.getElementById('locationFlag');
             const locationName = document.getElementById('locationName');
@@ -2037,20 +1446,6 @@
             const banglaSimple = document.getElementById('banglaSimple');
             const hijriDate = document.getElementById('hijriDate');
             const hijriSimple = document.getElementById('hijriSimple');
-
-            // Desktop elements
-            const desktopLocationFlag = document.getElementById('desktopLocationFlag');
-            const desktopLocationName = document.getElementById('desktopLocationName');
-            const desktopHoursElement = document.getElementById('desktopHours');
-            const desktopMinutesElement = document.getElementById('desktopMinutes');
-            const desktopSecondsElement = document.getElementById('desktopSeconds');
-            const desktopAmpmElement = document.getElementById('desktopAmpm');
-            const desktopEnglishDate = document.getElementById('desktopEnglishDate');
-            const desktopEnglishSimple = document.getElementById('desktopEnglishSimple');
-            const desktopBanglaDate = document.getElementById('desktopBanglaDate');
-            const desktopBanglaSimple = document.getElementById('desktopBanglaSimple');
-            const desktopHijriDate = document.getElementById('desktopHijriDate');
-            const desktopHijriSimple = document.getElementById('desktopHijriSimple');
 
             // Timezone mapping
             const timezoneMap = {
@@ -2136,7 +1531,7 @@
                 const formattedMinutes = minutes.toString().padStart(2, '0');
                 const formattedSeconds = seconds.toString().padStart(2, '0');
                 
-                // Update mobile elements
+                // Update time elements
                 updateTimeElementWithFlip(hoursElement, formattedHours);
                 updateTimeElementWithFlip(minutesElement, formattedMinutes);
                 updateTimeElementWithFlip(secondsElement, formattedSeconds);
@@ -2149,28 +1544,9 @@
                     }, 10);
                 }
                 
-                // Update desktop elements
-                updateTimeElementWithFlip(desktopHoursElement, formattedHours);
-                updateTimeElementWithFlip(desktopMinutesElement, formattedMinutes);
-                updateTimeElementWithFlip(desktopSecondsElement, formattedSeconds);
-                
-                if (desktopAmpmElement.textContent !== ampm) {
-                    desktopAmpmElement.style.animation = 'none';
-                    setTimeout(() => {
-                        desktopAmpmElement.style.animation = 'amPmGlowWhite 3s ease-in-out infinite';
-                        desktopAmpmElement.textContent = ampm;
-                    }, 10);
-                }
-                
                 const location = timezoneMap[userTimezone] || timezoneMap['BD'];
-                
-                // Update mobile location
                 locationFlag.textContent = location.flag;
                 locationName.textContent = location.name;
-                
-                // Update desktop location
-                desktopLocationFlag.textContent = location.flag;
-                desktopLocationName.textContent = location.name;
                 
                 // Update dates
                 updateDates(localTime);
@@ -2209,35 +1585,21 @@
                 const englishFull = `${englishDay}, ${englishDateNum} ${englishMonth} ${englishYear}`;
                 const englishShort = `${englishDateNum} ${englishMonth.slice(0, 3)} ${englishYear}`;
                 
-                // Update mobile
                 englishDate.textContent = englishFull;
                 englishSimple.textContent = englishShort;
-                
-                // Update desktop
-                desktopEnglishDate.textContent = englishFull;
-                desktopEnglishSimple.textContent = englishShort;
 
                 // Bengali date
                 const banglaDateResult = getBanglaDate(date);
-                const banglaFull = `${banglaDateResult.day} ${banglaDateResult.month} ${banglaDateResult.year} বঙ্গাব্দ`;
-                const banglaShort = `${banglaDateResult.day} ${banglaDateResult.month} ${banglaDateResult.year}`;
+                const banglaFull = `${banglaDateResult.day} ${banglaDateResult.month} ${banglaDateResult.year}`;
                 
                 banglaDate.textContent = banglaFull;
-                banglaSimple.textContent = banglaShort;
-                
-                desktopBanglaDate.textContent = banglaFull;
-                desktopBanglaSimple.textContent = banglaShort;
+                banglaSimple.textContent = "বঙ্গাব্দ";
 
-                // Hijri date
+                // Hijri date - FIXED: Now shows Arabic date
                 const hijriDateResult = getHijriDate(date);
-                const hijriFull = `${hijriDateResult.day} ${hijriDateResult.month} ${hijriDateResult.year} হিজরি`;
-                const hijriShort = `${convertToArabicNumber(hijriDateResult.day)} ${hijriDateResult.monthAr} ${convertToArabicNumber(hijriDateResult.year)} هـ`;
-                
-                hijriDate.textContent = hijriFull;
-                hijriSimple.textContent = hijriShort;
-                
-                desktopHijriDate.textContent = hijriFull;
-                desktopHijriSimple.textContent = hijriShort;
+                // Arabic date: ١٤ رجب ١٤٤٧
+                hijriDate.textContent = hijriDateResult.arabicFull;
+                hijriSimple.textContent = "هـ"; // Just the هـ symbol
             }
 
             function getBanglaDate(gregorianDate) {
@@ -2286,74 +1648,63 @@
             }
 
             function getHijriDate(gregorianDate) {
-                const hijriMonths = ['মুহররম', 'সফর', 'রবিউল আউয়াল', 'রবিউস সানি', 
-                                    'জমাদিউল আউয়াল', 'জমাদিউস সানি', 'রজব', 'শাবান', 
-                                    'রমজান', 'শাওয়াল', 'জিলকদ', 'জিলহজ্জ'];
-                
-                const hijriMonthsAr = ['محرم', 'صفر', 'ربيع الأول', 'ربيع الثاني', 
-                                     'جمادى الأول', 'جمادى الثاني', 'رجب', 'شعبان', 
-                                     'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'];
-                
                 // Fixed calculation for 2026
                 const gregorianYear = gregorianDate.getFullYear();
                 const gregorianMonth = gregorianDate.getMonth() + 1;
                 const gregorianDay = gregorianDate.getDate();
                 
-                let hijriDay, hijriMonthIndex, hijriYear;
+                // For January 2026 - these are known dates
+                // 1 Jan 2026 = 11 Rajab 1447
+                // 2 Jan 2026 = 12 Rajab 1447
+                // 3 Jan 2026 = 13 Rajab 1447
+                // 4 Jan 2026 = 14 Rajab 1447
+                
+                let hijriDay, hijriMonth, hijriYear;
                 
                 if (gregorianYear === 2026 && gregorianMonth === 1) {
-                    if (gregorianDay === 1) hijriDay = 11;
-                    else if (gregorianDay === 2) hijriDay = 12;
-                    else if (gregorianDay === 3) hijriDay = 13;
-                    else if (gregorianDay === 4) hijriDay = 14;
-                    else if (gregorianDay === 5) hijriDay = 15;
-                    else {
-                        hijriDay = 13 + (gregorianDay - 3);
-                        if (hijriDay > 30) {
-                            hijriDay = hijriDay - 30;
-                            hijriMonthIndex = 7;
-                        } else {
-                            hijriMonthIndex = 6;
-                        }
-                    }
+                    // January 2026
                     hijriYear = 1447;
+                    hijriMonth = "رجب"; // Rajab in Arabic
                     
-                    if (!hijriMonthIndex) hijriMonthIndex = 6; // Rajab
+                    // Calculate day based on Jan 1 = 11 Rajab
+                    hijriDay = 10 + gregorianDay; // Jan 1 = 11, Jan 2 = 12, etc.
+                    
+                    if (hijriDay > 30) {
+                        hijriDay = hijriDay - 30;
+                        hijriMonth = "شعبان"; // Sha'ban if exceeds 30
+                    }
                 } else {
-                    // Fallback approximation
-                    const today = new Date();
-                    const baseDate = new Date(2026, 0, 3); // 3 Jan 2026 = 13 Rajab 1447
+                    // For other dates, use approximation
+                    const baseDate = new Date(2026, 0, 1); // Jan 1, 2026
                     const diffDays = Math.floor((gregorianDate - baseDate) / (1000 * 60 * 60 * 24));
                     
                     hijriYear = 1447;
-                    hijriMonthIndex = 6; // Rajab
-                    hijriDay = 13 + diffDays;
+                    hijriMonth = "رجب";
+                    hijriDay = 11 + diffDays; // Start from 11 Rajab
                     
-                    // Adjust month and year
+                    // Adjust for month boundaries
                     while (hijriDay > 30) {
                         hijriDay -= 30;
-                        hijriMonthIndex++;
-                        if (hijriMonthIndex > 11) {
-                            hijriMonthIndex = 0;
-                            hijriYear++;
+                        if (hijriMonth === "رجب") {
+                            hijriMonth = "شعبان";
+                        } else if (hijriMonth === "شعبان") {
+                            hijriMonth = "رمضان";
+                        } else if (hijriMonth === "رمضان") {
+                            hijriMonth = "شوال";
+                            hijriYear = 1448; // Move to next year
                         }
-                    }
-                    
-                    while (hijriDay < 1) {
-                        hijriMonthIndex--;
-                        if (hijriMonthIndex < 0) {
-                            hijriMonthIndex = 11;
-                            hijriYear--;
-                        }
-                        hijriDay += 30;
                     }
                 }
                 
+                // Convert day to Arabic numerals
+                const arabicDay = convertToArabicNumber(hijriDay);
+                const arabicYear = convertToArabicNumber(hijriYear);
+                
                 return {
+                    arabicFull: `${arabicDay} ${hijriMonth} ${arabicYear}`,
                     day: convertToBanglaNumber(hijriDay),
-                    month: hijriMonths[hijriMonthIndex],
-                    monthAr: hijriMonthsAr[hijriMonthIndex],
-                    year: convertToBanglaNumber(hijriYear)
+                    month: hijriMonth,
+                    year: hijriYear
                 };
             }
 
@@ -2370,9 +1721,6 @@
             // Initialize
             detectLocation();
             setInterval(updateTime, 1000);
-            
-            // Initial call to setup layout
-            setupLayout();
         });
     </script>
 </body>
