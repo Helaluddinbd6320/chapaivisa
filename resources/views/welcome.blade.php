@@ -26,9 +26,9 @@
             --bird-orange: #f97316;
             --bird-pink: #ec4899;
             --bird-purple: #8b5cf6;
-            --time-red: #ef4444; /* লাল কালার */
-            --time-red-light: #f87171;
-            --time-red-dark: #dc2626;
+            --time-white: #ffffff;
+            --time-light: #f1f5f9;
+            --time-gray: #cbd5e1;
         }
 
         * {
@@ -52,10 +52,6 @@
                 radial-gradient(800px 400px at 50% 50%, rgba(236, 72, 153, 0.08), transparent),
                 linear-gradient(180deg, var(--bg-1), var(--bg-2));
             color: #e6eef8;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             padding: 32px 20px;
             overflow-y: auto;
             position: relative;
@@ -66,7 +62,12 @@
             min-height: 100vh;
         }
 
-        /* Time display container */
+        /* Main layout for desktop */
+        .desktop-layout {
+            display: none;
+        }
+
+        /* Time display container for mobile */
         .time-container {
             position: relative;
             width: 100%;
@@ -74,6 +75,52 @@
             margin-bottom: 30px;
             z-index: 100;
             animation: fadeInUp 0.8s ease 0.1s both;
+        }
+
+        /* For desktop: hide mobile time container */
+        @media (min-width: 1024px) {
+            .time-container {
+                display: none;
+            }
+            
+            body {
+                padding: 40px;
+            }
+            
+            .desktop-layout {
+                display: flex;
+                width: 100%;
+                max-width: 1400px;
+                margin: 0 auto;
+                gap: 40px;
+                align-items: flex-start;
+                justify-content: center;
+                min-height: 100vh;
+            }
+            
+            .desktop-left {
+                flex: 1;
+                max-width: 400px;
+                position: sticky;
+                top: 40px;
+                animation: fadeInLeft 0.8s ease 0.1s both;
+            }
+            
+            .desktop-right {
+                flex: 1;
+                max-width: 400px;
+                position: sticky;
+                top: 40px;
+                animation: fadeInRight 0.8s ease 0.2s both;
+            }
+            
+            .desktop-center {
+                flex: 0 0 auto;
+                width: 540px;
+                animation: fadeInUp 0.8s ease 0.3s both;
+                position: relative;
+                z-index: 110;
+            }
         }
 
         .time-card {
@@ -91,6 +138,7 @@
                 0 0 0 1px rgba(255, 255, 255, 0.02);
             text-align: center;
             transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            height: 100%;
         }
 
         .time-card:hover {
@@ -127,7 +175,7 @@
             background-size: 300% 300%;
         }
 
-        /* Improved Time Display Design - RED COLOR */
+        /* Time Display Design - WHITE COLOR */
         .time-display {
             display: flex;
             align-items: center;
@@ -152,16 +200,16 @@
         .time-number {
             font-size: 48px;
             font-weight: 900;
-            background: linear-gradient(135deg, #fff, var(--time-red-light), var(--time-red));
+            background: linear-gradient(135deg, var(--time-white), var(--time-light), var(--time-gray));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: timeGlowRed 3s ease-in-out infinite;
+            animation: timeGlowWhite 3s ease-in-out infinite;
             letter-spacing: 2px;
             text-shadow: 
-                0 0 10px rgba(239, 68, 68, 0.5),
-                0 0 20px rgba(239, 68, 68, 0.3),
-                0 0 30px rgba(239, 68, 68, 0.2);
+                0 0 10px rgba(255, 255, 255, 0.5),
+                0 0 20px rgba(255, 255, 255, 0.3),
+                0 0 30px rgba(255, 255, 255, 0.2);
             min-width: 80px;
             text-align: center;
             padding: 5px 0;
@@ -180,13 +228,13 @@
             bottom: -5px;
             background: linear-gradient(45deg, 
                 transparent, 
-                rgba(239, 68, 68, 0.2), 
-                rgba(239, 68, 68, 0.3),
-                rgba(220, 38, 38, 0.2),
+                rgba(255, 255, 255, 0.1), 
+                rgba(255, 255, 255, 0.15),
+                rgba(203, 213, 225, 0.1),
                 transparent);
             border-radius: 12px;
             z-index: -1;
-            animation: borderGlowRed 4s linear infinite;
+            animation: borderGlowWhite 4s linear infinite;
             filter: blur(10px);
         }
 
@@ -197,7 +245,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, #fff, var(--time-red-light), var(--time-red));
+            background: linear-gradient(135deg, var(--time-white), var(--time-light), var(--time-gray));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -209,24 +257,24 @@
 
         .time-label {
             font-size: 12px;
-            color: var(--time-red);
+            color: var(--time-light);
             margin-top: 4px;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             font-weight: 700;
-            text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-            animation: labelPulseRed 2s ease-in-out infinite;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            animation: labelPulseWhite 2s ease-in-out infinite;
         }
 
         .time-colon {
             font-size: 48px;
             font-weight: 900;
-            color: var(--time-red);
-            animation: colonPulseRed 2s infinite;
+            color: var(--time-white);
+            animation: colonPulseWhite 2s infinite;
             margin: 0 5px;
             text-shadow: 
-                0 0 15px rgba(239, 68, 68, 0.7),
-                0 0 25px rgba(239, 68, 68, 0.4);
+                0 0 15px rgba(255, 255, 255, 0.7),
+                0 0 25px rgba(255, 255, 255, 0.4);
             position: relative;
             top: -10px;
         }
@@ -234,29 +282,57 @@
         .time-am-pm {
             font-size: 24px;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--time-red-light), var(--time-red-dark));
+            background: linear-gradient(135deg, var(--time-light), var(--time-white));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-left: 15px;
             padding: 8px 16px;
             border-radius: 25px;
-            border: 2px solid rgba(239, 68, 68, 0.3);
-            animation: amPmGlowRed 3s ease-in-out infinite;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            animation: amPmGlowWhite 3s ease-in-out infinite;
             box-shadow: 
-                0 5px 20px rgba(239, 68, 68, 0.3),
+                0 5px 20px rgba(255, 255, 255, 0.2),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
             position: relative;
             top: -10px;
-            text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
-        /* Date Container - Simplified */
+        /* Date Container */
         .date-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
             margin-top: 25px;
+        }
+
+        /* For desktop left panel: vertical layout */
+        @media (min-width: 1024px) {
+            .desktop-left .date-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .desktop-left .date-box {
+                height: auto;
+                min-height: 120px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+                text-align: center;
+            }
+            
+            .desktop-left .date-value {
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+            
+            .desktop-left .date-simple {
+                font-size: 13px;
+            }
         }
 
         .date-box {
@@ -306,21 +382,50 @@
             direction: rtl;
         }
 
-        /* New Animations - RED VERSION */
-        @keyframes timeGlowRed {
+        /* Desktop time display (right panel) */
+        @media (min-width: 1024px) {
+            .desktop-right .time-card {
+                height: 100%;
+                min-height: 400px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            
+            .desktop-right .time-number {
+                font-size: 56px;
+                min-width: 90px;
+            }
+            
+            .desktop-right .time-colon {
+                font-size: 56px;
+            }
+            
+            .desktop-right .time-am-pm {
+                font-size: 28px;
+                padding: 10px 20px;
+            }
+            
+            .desktop-right .location-name {
+                font-size: 20px;
+            }
+        }
+
+        /* New Animations - WHITE VERSION */
+        @keyframes timeGlowWhite {
             0%, 100% {
-                filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.6))
-                       drop-shadow(0 0 30px rgba(220, 38, 38, 0.4));
+                filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.6))
+                       drop-shadow(0 0 30px rgba(241, 245, 249, 0.4));
                 transform: scale(1);
             }
             50% {
-                filter: drop-shadow(0 0 30px rgba(239, 68, 68, 0.9))
-                       drop-shadow(0 0 40px rgba(220, 38, 38, 0.6));
+                filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.9))
+                       drop-shadow(0 0 40px rgba(241, 245, 249, 0.6));
                 transform: scale(1.03);
             }
         }
 
-        @keyframes borderGlowRed {
+        @keyframes borderGlowWhite {
             0% {
                 opacity: 0.5;
                 transform: rotate(0deg);
@@ -341,7 +446,7 @@
             }
         }
 
-        @keyframes colonPulseRed {
+        @keyframes colonPulseWhite {
             0%, 100% {
                 opacity: 1;
                 transform: scale(1) translateY(0);
@@ -352,22 +457,22 @@
             }
         }
 
-        @keyframes amPmGlowRed {
+        @keyframes amPmGlowWhite {
             0%, 100% {
                 transform: scale(1);
                 box-shadow: 
-                    0 5px 20px rgba(239, 68, 68, 0.3),
+                    0 5px 20px rgba(255, 255, 255, 0.2),
                     inset 0 1px 0 rgba(255, 255, 255, 0.1);
             }
             50% {
                 transform: scale(1.08);
                 box-shadow: 
-                    0 8px 30px rgba(239, 68, 68, 0.5),
+                    0 8px 30px rgba(255, 255, 255, 0.3),
                     inset 0 1px 0 rgba(255, 255, 255, 0.2);
             }
         }
 
-        @keyframes labelPulseRed {
+        @keyframes labelPulseWhite {
             0%, 100% {
                 opacity: 0.8;
                 transform: translateY(0);
@@ -387,6 +492,29 @@
             }
             100% {
                 transform: rotateX(0deg);
+            }
+        }
+
+        /* Desktop animations */
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
             }
         }
 
@@ -446,7 +574,7 @@
             position: fixed;
             width: 60px;
             height: 60px;
-            background: radial-gradient(circle, rgba(239, 68, 68, 0.3) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, transparent 70%);
             border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
@@ -471,7 +599,7 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            border: 2px solid rgba(239, 68, 68, 0.3);
+            border: 2px solid rgba(6, 182, 212, 0.3);
             border-radius: 50%;
             animation: cursorRipple 1.5s ease-out infinite;
         }
@@ -488,7 +616,7 @@
             pointer-events: none;
         }
 
-        /* Butterfly styles - 80 butterflies */
+        /* Butterfly styles - MULTICOLOR butterflies */
         .butterfly {
             position: absolute;
             width: 35px;
@@ -506,18 +634,18 @@
             height: 24px;
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             transform-origin: center;
-            background: var(--wing-color, var(--time-red));
+            background: var(--wing-color, #06b6d4);
         }
 
         .butterfly .left-wing {
             left: 0;
-            background: radial-gradient(circle at 70% 30%, var(--wing-color, var(--time-red)), color-mix(in srgb, var(--wing-color, var(--time-red)) 80%, transparent));
+            background: radial-gradient(circle at 70% 30%, var(--wing-color), color-mix(in srgb, var(--wing-color) 80%, transparent));
             animation: butterflyFlapLeft 0.8s ease-in-out infinite;
         }
 
         .butterfly .right-wing {
             right: 0;
-            background: radial-gradient(circle at 30% 30%, var(--wing-color, var(--time-red)), color-mix(in srgb, var(--wing-color, var(--time-red)) 80%, transparent));
+            background: radial-gradient(circle at 30% 30%, var(--wing-color), color-mix(in srgb, var(--wing-color) 80%, transparent));
             animation: butterflyFlapRight 0.8s ease-in-out infinite;
         }
 
@@ -552,7 +680,7 @@
             transform: rotate(20deg);
         }
 
-        /* Bird styles - Increased numbers */
+        /* Bird styles */
         .bird {
             position: absolute;
             width: 60px;
@@ -700,7 +828,7 @@
             z-index: 0;
         }
 
-        /* Bird types - More varieties */
+        /* Bird types */
         .bird.sparrow {
             --bird-body-color: var(--bird-gray);
             --bird-head-color: var(--bird-black);
@@ -764,7 +892,7 @@
             --bird-tail-color: var(--bird-green);
         }
 
-        /* Card styles */
+        /* Card styles - Center for desktop */
         .card {
             width: 100%;
             max-width: 540px;
@@ -787,6 +915,33 @@
             transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
             cursor: auto;
             margin: 0 auto;
+        }
+
+        /* For desktop center */
+        @media (min-width: 1024px) {
+            .card {
+                margin: 0;
+                transform: translateY(0);
+                animation: cardFloat 3s ease-in-out infinite;
+            }
+            
+            .card:hover {
+                transform: translateY(-12px) scale(1.01);
+                animation: none;
+                box-shadow:
+                    0 35px 70px rgba(2, 6, 23, 1),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                    0 0 0 1px rgba(255, 255, 255, 0.02);
+            }
+        }
+
+        @keyframes cardFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
         }
 
         .card:hover {
@@ -1061,7 +1216,7 @@
             }
         }
 
-        /* Bird animation - LONGER for big screens */
+        /* Bird animation */
         @keyframes birdFlyOut {
             0% {
                 opacity: 0;
@@ -1105,6 +1260,16 @@
         }
 
         /* Performance optimization */
+        @media (max-width: 1023px) {
+            .desktop-layout {
+                display: none;
+            }
+            
+            .time-container {
+                display: block;
+            }
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 24px 16px;
@@ -1360,7 +1525,7 @@
     <!-- Flying creatures container -->
     <div class="flying-creatures" id="creatures"></div>
 
-    <!-- Time display container -->
+    <!-- Mobile layout -->
     <div class="time-container">
         <div class="time-card">
             <div class="location-info">
@@ -1368,7 +1533,7 @@
                 <div class="location-name" id="locationName">Detecting location...</div>
             </div>
             
-            <!-- New Time Display -->
+            <!-- Time Display -->
             <div class="time-display">
                 <div class="time-segment">
                     <div class="time-number-container">
@@ -1393,7 +1558,7 @@
                 <div class="time-am-pm" id="ampm">AM</div>
             </div>
 
-            <!-- Date Container - Simplified (No labels) -->
+            <!-- Date Container -->
             <div class="date-container">
                 <div class="date-box">
                     <div class="date-value" id="englishDate">Friday, 2 January 2026</div>
@@ -1411,7 +1576,80 @@
         </div>
     </div>
 
-    <main class="card" role="main">
+    <!-- Desktop layout -->
+    <div class="desktop-layout">
+        <div class="desktop-left">
+            <div class="time-card">
+                <div class="date-container">
+                    <div class="date-box">
+                        <div class="date-value" id="desktopEnglishDate">Friday, 2 January 2026</div>
+                        <div class="date-simple" id="desktopEnglishSimple">2 Jan 2026</div>
+                    </div>
+                    <div class="date-box">
+                        <div class="date-value bangla-date" id="desktopBanglaDate">১৭ পৌষ ১৪৩২ বঙ্গাব্দ</div>
+                        <div class="date-simple bangla-date" id="desktopBanglaSimple">১৭ পৌষ ১৪৩২</div>
+                    </div>
+                    <div class="date-box">
+                        <div class="date-value hijri-date" id="desktopHijriDate">১৩ রজব ১৪৪৭ হিজরি</div>
+                        <div class="date-simple hijri-date" id="desktopHijriSimple">١٣ رجب ١٤٤٧ هـ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="desktop-center">
+            <main class="card" role="main">
+                <h1 class="title">Welcome back</h1>
+                <p class="subtitle">Click the button below to continue to the login page.</p>
+
+                <a class="btn" href="/admin" role="button" aria-label="Go To Login">
+                    <span>Go To Login</span>
+                    <span class="arrow" aria-hidden="true">➜</span>
+                </a>
+
+                <p class="muted">Need help? <a
+                        href="https://wa.me/8801841484885?text=Login%20করতে%20প্রবলেম%20হচ্ছে.%20দয়া%20করে%20সহায়তা%20করুন.%20Website%20URL:%20https://chapaivisa.com/"
+                        target="_blank">Contact support on WhatsApp</a> — and say Hi to Helal Uddin ❤️</p>
+            </main>
+        </div>
+        
+        <div class="desktop-right">
+            <div class="time-card">
+                <div class="location-info">
+                    <div class="location-flag" id="desktopLocationFlag">🌍</div>
+                    <div class="location-name" id="desktopLocationName">Detecting location...</div>
+                </div>
+                
+                <!-- Desktop Time Display -->
+                <div class="time-display">
+                    <div class="time-segment">
+                        <div class="time-number-container">
+                            <div class="time-number" id="desktopHours" data-value="12">12</div>
+                        </div>
+                        <div class="time-label">Hours</div>
+                    </div>
+                    <div class="time-colon">:</div>
+                    <div class="time-segment">
+                        <div class="time-number-container">
+                            <div class="time-number" id="desktopMinutes" data-value="00">00</div>
+                        </div>
+                        <div class="time-label">Minutes</div>
+                    </div>
+                    <div class="time-colon">:</div>
+                    <div class="time-segment">
+                        <div class="time-number-container">
+                            <div class="time-number" id="desktopSeconds" data-value="00">00</div>
+                        </div>
+                        <div class="time-label">Seconds</div>
+                    </div>
+                    <div class="time-am-pm" id="desktopAmpm">AM</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile card (shown only on mobile) -->
+    <main class="card" role="main" style="display: none;" id="mobileCard">
         <h1 class="title">Welcome back</h1>
         <p class="subtitle">Click the button below to continue to the login page.</p>
 
@@ -1427,7 +1665,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Document loaded, creating MORE creatures...');
+            console.log('Document loaded, creating MULTICOLOR creatures...');
 
             const container = document.getElementById('creatures');
             const cursor = document.getElementById('cursor');
@@ -1435,28 +1673,35 @@
             // Show cursor initially
             cursor.style.display = 'block';
 
+            // MULTICOLOR butterfly colors
             const colors = [
+                '#06b6d4', // cyan
+                '#7c3aed', // purple
+                '#ec4899', // pink
+                '#10b981', // emerald
+                '#f59e0b', // amber
+                '#8b5cf6', // violet
                 '#ef4444', // red
-                '#dc2626', // dark red
-                '#f87171', // light red
-                '#b91c1c', // deep red
-                '#ef4444', // red again
-                '#dc2626' // dark red again
+                '#3b82f6', // blue
+                '#fbbf24', // yellow
+                '#84cc16', // lime
+                '#14b8a6', // teal
+                '#f97316'  // orange
             ];
 
-            // Bird types - 9 varieties
+            // Bird types
             const birdTypes = ['sparrow', 'pigeon', 'cardinal', 'bluejay', 'canary', 'parrot', 'robin', 'flamingo',
                 'peacock'
             ];
 
-            // INCREASED: 80 butterflies initially
+            // 80 butterflies initially
             const initialButterflyCount = 80;
-            console.log(`Creating ${initialButterflyCount} butterflies...`);
+            console.log(`Creating ${initialButterflyCount} MULTICOLOR butterflies...`);
 
             for (let i = 0; i < initialButterflyCount; i++) {
                 setTimeout(() => {
                     createRandomButterfly(container, colors);
-                }, i * 30); // Faster creation
+                }, i * 30);
             }
 
             // Variables for bird generation
@@ -1474,10 +1719,10 @@
                 const screenHeight = window.innerHeight;
                 const screenArea = screenWidth * screenHeight;
 
-                let baseDuration = 10; // Increased base duration
+                let baseDuration = 10;
 
                 if (screenArea > 1920 * 1080) {
-                    baseDuration = 18; // Longer for 4K
+                    baseDuration = 18;
                 } else if (screenArea > 1366 * 768) {
                     baseDuration = 14;
                 } else if (screenArea > 1024 * 768) {
@@ -1492,7 +1737,7 @@
                 const screenHeight = window.innerHeight;
                 const screenArea = screenWidth * screenHeight;
 
-                let baseDuration = 40; // Increased
+                let baseDuration = 40;
 
                 if (screenArea > 1920 * 1080) {
                     baseDuration = 80;
@@ -1508,44 +1753,37 @@
             function getBirdFlyDistance() {
                 const screenWidth = window.innerWidth;
                 const screenHeight = window.innerHeight;
-
-                // Fly even longer distance
                 const diagonal = Math.sqrt(screenWidth * screenWidth + screenHeight * screenHeight);
-                return diagonal * 2 + Math.random() * diagonal; // 2x diagonal
+                return diagonal * 2 + Math.random() * diagonal;
             }
 
-            // INCREASED: More frequent bird generation
+            // Bird generation functions
             function startCenterGeneration() {
-                console.log('Starting center bird generation (INCREASED)...');
+                console.log('Starting center bird generation...');
                 centerGenerationInterval = setInterval(() => {
                     if (isGeneratingFromCenter) {
-                        // Create 2-3 birds at once from center
                         const birdCount = 2 + Math.floor(Math.random() * 2);
                         for (let i = 0; i < birdCount; i++) {
                             setTimeout(() => {
-                                const birdType = birdTypes[Math.floor(Math.random() * birdTypes
-                                    .length)];
+                                const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
                                 createBirdFromPoint(container, birdType, centerX, centerY, true);
                             }, i * 100);
                         }
                     }
-                }, 800); // More frequent: 800ms
+                }, 800);
             }
 
-            // INCREASED: More frequent mouse generation
             function startMouseGeneration() {
-                console.log('Switching to mouse bird generation (INCREASED)...');
+                console.log('Switching to mouse bird generation...');
                 birdGenerationInterval = setInterval(() => {
-                    // Create 1-2 birds at once from mouse
                     const birdCount = 1 + Math.floor(Math.random() * 2);
                     for (let i = 0; i < birdCount; i++) {
                         setTimeout(() => {
-                            const birdType = birdTypes[Math.floor(Math.random() * birdTypes
-                            .length)];
+                            const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
                             createBirdFromPoint(container, birdType, mouseX, mouseY, false);
                         }, i * 150);
                     }
-                }, 400); // More frequent: 400ms
+                }, 400);
             }
 
             // Mouse movement tracking
@@ -1586,24 +1824,21 @@
                         cursor.style.opacity = '0';
                     }, 1000);
 
-                    // Create multiple birds on touch
                     for (let i = 0; i < 3; i++) {
                         setTimeout(() => {
-                            const birdType = birdTypes[Math.floor(Math.random() * birdTypes
-                            .length)];
+                            const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
                             createBirdFromPoint(container, birdType, mouseX, mouseY, false);
                         }, i * 100);
                     }
                 }
             });
 
-            // INCREASED: More extra birds on fast movement
             function createExtraBirdsOnMove(movementX, movementY) {
                 const speed = Math.sqrt(movementX * movementX + movementY * movementY);
 
                 if (speed > 10) {
-                    const extraBirds = Math.floor(speed / 15); // More birds
-                    for (let i = 0; i < extraBirds && i < 4; i++) { // Up to 4 extra birds
+                    const extraBirds = Math.floor(speed / 15);
+                    for (let i = 0; i < extraBirds && i < 4; i++) {
                         setTimeout(() => {
                             const birdType = birdTypes[Math.floor(Math.random() * birdTypes.length)];
                             createBirdFromPoint(container, birdType, mouseX, mouseY, false);
@@ -1619,7 +1854,6 @@
                 bird.style.left = `${x}px`;
                 bird.style.top = `${y}px`;
 
-                // Create bird parts
                 const body = document.createElement('div');
                 body.className = 'bird-body';
 
@@ -1645,7 +1879,6 @@
                 bird.appendChild(wing);
                 bird.appendChild(tail);
 
-                // Random flying direction
                 let angle;
                 if (fromCenter) {
                     angle = Math.random() * Math.PI * 2;
@@ -1742,17 +1975,16 @@
             // Start center generation
             setTimeout(() => {
                 startCenterGeneration();
-                console.log('Center bird generation started (INCREASED)');
+                console.log('Center bird generation started');
             }, 1000);
 
-            // Auto-cleanup with higher limits
+            // Auto-cleanup
             setInterval(() => {
                 const birds = container.querySelectorAll('.bird');
                 const butterflies = container.querySelectorAll('.butterfly');
 
                 console.log(`Current: ${birds.length} birds, ${butterflies.length} butterflies`);
 
-                // Higher limits for birds
                 if (birds.length > 60) {
                     const birdsToRemove = birds.length - 50;
                     for (let i = 0; i < birdsToRemove && i < birds.length; i++) {
@@ -1762,7 +1994,6 @@
                     }
                 }
 
-                // Higher limits for butterflies
                 if (butterflies.length > 100) {
                     const butterfliesToRemove = butterflies.length - 80;
                     for (let i = 0; i < butterfliesToRemove && i < butterflies.length; i++) {
@@ -1771,31 +2002,29 @@
                         }
                     }
                 }
-            }, 20000); // Less frequent cleanup
+            }, 20000);
 
-            // Fix for mobile scrolling
-            function fixMobileScrolling() {
-                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                if (isMobile) {
-                    // Prevent default touch behavior that might block scrolling
-                    document.addEventListener('touchmove', function(e) {
-                        if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
-                            // Allow scrolling
-                            return;
-                        }
-                    }, { passive: true });
-                    
-                    // Ensure body is scrollable
-                    document.body.style.overflowY = 'auto';
-                    document.body.style.height = 'auto';
-                    document.body.style.minHeight = '100vh';
+            // Fix for mobile scrolling and show/hide appropriate cards
+            function setupLayout() {
+                const isDesktop = window.innerWidth >= 1024;
+                const mobileCard = document.getElementById('mobileCard');
+                const timeContainer = document.querySelector('.time-container');
+                
+                if (isDesktop) {
+                    // Hide mobile card and show desktop layout
+                    if (mobileCard) mobileCard.style.display = 'none';
+                    if (timeContainer) timeContainer.style.display = 'none';
+                } else {
+                    // Show mobile card and hide desktop layout
+                    if (mobileCard) mobileCard.style.display = 'block';
+                    if (timeContainer) timeContainer.style.display = 'block';
                 }
             }
             
-            // Call the fix
-            fixMobileScrolling();
+            setupLayout();
+            window.addEventListener('resize', setupLayout);
 
-            // Time and Date Functions - AM/PM Format with LIVE Dates
+            // Time and Date Functions
             const locationFlag = document.getElementById('locationFlag');
             const locationName = document.getElementById('locationName');
             const hoursElement = document.getElementById('hours');
@@ -1808,6 +2037,20 @@
             const banglaSimple = document.getElementById('banglaSimple');
             const hijriDate = document.getElementById('hijriDate');
             const hijriSimple = document.getElementById('hijriSimple');
+
+            // Desktop elements
+            const desktopLocationFlag = document.getElementById('desktopLocationFlag');
+            const desktopLocationName = document.getElementById('desktopLocationName');
+            const desktopHoursElement = document.getElementById('desktopHours');
+            const desktopMinutesElement = document.getElementById('desktopMinutes');
+            const desktopSecondsElement = document.getElementById('desktopSeconds');
+            const desktopAmpmElement = document.getElementById('desktopAmpm');
+            const desktopEnglishDate = document.getElementById('desktopEnglishDate');
+            const desktopEnglishSimple = document.getElementById('desktopEnglishSimple');
+            const desktopBanglaDate = document.getElementById('desktopBanglaDate');
+            const desktopBanglaSimple = document.getElementById('desktopBanglaSimple');
+            const desktopHijriDate = document.getElementById('desktopHijriDate');
+            const desktopHijriSimple = document.getElementById('desktopHijriSimple');
 
             // Timezone mapping
             const timezoneMap = {
@@ -1823,17 +2066,13 @@
                 'RU': { flag: '🇷🇺', name: 'Russia Time', offset: 3 }
             };
 
-            // Default to Bangladesh time
             let userTimezone = 'BD';
             let timezoneOffset = 6;
 
-            // Try to detect user location
             function detectLocation() {
-                // Try to get location from browser
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
                         (position) => {
-                            // Get country code from coordinates (simplified)
                             fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&localityLanguage=en`)
                                 .then(response => response.json())
                                 .then(data => {
@@ -1851,7 +2090,6 @@
                                 });
                         },
                         () => {
-                            // Fallback to IP-based detection
                             fetch('https://ipapi.co/json/')
                                 .then(response => response.json())
                                 .then(data => {
@@ -1874,20 +2112,15 @@
                 }
             }
 
-            // Update time display - AM/PM Format
             function updateTime() {
                 const now = new Date();
-                
-                // Calculate local time based on detected timezone
                 const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
                 const localTime = new Date(utc + (3600000 * timezoneOffset));
                 
-                // Get hours, minutes, seconds
                 let hours = localTime.getHours();
                 const minutes = localTime.getMinutes();
                 const seconds = localTime.getSeconds();
                 
-                // Convert to AM/PM format
                 let ampm = 'AM';
                 if (hours >= 12) {
                     ampm = 'PM';
@@ -1896,15 +2129,14 @@
                     }
                 }
                 if (hours === 0) {
-                    hours = 12; // 12 AM
+                    hours = 12;
                 }
                 
-                // Format with leading zeros
                 const formattedHours = hours.toString().padStart(2, '0');
                 const formattedMinutes = minutes.toString().padStart(2, '0');
                 const formattedSeconds = seconds.toString().padStart(2, '0');
                 
-                // Update elements with animation
+                // Update mobile elements
                 updateTimeElementWithFlip(hoursElement, formattedHours);
                 updateTimeElementWithFlip(minutesElement, formattedMinutes);
                 updateTimeElementWithFlip(secondsElement, formattedSeconds);
@@ -1912,28 +2144,43 @@
                 if (ampmElement.textContent !== ampm) {
                     ampmElement.style.animation = 'none';
                     setTimeout(() => {
-                        ampmElement.style.animation = 'amPmGlowRed 3s ease-in-out infinite';
+                        ampmElement.style.animation = 'amPmGlowWhite 3s ease-in-out infinite';
                         ampmElement.textContent = ampm;
                     }, 10);
                 }
                 
-                // Update location info
+                // Update desktop elements
+                updateTimeElementWithFlip(desktopHoursElement, formattedHours);
+                updateTimeElementWithFlip(desktopMinutesElement, formattedMinutes);
+                updateTimeElementWithFlip(desktopSecondsElement, formattedSeconds);
+                
+                if (desktopAmpmElement.textContent !== ampm) {
+                    desktopAmpmElement.style.animation = 'none';
+                    setTimeout(() => {
+                        desktopAmpmElement.style.animation = 'amPmGlowWhite 3s ease-in-out infinite';
+                        desktopAmpmElement.textContent = ampm;
+                    }, 10);
+                }
+                
                 const location = timezoneMap[userTimezone] || timezoneMap['BD'];
+                
+                // Update mobile location
                 locationFlag.textContent = location.flag;
                 locationName.textContent = location.name;
+                
+                // Update desktop location
+                desktopLocationFlag.textContent = location.flag;
+                desktopLocationName.textContent = location.name;
                 
                 // Update dates
                 updateDates(localTime);
             }
 
-            // Update time element with enhanced flip animation
             function updateTimeElementWithFlip(element, newValue) {
-                if (element.textContent !== newValue) {
-                    // Store old value for data attribute
+                if (element && element.textContent !== newValue) {
                     const oldValue = element.textContent;
                     element.setAttribute('data-value', oldValue);
                     
-                    // Add flip animation
                     element.style.animation = 'none';
                     element.style.transform = 'rotateX(0deg)';
                     
@@ -1941,15 +2188,13 @@
                         element.style.animation = 'digitFlip 0.6s ease';
                         element.textContent = newValue;
                         
-                        // Remove animation after it completes
                         setTimeout(() => {
-                            element.style.animation = 'timeGlowRed 3s ease-in-out infinite';
+                            element.style.animation = 'timeGlowWhite 3s ease-in-out infinite';
                         }, 600);
                     }, 10);
                 }
             }
 
-            // Update all dates - REAL TIME DATES
             function updateDates(date) {
                 // English date
                 const englishDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -1961,23 +2206,41 @@
                 const englishMonth = englishMonths[date.getMonth()];
                 const englishYear = date.getFullYear();
                 
-                englishDate.textContent = `${englishDay}, ${englishDateNum} ${englishMonth} ${englishYear}`;
-                englishSimple.textContent = `${englishDateNum} ${englishMonth.slice(0, 3)} ${englishYear}`;
+                const englishFull = `${englishDay}, ${englishDateNum} ${englishMonth} ${englishYear}`;
+                const englishShort = `${englishDateNum} ${englishMonth.slice(0, 3)} ${englishYear}`;
+                
+                // Update mobile
+                englishDate.textContent = englishFull;
+                englishSimple.textContent = englishShort;
+                
+                // Update desktop
+                desktopEnglishDate.textContent = englishFull;
+                desktopEnglishSimple.textContent = englishShort;
 
-                // Bengali date calculation
+                // Bengali date
                 const banglaDateResult = getBanglaDate(date);
-                banglaDate.textContent = `${banglaDateResult.day} ${banglaDateResult.month} ${banglaDateResult.year} বঙ্গাব্দ`;
-                banglaSimple.textContent = `${banglaDateResult.day} ${banglaDateResult.month} ${banglaDateResult.year}`;
+                const banglaFull = `${banglaDateResult.day} ${banglaDateResult.month} ${banglaDateResult.year} বঙ্গাব্দ`;
+                const banglaShort = `${banglaDateResult.day} ${banglaDateResult.month} ${banglaDateResult.year}`;
+                
+                banglaDate.textContent = banglaFull;
+                banglaSimple.textContent = banglaShort;
+                
+                desktopBanglaDate.textContent = banglaFull;
+                desktopBanglaSimple.textContent = banglaShort;
 
-                // Hijri date calculation - FIXED (no more random year)
+                // Hijri date
                 const hijriDateResult = getHijriDate(date);
-                hijriDate.textContent = `${hijriDateResult.day} ${hijriDateResult.month} ${hijriDateResult.year} হিজরি`;
-                hijriSimple.textContent = `${convertToArabicNumber(hijriDateResult.day)} ${hijriDateResult.monthAr} ${convertToArabicNumber(hijriDateResult.year)} هـ`;
+                const hijriFull = `${hijriDateResult.day} ${hijriDateResult.month} ${hijriDateResult.year} হিজরি`;
+                const hijriShort = `${convertToArabicNumber(hijriDateResult.day)} ${hijriDateResult.monthAr} ${convertToArabicNumber(hijriDateResult.year)} هـ`;
+                
+                hijriDate.textContent = hijriFull;
+                hijriSimple.textContent = hijriShort;
+                
+                desktopHijriDate.textContent = hijriFull;
+                desktopHijriSimple.textContent = hijriShort;
             }
 
-            // Bengali date calculation
             function getBanglaDate(gregorianDate) {
-                // Simple approximation for Bengali date
                 const banglaMonths = ['বৈশাখ', 'জ্যৈষ্ঠ', 'আষাঢ়', 'শ্রাবণ', 'ভাদ্র', 'আশ্বিন', 
                                      'কার্তিক', 'অগ্রহায়ণ', 'পৌষ', 'মাঘ', 'ফাল্গুন', 'চৈত্র'];
                 
@@ -1985,19 +2248,15 @@
                 const month = gregorianDate.getMonth();
                 const year = gregorianDate.getFullYear();
                 
-                // Approximate Bengali year (Bangla year starts in April)
                 let banglaYear = year - 593;
                 if (month < 3) {
                     banglaYear -= 1;
                 }
                 
-                // Approximate Bengali month (starts in April)
                 let banglaMonthIndex = (month + 8) % 12;
                 let banglaDay = day;
                 
-                // Adjust for month lengths (simplified)
                 if ([0, 2, 4, 6, 7, 9, 11].includes(banglaMonthIndex)) {
-                    // 31-day months
                     if (day > 17) {
                         banglaDay = day - 17;
                         banglaMonthIndex = (banglaMonthIndex + 1) % 12;
@@ -2008,7 +2267,6 @@
                         banglaDay = day + 14;
                     }
                 } else {
-                    // 30-day months
                     if (day > 16) {
                         banglaDay = day - 16;
                         banglaMonthIndex = (banglaMonthIndex + 1) % 12;
@@ -2027,7 +2285,6 @@
                 };
             }
 
-            // Hijri date calculation (approximation) - FIXED VERSION
             function getHijriDate(gregorianDate) {
                 const hijriMonths = ['মুহররম', 'সফর', 'রবিউল আউয়াল', 'রবিউস সানি', 
                                     'জমাদিউল আউয়াল', 'জমাদিউস সানি', 'রজব', 'শাবান', 
@@ -2037,82 +2294,58 @@
                                      'جمادى الأول', 'جمادى الثاني', 'رجب', 'شعبان', 
                                      'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'];
                 
-                // Fixed Hijri date calculation
+                // Fixed calculation for 2026
                 const gregorianYear = gregorianDate.getFullYear();
                 const gregorianMonth = gregorianDate.getMonth() + 1;
                 const gregorianDay = gregorianDate.getDate();
                 
-                // Today's date (3 Jan 2026)
-                const today = new Date();
-                const todayYear = today.getFullYear();
-                const todayMonth = today.getMonth() + 1;
-                const todayDay = today.getDate();
-                
-                // For demonstration, let's calculate based on known data
-                // 3 January 2026 = 13 Rajab 1447 AH
                 let hijriDay, hijriMonthIndex, hijriYear;
                 
                 if (gregorianYear === 2026 && gregorianMonth === 1) {
-                    if (gregorianDay === 1) {
-                        hijriDay = 11;
-                        hijriMonthIndex = 6; // Rajab
-                        hijriYear = 1447;
-                    } else if (gregorianDay === 2) {
-                        hijriDay = 12;
-                        hijriMonthIndex = 6; // Rajab
-                        hijriYear = 1447;
-                    } else if (gregorianDay === 3) {
-                        hijriDay = 13;
-                        hijriMonthIndex = 6; // Rajab
-                        hijriYear = 1447;
-                    } else if (gregorianDay === 4) {
-                        hijriDay = 14;
-                        hijriMonthIndex = 6; // Rajab
-                        hijriYear = 1447;
-                    } else if (gregorianDay === 5) {
-                        hijriDay = 15;
-                        hijriMonthIndex = 6; // Rajab
-                        hijriYear = 1447;
-                    } else {
-                        // For other days in Jan 2026
+                    if (gregorianDay === 1) hijriDay = 11;
+                    else if (gregorianDay === 2) hijriDay = 12;
+                    else if (gregorianDay === 3) hijriDay = 13;
+                    else if (gregorianDay === 4) hijriDay = 14;
+                    else if (gregorianDay === 5) hijriDay = 15;
+                    else {
                         hijriDay = 13 + (gregorianDay - 3);
                         if (hijriDay > 30) {
                             hijriDay = hijriDay - 30;
-                            hijriMonthIndex = 7; // Sha'ban
+                            hijriMonthIndex = 7;
                         } else {
-                            hijriMonthIndex = 6; // Rajab
+                            hijriMonthIndex = 6;
                         }
-                        hijriYear = 1447;
                     }
+                    hijriYear = 1447;
+                    
+                    if (!hijriMonthIndex) hijriMonthIndex = 6; // Rajab
                 } else {
-                    // Fallback for other dates
-                    // This is a simple approximation - for production, use a proper library
-                    const hijriEpoch = new Date(622, 6, 16); // July 16, 622 CE
-                    const diffMs = gregorianDate.getTime() - hijriEpoch.getTime();
-                    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                    // Fallback approximation
+                    const today = new Date();
+                    const baseDate = new Date(2026, 0, 3); // 3 Jan 2026 = 13 Rajab 1447
+                    const diffDays = Math.floor((gregorianDate - baseDate) / (1000 * 60 * 60 * 24));
                     
-                    // Hijri year approximation (1447 for 2026)
-                    hijriYear = Math.floor(diffDays / 354.366) + 1;
+                    hijriYear = 1447;
+                    hijriMonthIndex = 6; // Rajab
+                    hijriDay = 13 + diffDays;
                     
-                    // Make sure it's around 1447-1448
-                    if (gregorianYear >= 2026) {
-                        hijriYear = 1447 + Math.floor((gregorianYear - 2026) * 0.97);
+                    // Adjust month and year
+                    while (hijriDay > 30) {
+                        hijriDay -= 30;
+                        hijriMonthIndex++;
+                        if (hijriMonthIndex > 11) {
+                            hijriMonthIndex = 0;
+                            hijriYear++;
+                        }
                     }
                     
-                    // Simple month and day calculation
-                    const daysInYear = diffDays % 354.366;
-                    const hijriMonthLengths = [30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29];
-                    let remainingDays = daysInYear;
-                    hijriMonthIndex = 0;
-                    hijriDay = 1;
-                    
-                    for (let i = 0; i < hijriMonthLengths.length; i++) {
-                        if (remainingDays <= hijriMonthLengths[i]) {
-                            hijriMonthIndex = i;
-                            hijriDay = Math.floor(remainingDays) + 1;
-                            break;
+                    while (hijriDay < 1) {
+                        hijriMonthIndex--;
+                        if (hijriMonthIndex < 0) {
+                            hijriMonthIndex = 11;
+                            hijriYear--;
                         }
-                        remainingDays -= hijriMonthLengths[i];
+                        hijriDay += 30;
                     }
                 }
                 
@@ -2124,21 +2357,22 @@
                 };
             }
 
-            // Convert numbers to Bengali
             function convertToBanglaNumber(num) {
                 const banglaNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
                 return num.toString().split('').map(digit => banglaNumbers[parseInt(digit)] || digit).join('');
             }
 
-            // Convert numbers to Arabic
             function convertToArabicNumber(num) {
                 const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
                 return num.toString().split('').map(digit => arabicNumbers[parseInt(digit)] || digit).join('');
             }
 
-            // Initialize time display
+            // Initialize
             detectLocation();
             setInterval(updateTime, 1000);
+            
+            // Initial call to setup layout
+            setupLayout();
         });
     </script>
 </body>
