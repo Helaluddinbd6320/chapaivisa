@@ -316,39 +316,71 @@
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
-        /* Date Container - Three dates in one card */
+        /* Desktop Date Container - Three dates in one card */
         .date-container-grid {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             margin-top: 10px;
         }
 
-        @media (min-width: 768px) {
-            .date-container-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+        /* Mobile Date Slider Container */
+        .date-slider-container {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+            border-radius: 16px;
+            margin-top: 10px;
         }
 
-        .date-box {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
+        .date-slider {
+            display: flex;
+            width: 300%;
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .date-slide {
+            flex: 0 0 33.333%;
+            width: 33.333%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            min-height: 140px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .date-box:hover {
+        .date-slide:hover {
             background: rgba(255, 255, 255, 0.06);
-            transform: translateY(-3px);
             border-color: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Slider indicators */
+        .slider-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .slider-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .slider-indicator.active {
+            background: var(--accent);
+            transform: scale(1.2);
         }
 
         .date-type {
@@ -386,12 +418,19 @@
             direction: rtl;
         }
 
-        /* Center card for login */
+        /* Center card for login - Adjust position for mobile */
         .center-card-container {
             width: 100%;
             display: flex;
             justify-content: center;
             animation: fadeInUp 0.8s ease 0.4s both;
+            margin-top: 20px;
+        }
+
+        @media (min-width: 1024px) {
+            .center-card-container {
+                margin-top: 40px;
+            }
         }
 
         /* Card styles - Center */
@@ -430,6 +469,14 @@
                     0 35px 70px rgba(2, 6, 23, 1),
                     inset 0 1px 0 rgba(255, 255, 255, 0.05),
                     0 0 0 1px rgba(255, 255, 255, 0.02);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 36px 24px;
+                border-radius: 16px;
+                margin-top: 10px;
             }
         }
 
@@ -796,249 +843,6 @@
             animation: butterflyFlapRight 0.8s ease-in-out infinite;
         }
 
-        .butterfly .body {
-            position: absolute;
-            width: 3px;
-            height: 24px;
-            background: linear-gradient(to bottom, #fff, #ccc);
-            left: 50%;
-            top: 5px;
-            transform: translateX(-50%);
-            border-radius: 1.5px;
-            box-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
-        }
-
-        .butterfly .antenna {
-            position: absolute;
-            width: 1px;
-            height: 10px;
-            background: #fff;
-            top: 0;
-            transform-origin: bottom;
-        }
-
-        .butterfly .antenna.left {
-            left: calc(50% - 1px);
-            transform: rotate(-20deg);
-        }
-
-        .butterfly .antenna.right {
-            right: calc(50% - 1px);
-            transform: rotate(20deg);
-        }
-
-        /* Bird styles */
-        .bird {
-            position: absolute;
-            width: 60px;
-            height: 42px;
-            opacity: 0;
-            z-index: 1;
-            pointer-events: none;
-            filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
-        }
-
-        /* Bird body */
-        .bird-body {
-            position: absolute;
-            width: 36px;
-            height: 24px;
-            background: var(--bird-body-color, var(--bird-gray));
-            border-radius: 50% 50% 40% 40%;
-            left: 12px;
-            top: 9px;
-            box-shadow:
-                inset 0 -3px 5px rgba(0, 0, 0, 0.2),
-                0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Bird head */
-        .bird-head {
-            position: absolute;
-            width: 21px;
-            height: 21px;
-            background: var(--bird-head-color, var(--bird-gray));
-            border-radius: 50%;
-            left: 0;
-            top: 3px;
-            z-index: 2;
-            box-shadow:
-                inset 0 -2px 3px rgba(0, 0, 0, 0.2),
-                0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Bird beak */
-        .bird-beak {
-            position: absolute;
-            width: 15px;
-            height: 8px;
-            background: var(--bird-beak-color, #ffb347);
-            border-radius: 50% 0 0 50%;
-            left: -8px;
-            top: 9px;
-            z-index: 1;
-            clip-path: polygon(0 0, 100% 25%, 100% 75%, 0 100%);
-            box-shadow: 1px 0 2px rgba(0, 0, 0, 0.2);
-        }
-
-        .bird-beak::after {
-            content: '';
-            position: absolute;
-            width: 2px;
-            height: 1px;
-            background: #000;
-            top: 3px;
-            right: 3px;
-            border-radius: 1px;
-        }
-
-        /* Bird eye */
-        .bird-eye {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #fff;
-            border-radius: 50%;
-            left: 12px;
-            top: 7px;
-            z-index: 3;
-            box-shadow:
-                0 0 0 2px rgba(0, 0, 0, 0.1),
-                inset 0 1px 2px rgba(0, 0, 0, 0.3);
-        }
-
-        .bird-eye::before {
-            content: '';
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: #000;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-        }
-
-        .bird-eye::after {
-            content: '';
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            background: #fff;
-            border-radius: 50%;
-            top: 3px;
-            left: 3px;
-        }
-
-        /* Bird wings */
-        .bird-wing {
-            position: absolute;
-            width: 42px;
-            height: 21px;
-            background: var(--bird-wing-color, var(--bird-gray));
-            border-radius: 50%;
-            top: 12px;
-            left: 15px;
-            transform-origin: 15px 10px;
-            animation: birdWingFlap 0.5s ease-in-out infinite;
-            box-shadow:
-                inset 0 -2px 5px rgba(0, 0, 0, 0.3),
-                0 1px 2px rgba(0, 0, 0, 0.1);
-            z-index: 1;
-        }
-
-        .bird-wing::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg,
-                    transparent 20%,
-                    rgba(255, 255, 255, 0.1) 30%,
-                    rgba(0, 0, 0, 0.1) 70%,
-                    transparent 80%);
-            border-radius: 50%;
-        }
-
-        /* Bird tail */
-        .bird-tail {
-            position: absolute;
-            width: 27px;
-            height: 15px;
-            background: var(--bird-tail-color, var(--bird-gray));
-            right: -15px;
-            top: 18px;
-            border-radius: 0 50% 50% 0;
-            clip-path: polygon(0 0, 100% 50%, 0 100%);
-            box-shadow:
-                inset -2px 0 3px rgba(0, 0, 0, 0.2),
-                1px 0 2px rgba(0, 0, 0, 0.1);
-            z-index: 0;
-        }
-
-        /* Bird types */
-        .bird.sparrow {
-            --bird-body-color: var(--bird-gray);
-            --bird-head-color: var(--bird-black);
-            --bird-wing-color: var(--bird-black);
-            --bird-tail-color: var(--bird-gray);
-        }
-
-        .bird.pigeon {
-            --bird-body-color: var(--bird-white);
-            --bird-head-color: #cbd5e1;
-            --bird-wing-color: var(--bird-white);
-            --bird-tail-color: var(--bird-white);
-        }
-
-        .bird.cardinal {
-            --bird-body-color: var(--bird-red);
-            --bird-head-color: var(--bird-red);
-            --bird-wing-color: #dc2626;
-            --bird-tail-color: var(--bird-red);
-        }
-
-        .bird.bluejay {
-            --bird-body-color: var(--bird-blue);
-            --bird-head-color: var(--bird-blue);
-            --bird-wing-color: #1d4ed8;
-            --bird-tail-color: var(--bird-blue);
-        }
-
-        .bird.canary {
-            --bird-body-color: var(--bird-yellow);
-            --bird-head-color: var(--bird-yellow);
-            --bird-wing-color: #d97706;
-            --bird-tail-color: var(--bird-yellow);
-        }
-
-        .bird.parrot {
-            --bird-body-color: var(--bird-green);
-            --bird-head-color: var(--bird-green);
-            --bird-wing-color: #059669;
-            --bird-tail-color: var(--bird-green);
-        }
-
-        .bird.robin {
-            --bird-body-color: var(--bird-orange);
-            --bird-head-color: var(--bird-orange);
-            --bird-wing-color: #ea580c;
-            --bird-tail-color: var(--bird-orange);
-        }
-
-        .bird.flamingo {
-            --bird-body-color: var(--bird-pink);
-            --bird-head-color: var(--bird-pink);
-            --bird-wing-color: #db2777;
-            --bird-tail-color: var(--bird-pink);
-        }
-
-        .bird.peacock {
-            --bird-body-color: var(--bird-blue);
-            --bird-head-color: var(--bird-green);
-            --bird-wing-color: var(--bird-purple);
-            --bird-tail-color: var(--bird-green);
-        }
-
         /* Animations */
         @keyframes butterflyFlapLeft {
             0%, 100% {
@@ -1055,15 +859,6 @@
             }
             50% {
                 transform: rotate(25deg) translateY(-2px) scaleY(0.9);
-            }
-        }
-
-        @keyframes birdWingFlap {
-            0%, 100% {
-                transform: rotate(0deg);
-            }
-            50% {
-                transform: rotate(35deg);
             }
         }
 
@@ -1139,54 +934,18 @@
             }
         }
 
-        /* Bird animation */
-        @keyframes birdFlyOut {
-            0% {
-                opacity: 0;
-                transform: translate(0, 0) scale(0.7) rotate(0deg);
-            }
-            10% {
-                opacity: 1;
-                transform: translate(0, 0) scale(1) rotate(0deg);
-            }
-            85% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0;
-                transform: translate(var(--fly-x), var(--fly-y)) scale(0.8) rotate(var(--fly-rotate));
-            }
-        }
-
-        /* Butterfly animation */
-        @keyframes butterflyRandomMove {
-            0% {
-                transform: translate(var(--start-x), var(--start-y)) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translate(var(--end-x), var(--end-y)) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
         /* Performance optimization */
         @media (max-width: 768px) {
             body {
                 padding: 24px 16px;
+                gap: 20px;
             }
 
             .time-container, .date-container-full {
                 max-width: 95%;
             }
 
-            .time-card, .date-card {
+            .time-card {
                 padding: 20px;
             }
 
@@ -1208,9 +967,12 @@
                 font-size: 18px;
             }
 
-            .date-box {
+            .date-slider-container {
+                height: 160px;
+            }
+
+            .date-slide {
                 padding: 15px;
-                min-height: 120px;
             }
 
             .date-value {
@@ -1224,6 +986,7 @@
             .card {
                 padding: 36px 24px;
                 max-width: 95%;
+                margin-top: 10px;
             }
 
             .title {
@@ -1249,6 +1012,7 @@
         @media (max-width: 480px) {
             body {
                 padding: 20px 12px;
+                gap: 15px;
             }
 
             .time-card, .date-card {
@@ -1266,11 +1030,19 @@
 
             .time-am-pm {
                 font-size: 20px;
+                padding: 6px 12px;
             }
 
-            .date-container-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
+            .date-slider-container {
+                height: 150px;
+            }
+
+            .date-value {
+                font-size: 15px;
+            }
+
+            .date-simple {
+                font-size: 12px;
             }
 
             .card {
@@ -1347,25 +1119,39 @@
                 </div>
             </div>
 
-            <!-- Date Container -->
+            <!-- Date Container with Slider (Mobile only) -->
             <div class="date-container-full">
                 <div class="date-card">
-                    <div class="date-container-grid">
-                        <div class="date-box">
-                            <div class="date-type">English Date</div>
-                            <div class="date-value" id="englishDate">Friday, 3 January 2026</div>
-                            <div class="date-simple" id="englishSimple">3 Jan 2026</div>
+                    <div class="date-slider-container">
+                        <div class="date-slider" id="dateSlider">
+                            <!-- English Date Slide -->
+                            <div class="date-slide" data-index="0">
+                                <div class="date-type">English Date</div>
+                                <div class="date-value" id="englishDate">Friday, 3 January 2026</div>
+                                <div class="date-simple" id="englishSimple">3 Jan 2026</div>
+                            </div>
+                            
+                            <!-- Bengali Date Slide -->
+                            <div class="date-slide" data-index="1">
+                                <div class="date-type">বাংলা তারিখ</div>
+                                <div class="date-value bangla-date" id="banglaDate">১৮ পৌষ ১৪৩২</div>
+                                <div class="date-simple bangla-date" id="banglaSimple">বঙ্গাব্দ</div>
+                            </div>
+                            
+                            <!-- Hijri Date Slide -->
+                            <div class="date-slide" data-index="2">
+                                <div class="date-type">التاريخ الهجري</div>
+                                <div class="date-value hijri-date" id="hijriDate">١٤ رجب ١٤٤٧</div>
+                                <div class="date-simple hijri-date" id="hijriSimple">هـ</div>
+                            </div>
                         </div>
-                        <div class="date-box">
-                            <div class="date-type">বাংলা তারিখ</div>
-                            <div class="date-value bangla-date" id="banglaDate">১৮ পৌষ ১৪৩২</div>
-                            <div class="date-simple bangla-date" id="banglaSimple">বঙ্গাব্দ</div>
-                        </div>
-                        <div class="date-box">
-                            <div class="date-type">التاريخ الهجري</div>
-                            <div class="date-value hijri-date" id="hijriDate">١٤ رجب ١٤٤٧</div>
-                            <div class="date-simple hijri-date" id="hijriSimple">هـ</div>
-                        </div>
+                    </div>
+                    
+                    <!-- Slider Indicators -->
+                    <div class="slider-indicators">
+                        <div class="slider-indicator active" data-index="0"></div>
+                        <div class="slider-indicator" data-index="1"></div>
+                        <div class="slider-indicator" data-index="2"></div>
                     </div>
                 </div>
             </div>
@@ -1500,7 +1286,7 @@
                 'peacock'
             ];
 
-            // Create butterflies - FIXED: Now it will create butterflies
+            // Create butterflies
             const initialButterflyCount = 80;
             console.log(`Creating ${initialButterflyCount} MULTICOLOR butterflies...`);
 
@@ -1562,7 +1348,7 @@
                 return diagonal * 2 + Math.random() * diagonal;
             }
 
-            // Bird generation functions - FIXED: Now it will generate birds
+            // Bird generation functions
             function startCenterGeneration() {
                 console.log('Starting center bird generation...');
                 centerGenerationInterval = setInterval(() => {
@@ -1809,6 +1595,121 @@
                 }
             }, 20000);
 
+            // ============================================
+            // DATE SLIDER FUNCTIONALITY FOR MOBILE
+            // ============================================
+            
+            let currentSlide = 0;
+            const totalSlides = 3;
+            let slideInterval;
+            
+            function initDateSlider() {
+                const slider = document.getElementById('dateSlider');
+                const indicators = document.querySelectorAll('.slider-indicator');
+                
+                // Auto slide every 2 seconds
+                slideInterval = setInterval(() => {
+                    nextSlide();
+                }, 2000);
+                
+                // Add click event to indicators
+                indicators.forEach(indicator => {
+                    indicator.addEventListener('click', () => {
+                        const index = parseInt(indicator.getAttribute('data-index'));
+                        goToSlide(index);
+                    });
+                });
+                
+                // Pause on hover
+                const sliderContainer = document.querySelector('.date-slider-container');
+                sliderContainer.addEventListener('mouseenter', () => {
+                    clearInterval(slideInterval);
+                });
+                
+                sliderContainer.addEventListener('mouseleave', () => {
+                    slideInterval = setInterval(() => {
+                        nextSlide();
+                    }, 2000);
+                });
+                
+                // Touch swipe support
+                let touchStartX = 0;
+                let touchEndX = 0;
+                
+                sliderContainer.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                    clearInterval(slideInterval);
+                });
+                
+                sliderContainer.addEventListener('touchend', (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe();
+                    slideInterval = setInterval(() => {
+                        nextSlide();
+                    }, 2000);
+                });
+                
+                function handleSwipe() {
+                    const swipeThreshold = 50;
+                    const diff = touchStartX - touchEndX;
+                    
+                    if (Math.abs(diff) > swipeThreshold) {
+                        if (diff > 0) {
+                            nextSlide(); // Swipe left
+                        } else {
+                            prevSlide(); // Swipe right
+                        }
+                    }
+                }
+            }
+            
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % totalSlides;
+                updateSlider();
+            }
+            
+            function prevSlide() {
+                currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+                updateSlider();
+            }
+            
+            function goToSlide(index) {
+                currentSlide = index;
+                updateSlider();
+            }
+            
+            function updateSlider() {
+                const slider = document.getElementById('dateSlider');
+                const indicators = document.querySelectorAll('.slider-indicator');
+                
+                // Update slider position
+                slider.style.transform = `translateX(-${currentSlide * 33.333}%)`;
+                
+                // Update indicators
+                indicators.forEach((indicator, index) => {
+                    if (index === currentSlide) {
+                        indicator.classList.add('active');
+                    } else {
+                        indicator.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Initialize slider only on mobile
+            if (window.innerWidth < 1024) {
+                initDateSlider();
+            }
+            
+            // Reinitialize on resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth < 1024 && !slideInterval) {
+                    initDateSlider();
+                } else if (window.innerWidth >= 1024 && slideInterval) {
+                    clearInterval(slideInterval);
+                    slideInterval = null;
+                }
+            });
+
             // Time and Date Functions
             const locationFlag = document.getElementById('locationFlag');
             const locationName = document.getElementById('locationName');
@@ -1817,11 +1718,8 @@
             const secondsElement = document.getElementById('seconds');
             const ampmElement = document.getElementById('ampm');
             const englishDate = document.getElementById('englishDate');
-            const englishSimple = document.getElementById('englishSimple');
             const banglaDate = document.getElementById('banglaDate');
-            const banglaSimple = document.getElementById('banglaSimple');
             const hijriDate = document.getElementById('hijriDate');
-            const hijriSimple = document.getElementById('hijriSimple');
 
             // Desktop elements
             const desktopLocationFlag = document.getElementById('desktopLocationFlag');
@@ -1831,11 +1729,8 @@
             const desktopSecondsElement = document.getElementById('desktopSeconds');
             const desktopAmpmElement = document.getElementById('desktopAmpm');
             const desktopEnglishDate = document.getElementById('desktopEnglishDate');
-            const desktopEnglishSimple = document.getElementById('desktopEnglishSimple');
             const desktopBanglaDate = document.getElementById('desktopBanglaDate');
-            const desktopBanglaSimple = document.getElementById('desktopBanglaSimple');
             const desktopHijriDate = document.getElementById('desktopHijriDate');
-            const desktopHijriSimple = document.getElementById('desktopHijriSimple');
 
             // Timezone mapping
             const timezoneMap = {
@@ -1996,31 +1891,23 @@
                 
                 // Update mobile
                 englishDate.textContent = englishFull;
-                englishSimple.textContent = englishShort;
                 
                 // Update desktop
                 desktopEnglishDate.textContent = englishFull;
-                desktopEnglishSimple.textContent = englishShort;
 
                 // Bengali date
                 const banglaDateResult = getBanglaDate(date);
                 const banglaFull = `${banglaDateResult.day} ${banglaDateResult.month} ${banglaDateResult.year}`;
                 
                 banglaDate.textContent = banglaFull;
-                banglaSimple.textContent = "বঙ্গাব্দ";
-                
                 desktopBanglaDate.textContent = banglaFull;
-                desktopBanglaSimple.textContent = "বঙ্গাব্দ";
 
                 // Hijri date
                 const hijriDateResult = getHijriDate(date);
                 const hijriFull = hijriDateResult.arabicFull;
                 
                 hijriDate.textContent = hijriFull;
-                hijriSimple.textContent = "هـ";
-                
                 desktopHijriDate.textContent = hijriFull;
-                desktopHijriSimple.textContent = "هـ";
             }
 
             function getBanglaDate(gregorianDate) {
@@ -2069,7 +1956,6 @@
             }
 
             function getHijriDate(gregorianDate) {
-                // Fixed calculation for 2026
                 const gregorianYear = gregorianDate.getFullYear();
                 const gregorianMonth = gregorianDate.getMonth() + 1;
                 const gregorianDay = gregorianDate.getDate();
@@ -2077,27 +1963,23 @@
                 let hijriDay, hijriMonth, hijriYear;
                 
                 if (gregorianYear === 2026 && gregorianMonth === 1) {
-                    // January 2026
                     hijriYear = 1447;
-                    hijriMonth = "رجب"; // Rajab in Arabic
+                    hijriMonth = "رجب";
                     
-                    // Calculate day based on Jan 1 = 11 Rajab
-                    hijriDay = 10 + gregorianDay; // Jan 1 = 11, Jan 2 = 12, etc.
+                    hijriDay = 10 + gregorianDay;
                     
                     if (hijriDay > 30) {
                         hijriDay = hijriDay - 30;
-                        hijriMonth = "شعبان"; // Sha'ban if exceeds 30
+                        hijriMonth = "شعبان";
                     }
                 } else {
-                    // For other dates, use approximation
-                    const baseDate = new Date(2026, 0, 1); // Jan 1, 2026
+                    const baseDate = new Date(2026, 0, 1);
                     const diffDays = Math.floor((gregorianDate - baseDate) / (1000 * 60 * 60 * 24));
                     
                     hijriYear = 1447;
                     hijriMonth = "رجب";
-                    hijriDay = 11 + diffDays; // Start from 11 Rajab
+                    hijriDay = 11 + diffDays;
                     
-                    // Adjust for month boundaries
                     while (hijriDay > 30) {
                         hijriDay -= 30;
                         if (hijriMonth === "رجب") {
@@ -2106,12 +1988,11 @@
                             hijriMonth = "رمضان";
                         } else if (hijriMonth === "رمضان") {
                             hijriMonth = "شوال";
-                            hijriYear = 1448; // Move to next year
+                            hijriYear = 1448;
                         }
                     }
                 }
                 
-                // Convert day to Arabic numerals
                 const arabicDay = convertToArabicNumber(hijriDay);
                 const arabicYear = convertToArabicNumber(hijriYear);
                 
