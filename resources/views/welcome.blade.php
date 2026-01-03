@@ -75,24 +75,33 @@
             gap: 40px;
         }
 
-        /* Top section - Date and Time side by side */
-        .top-section {
+        /* Mobile layout - shown by default */
+        .mobile-layout {
+            width: 100%;
             display: flex;
             flex-direction: column;
             gap: 30px;
-            width: 100%;
         }
 
-        /* Date-Time container for side by side layout */
-        .datetime-container {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
+        /* Desktop layout - hidden on mobile */
+        .desktop-layout {
+            display: none;
             width: 100%;
+            flex-direction: column;
+            gap: 40px;
         }
 
         @media (min-width: 1024px) {
+            .mobile-layout {
+                display: none;
+            }
+            
+            .desktop-layout {
+                display: flex;
+            }
+            
             .datetime-container {
+                display: flex;
                 flex-direction: row;
                 gap: 40px;
             }
@@ -787,6 +796,249 @@
             animation: butterflyFlapRight 0.8s ease-in-out infinite;
         }
 
+        .butterfly .body {
+            position: absolute;
+            width: 3px;
+            height: 24px;
+            background: linear-gradient(to bottom, #fff, #ccc);
+            left: 50%;
+            top: 5px;
+            transform: translateX(-50%);
+            border-radius: 1.5px;
+            box-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+        }
+
+        .butterfly .antenna {
+            position: absolute;
+            width: 1px;
+            height: 10px;
+            background: #fff;
+            top: 0;
+            transform-origin: bottom;
+        }
+
+        .butterfly .antenna.left {
+            left: calc(50% - 1px);
+            transform: rotate(-20deg);
+        }
+
+        .butterfly .antenna.right {
+            right: calc(50% - 1px);
+            transform: rotate(20deg);
+        }
+
+        /* Bird styles */
+        .bird {
+            position: absolute;
+            width: 60px;
+            height: 42px;
+            opacity: 0;
+            z-index: 1;
+            pointer-events: none;
+            filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Bird body */
+        .bird-body {
+            position: absolute;
+            width: 36px;
+            height: 24px;
+            background: var(--bird-body-color, var(--bird-gray));
+            border-radius: 50% 50% 40% 40%;
+            left: 12px;
+            top: 9px;
+            box-shadow:
+                inset 0 -3px 5px rgba(0, 0, 0, 0.2),
+                0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Bird head */
+        .bird-head {
+            position: absolute;
+            width: 21px;
+            height: 21px;
+            background: var(--bird-head-color, var(--bird-gray));
+            border-radius: 50%;
+            left: 0;
+            top: 3px;
+            z-index: 2;
+            box-shadow:
+                inset 0 -2px 3px rgba(0, 0, 0, 0.2),
+                0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Bird beak */
+        .bird-beak {
+            position: absolute;
+            width: 15px;
+            height: 8px;
+            background: var(--bird-beak-color, #ffb347);
+            border-radius: 50% 0 0 50%;
+            left: -8px;
+            top: 9px;
+            z-index: 1;
+            clip-path: polygon(0 0, 100% 25%, 100% 75%, 0 100%);
+            box-shadow: 1px 0 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .bird-beak::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 1px;
+            background: #000;
+            top: 3px;
+            right: 3px;
+            border-radius: 1px;
+        }
+
+        /* Bird eye */
+        .bird-eye {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            left: 12px;
+            top: 7px;
+            z-index: 3;
+            box-shadow:
+                0 0 0 2px rgba(0, 0, 0, 0.1),
+                inset 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .bird-eye::before {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #000;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+        }
+
+        .bird-eye::after {
+            content: '';
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            background: #fff;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+        }
+
+        /* Bird wings */
+        .bird-wing {
+            position: absolute;
+            width: 42px;
+            height: 21px;
+            background: var(--bird-wing-color, var(--bird-gray));
+            border-radius: 50%;
+            top: 12px;
+            left: 15px;
+            transform-origin: 15px 10px;
+            animation: birdWingFlap 0.5s ease-in-out infinite;
+            box-shadow:
+                inset 0 -2px 5px rgba(0, 0, 0, 0.3),
+                0 1px 2px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .bird-wing::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent 20%,
+                    rgba(255, 255, 255, 0.1) 30%,
+                    rgba(0, 0, 0, 0.1) 70%,
+                    transparent 80%);
+            border-radius: 50%;
+        }
+
+        /* Bird tail */
+        .bird-tail {
+            position: absolute;
+            width: 27px;
+            height: 15px;
+            background: var(--bird-tail-color, var(--bird-gray));
+            right: -15px;
+            top: 18px;
+            border-radius: 0 50% 50% 0;
+            clip-path: polygon(0 0, 100% 50%, 0 100%);
+            box-shadow:
+                inset -2px 0 3px rgba(0, 0, 0, 0.2),
+                1px 0 2px rgba(0, 0, 0, 0.1);
+            z-index: 0;
+        }
+
+        /* Bird types */
+        .bird.sparrow {
+            --bird-body-color: var(--bird-gray);
+            --bird-head-color: var(--bird-black);
+            --bird-wing-color: var(--bird-black);
+            --bird-tail-color: var(--bird-gray);
+        }
+
+        .bird.pigeon {
+            --bird-body-color: var(--bird-white);
+            --bird-head-color: #cbd5e1;
+            --bird-wing-color: var(--bird-white);
+            --bird-tail-color: var(--bird-white);
+        }
+
+        .bird.cardinal {
+            --bird-body-color: var(--bird-red);
+            --bird-head-color: var(--bird-red);
+            --bird-wing-color: #dc2626;
+            --bird-tail-color: var(--bird-red);
+        }
+
+        .bird.bluejay {
+            --bird-body-color: var(--bird-blue);
+            --bird-head-color: var(--bird-blue);
+            --bird-wing-color: #1d4ed8;
+            --bird-tail-color: var(--bird-blue);
+        }
+
+        .bird.canary {
+            --bird-body-color: var(--bird-yellow);
+            --bird-head-color: var(--bird-yellow);
+            --bird-wing-color: #d97706;
+            --bird-tail-color: var(--bird-yellow);
+        }
+
+        .bird.parrot {
+            --bird-body-color: var(--bird-green);
+            --bird-head-color: var(--bird-green);
+            --bird-wing-color: #059669;
+            --bird-tail-color: var(--bird-green);
+        }
+
+        .bird.robin {
+            --bird-body-color: var(--bird-orange);
+            --bird-head-color: var(--bird-orange);
+            --bird-wing-color: #ea580c;
+            --bird-tail-color: var(--bird-orange);
+        }
+
+        .bird.flamingo {
+            --bird-body-color: var(--bird-pink);
+            --bird-head-color: var(--bird-pink);
+            --bird-wing-color: #db2777;
+            --bird-tail-color: var(--bird-pink);
+        }
+
+        .bird.peacock {
+            --bird-body-color: var(--bird-blue);
+            --bird-head-color: var(--bird-green);
+            --bird-wing-color: var(--bird-purple);
+            --bird-tail-color: var(--bird-green);
+        }
+
         /* Animations */
         @keyframes butterflyFlapLeft {
             0%, 100% {
@@ -803,6 +1055,15 @@
             }
             50% {
                 transform: rotate(25deg) translateY(-2px) scaleY(0.9);
+            }
+        }
+
+        @keyframes birdWingFlap {
+            0%, 100% {
+                transform: rotate(0deg);
+            }
+            50% {
+                transform: rotate(35deg);
             }
         }
 
@@ -874,6 +1135,43 @@
             }
             100% {
                 transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
+        }
+
+        /* Bird animation */
+        @keyframes birdFlyOut {
+            0% {
+                opacity: 0;
+                transform: translate(0, 0) scale(0.7) rotate(0deg);
+            }
+            10% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            85% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--fly-x), var(--fly-y)) scale(0.8) rotate(var(--fly-rotate));
+            }
+        }
+
+        /* Butterfly animation */
+        @keyframes butterflyRandomMove {
+            0% {
+                transform: translate(var(--start-x), var(--start-y)) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--end-x), var(--end-y)) rotate(360deg);
                 opacity: 0;
             }
         }
@@ -1012,8 +1310,86 @@
 
     <!-- Main Container -->
     <div class="main-container">
-        <!-- Top Section - Date and Time side by side -->
-        <div class="top-section">
+        <!-- Mobile Layout (shown by default) -->
+        <div class="mobile-layout">
+            <!-- Time Container -->
+            <div class="time-container">
+                <div class="time-card">
+                    <div class="location-info">
+                        <div class="location-flag" id="locationFlag">🌍</div>
+                        <div class="location-name" id="locationName">Detecting location...</div>
+                    </div>
+                    
+                    <!-- Time Display -->
+                    <div class="time-display">
+                        <div class="time-segment">
+                            <div class="time-number-container">
+                                <div class="time-number" id="hours" data-value="12">12</div>
+                            </div>
+                            <div class="time-label">Hours</div>
+                        </div>
+                        <div class="time-colon">:</div>
+                        <div class="time-segment">
+                            <div class="time-number-container">
+                                <div class="time-number" id="minutes" data-value="00">00</div>
+                            </div>
+                            <div class="time-label">Minutes</div>
+                        </div>
+                        <div class="time-colon">:</div>
+                        <div class="time-segment">
+                            <div class="time-number-container">
+                                <div class="time-number" id="seconds" data-value="00">00</div>
+                            </div>
+                            <div class="time-label">Seconds</div>
+                        </div>
+                        <div class="time-am-pm" id="ampm">AM</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date Container -->
+            <div class="date-container-full">
+                <div class="date-card">
+                    <div class="date-container-grid">
+                        <div class="date-box">
+                            <div class="date-type">English Date</div>
+                            <div class="date-value" id="englishDate">Friday, 3 January 2026</div>
+                            <div class="date-simple" id="englishSimple">3 Jan 2026</div>
+                        </div>
+                        <div class="date-box">
+                            <div class="date-type">বাংলা তারিখ</div>
+                            <div class="date-value bangla-date" id="banglaDate">১৮ পৌষ ১৪৩২</div>
+                            <div class="date-simple bangla-date" id="banglaSimple">বঙ্গাব্দ</div>
+                        </div>
+                        <div class="date-box">
+                            <div class="date-type">التاريخ الهجري</div>
+                            <div class="date-value hijri-date" id="hijriDate">١٤ رجب ١٤٤٧</div>
+                            <div class="date-simple hijri-date" id="hijriSimple">هـ</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Card for Login -->
+            <div class="center-card-container">
+                <main class="card" role="main">
+                    <h1 class="title">Welcome back</h1>
+                    <p class="subtitle">Click the button below to continue to the login page.</p>
+
+                    <a class="btn" href="/admin" role="button" aria-label="Go To Login">
+                        <span>Go To Login</span>
+                        <span class="arrow" aria-hidden="true">➜</span>
+                    </a>
+
+                    <p class="muted">Need help? <a
+                            href="https://wa.me/8801841484885?text=Login%20করতে%20প্রবলেম%20হচ্ছে.%20দয়া%20করে%20সহায়তা%20করুন.%20Website%20URL:%20https://chapaivisa.com/"
+                            target="_blank">Contact support on WhatsApp</a> — and say Hi to Helal Uddin ❤️</p>
+                </main>
+            </div>
+        </div>
+
+        <!-- Desktop Layout (hidden on mobile) -->
+        <div class="desktop-layout">
             <div class="datetime-container">
                 <!-- Date Card -->
                 <div class="date-container-full">
@@ -1021,18 +1397,18 @@
                         <div class="date-container-grid">
                             <div class="date-box">
                                 <div class="date-type">English Date</div>
-                                <div class="date-value" id="englishDate">Friday, 3 January 2026</div>
-                                <div class="date-simple" id="englishSimple">3 Jan 2026</div>
+                                <div class="date-value" id="desktopEnglishDate">Friday, 3 January 2026</div>
+                                <div class="date-simple" id="desktopEnglishSimple">3 Jan 2026</div>
                             </div>
                             <div class="date-box">
                                 <div class="date-type">বাংলা তারিখ</div>
-                                <div class="date-value bangla-date" id="banglaDate">১৮ পৌষ ১৪৩২</div>
-                                <div class="date-simple bangla-date" id="banglaSimple">বঙ্গাব্দ</div>
+                                <div class="date-value bangla-date" id="desktopBanglaDate">১৮ পৌষ ১৪৩২</div>
+                                <div class="date-simple bangla-date" id="desktopBanglaSimple">বঙ্গাব্দ</div>
                             </div>
                             <div class="date-box">
                                 <div class="date-type">التاريخ الهجري</div>
-                                <div class="date-value hijri-date" id="hijriDate">١٤ رجب ١٤٤٧</div>
-                                <div class="date-simple hijri-date" id="hijriSimple">هـ</div>
+                                <div class="date-value hijri-date" id="desktopHijriDate">١٤ رجب ١٤٤٧</div>
+                                <div class="date-simple hijri-date" id="desktopHijriSimple">هـ</div>
                             </div>
                         </div>
                     </div>
@@ -1042,60 +1418,60 @@
                 <div class="time-container">
                     <div class="time-card">
                         <div class="location-info">
-                            <div class="location-flag" id="locationFlag">🌍</div>
-                            <div class="location-name" id="locationName">Detecting location...</div>
+                            <div class="location-flag" id="desktopLocationFlag">🌍</div>
+                            <div class="location-name" id="desktopLocationName">Detecting location...</div>
                         </div>
                         
                         <!-- Time Display -->
                         <div class="time-display">
                             <div class="time-segment">
                                 <div class="time-number-container">
-                                    <div class="time-number" id="hours" data-value="12">12</div>
+                                    <div class="time-number" id="desktopHours" data-value="12">12</div>
                                 </div>
                                 <div class="time-label">Hours</div>
                             </div>
                             <div class="time-colon">:</div>
                             <div class="time-segment">
                                 <div class="time-number-container">
-                                    <div class="time-number" id="minutes" data-value="00">00</div>
+                                    <div class="time-number" id="desktopMinutes" data-value="00">00</div>
                                 </div>
                                 <div class="time-label">Minutes</div>
                             </div>
                             <div class="time-colon">:</div>
                             <div class="time-segment">
                                 <div class="time-number-container">
-                                    <div class="time-number" id="seconds" data-value="00">00</div>
+                                    <div class="time-number" id="desktopSeconds" data-value="00">00</div>
                                 </div>
                                 <div class="time-label">Seconds</div>
                             </div>
-                            <div class="time-am-pm" id="ampm">AM</div>
+                            <div class="time-am-pm" id="desktopAmpm">AM</div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Center Card for Login -->
-        <div class="center-card-container">
-            <main class="card" role="main">
-                <h1 class="title">Welcome back</h1>
-                <p class="subtitle">Click the button below to continue to the login page.</p>
+            <!-- Center Card for Login -->
+            <div class="center-card-container">
+                <main class="card" role="main">
+                    <h1 class="title">Welcome back</h1>
+                    <p class="subtitle">Click the button below to continue to the login page.</p>
 
-                <a class="btn" href="/admin" role="button" aria-label="Go To Login">
-                    <span>Go To Login</span>
-                    <span class="arrow" aria-hidden="true">➜</span>
-                </a>
+                    <a class="btn" href="/admin" role="button" aria-label="Go To Login">
+                        <span>Go To Login</span>
+                        <span class="arrow" aria-hidden="true">➜</span>
+                    </a>
 
-                <p class="muted">Need help? <a
-                        href="https://wa.me/8801841484885?text=Login%20করতে%20প্রবলেম%20হচ্ছে.%20দয়া%20করে%20সহায়তা%20করুন.%20Website%20URL:%20https://chapaivisa.com/"
-                        target="_blank">Contact support on WhatsApp</a> — and say Hi to Helal Uddin ❤️</p>
-            </main>
+                    <p class="muted">Need help? <a
+                            href="https://wa.me/8801841484885?text=Login%20করতে%20প্রবলেম%20হচ্ছে.%20দয়া%20করে%20সহায়তা%20করুন.%20Website%20URL:%20https://chapaivisa.com/"
+                            target="_blank">Contact support on WhatsApp</a> — and say Hi to Helal Uddin ❤️</p>
+                </main>
+            </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Document loaded, creating MULTICOLOR creatures...');
+            console.log('Document loaded, creating creatures...');
 
             const container = document.getElementById('creatures');
             const cursor = document.getElementById('cursor');
@@ -1124,7 +1500,7 @@
                 'peacock'
             ];
 
-            // 80 butterflies initially
+            // Create butterflies - FIXED: Now it will create butterflies
             const initialButterflyCount = 80;
             console.log(`Creating ${initialButterflyCount} MULTICOLOR butterflies...`);
 
@@ -1186,7 +1562,7 @@
                 return diagonal * 2 + Math.random() * diagonal;
             }
 
-            // Bird generation functions
+            // Bird generation functions - FIXED: Now it will generate birds
             function startCenterGeneration() {
                 console.log('Starting center bird generation...');
                 centerGenerationInterval = setInterval(() => {
@@ -1447,6 +1823,20 @@
             const hijriDate = document.getElementById('hijriDate');
             const hijriSimple = document.getElementById('hijriSimple');
 
+            // Desktop elements
+            const desktopLocationFlag = document.getElementById('desktopLocationFlag');
+            const desktopLocationName = document.getElementById('desktopLocationName');
+            const desktopHoursElement = document.getElementById('desktopHours');
+            const desktopMinutesElement = document.getElementById('desktopMinutes');
+            const desktopSecondsElement = document.getElementById('desktopSeconds');
+            const desktopAmpmElement = document.getElementById('desktopAmpm');
+            const desktopEnglishDate = document.getElementById('desktopEnglishDate');
+            const desktopEnglishSimple = document.getElementById('desktopEnglishSimple');
+            const desktopBanglaDate = document.getElementById('desktopBanglaDate');
+            const desktopBanglaSimple = document.getElementById('desktopBanglaSimple');
+            const desktopHijriDate = document.getElementById('desktopHijriDate');
+            const desktopHijriSimple = document.getElementById('desktopHijriSimple');
+
             // Timezone mapping
             const timezoneMap = {
                 'BD': { flag: '🇧🇩', name: 'Bangladesh Time', offset: 6 },
@@ -1531,7 +1921,7 @@
                 const formattedMinutes = minutes.toString().padStart(2, '0');
                 const formattedSeconds = seconds.toString().padStart(2, '0');
                 
-                // Update time elements
+                // Update mobile elements
                 updateTimeElementWithFlip(hoursElement, formattedHours);
                 updateTimeElementWithFlip(minutesElement, formattedMinutes);
                 updateTimeElementWithFlip(secondsElement, formattedSeconds);
@@ -1544,9 +1934,28 @@
                     }, 10);
                 }
                 
+                // Update desktop elements
+                updateTimeElementWithFlip(desktopHoursElement, formattedHours);
+                updateTimeElementWithFlip(desktopMinutesElement, formattedMinutes);
+                updateTimeElementWithFlip(desktopSecondsElement, formattedSeconds);
+                
+                if (desktopAmpmElement.textContent !== ampm) {
+                    desktopAmpmElement.style.animation = 'none';
+                    setTimeout(() => {
+                        desktopAmpmElement.style.animation = 'amPmGlowWhite 3s ease-in-out infinite';
+                        desktopAmpmElement.textContent = ampm;
+                    }, 10);
+                }
+                
                 const location = timezoneMap[userTimezone] || timezoneMap['BD'];
+                
+                // Update mobile location
                 locationFlag.textContent = location.flag;
                 locationName.textContent = location.name;
+                
+                // Update desktop location
+                desktopLocationFlag.textContent = location.flag;
+                desktopLocationName.textContent = location.name;
                 
                 // Update dates
                 updateDates(localTime);
@@ -1585,8 +1994,13 @@
                 const englishFull = `${englishDay}, ${englishDateNum} ${englishMonth} ${englishYear}`;
                 const englishShort = `${englishDateNum} ${englishMonth.slice(0, 3)} ${englishYear}`;
                 
+                // Update mobile
                 englishDate.textContent = englishFull;
                 englishSimple.textContent = englishShort;
+                
+                // Update desktop
+                desktopEnglishDate.textContent = englishFull;
+                desktopEnglishSimple.textContent = englishShort;
 
                 // Bengali date
                 const banglaDateResult = getBanglaDate(date);
@@ -1594,12 +2008,19 @@
                 
                 banglaDate.textContent = banglaFull;
                 banglaSimple.textContent = "বঙ্গাব্দ";
+                
+                desktopBanglaDate.textContent = banglaFull;
+                desktopBanglaSimple.textContent = "বঙ্গাব্দ";
 
-                // Hijri date - FIXED: Now shows Arabic date
+                // Hijri date
                 const hijriDateResult = getHijriDate(date);
-                // Arabic date: ١٤ رجب ١٤٤٧
-                hijriDate.textContent = hijriDateResult.arabicFull;
-                hijriSimple.textContent = "هـ"; // Just the هـ symbol
+                const hijriFull = hijriDateResult.arabicFull;
+                
+                hijriDate.textContent = hijriFull;
+                hijriSimple.textContent = "هـ";
+                
+                desktopHijriDate.textContent = hijriFull;
+                desktopHijriSimple.textContent = "هـ";
             }
 
             function getBanglaDate(gregorianDate) {
@@ -1652,12 +2073,6 @@
                 const gregorianYear = gregorianDate.getFullYear();
                 const gregorianMonth = gregorianDate.getMonth() + 1;
                 const gregorianDay = gregorianDate.getDate();
-                
-                // For January 2026 - these are known dates
-                // 1 Jan 2026 = 11 Rajab 1447
-                // 2 Jan 2026 = 12 Rajab 1447
-                // 3 Jan 2026 = 13 Rajab 1447
-                // 4 Jan 2026 = 14 Rajab 1447
                 
                 let hijriDay, hijriMonth, hijriYear;
                 
