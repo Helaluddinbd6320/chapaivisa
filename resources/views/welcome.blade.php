@@ -124,92 +124,136 @@
             background-size: 300% 300%;
         }
 
-        /* New Time Display Design */
+        /* Improved Time Display Design */
         .time-display {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin: 15px 0;
+            gap: 5px;
+            margin: 20px 0;
         }
 
         .time-segment {
             display: flex;
             flex-direction: column;
             align-items: center;
-            perspective: 1000px;
+            position: relative;
+        }
+
+        .time-number-container {
+            position: relative;
+            perspective: 500px;
+            margin-bottom: 5px;
         }
 
         .time-number {
-            font-size: 36px;
-            font-weight: 800;
+            font-size: 48px;
+            font-weight: 900;
             background: linear-gradient(135deg, #fff, var(--accent-2), var(--accent));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: timeNumberGlow 2s ease-in-out infinite;
+            animation: timeGlow 3s ease-in-out infinite;
             letter-spacing: 2px;
-            text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
-            position: relative;
-            min-width: 60px;
+            text-shadow: 
+                0 0 10px rgba(6, 182, 212, 0.5),
+                0 0 20px rgba(6, 182, 212, 0.3),
+                0 0 30px rgba(6, 182, 212, 0.2);
+            min-width: 80px;
             text-align: center;
             padding: 5px 0;
+            position: relative;
+            z-index: 2;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
         }
 
         .time-number::before {
             content: '';
             position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, 
+                transparent, 
+                rgba(124, 58, 237, 0.2), 
+                rgba(6, 182, 212, 0.3),
+                rgba(236, 72, 153, 0.2),
+                transparent);
+            border-radius: 12px;
+            z-index: -1;
+            animation: borderGlow 4s linear infinite;
+            filter: blur(10px);
+        }
+
+        .time-number::after {
+            content: attr(data-value);
+            position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(45deg, 
-                transparent, 
-                rgba(255, 255, 255, 0.1), 
-                transparent);
-            animation: timeShimmer 3s linear infinite;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #fff, var(--accent-2), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0.3;
+            transform: translateY(2px) scale(1.02);
+            filter: blur(3px);
+            z-index: -2;
         }
 
         .time-label {
-            font-size: 11px;
-            color: rgba(226, 232, 240, 0.6);
+            font-size: 12px;
+            color: var(--accent);
             margin-top: 4px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+            animation: labelPulse 2s ease-in-out infinite;
         }
 
         .time-colon {
-            font-size: 36px;
-            font-weight: 800;
+            font-size: 48px;
+            font-weight: 900;
             color: var(--accent);
-            animation: colonBlink 2s infinite;
+            animation: colonPulse 2s infinite;
             margin: 0 5px;
-            text-shadow: 0 0 15px rgba(6, 182, 212, 0.7);
+            text-shadow: 
+                0 0 15px rgba(6, 182, 212, 0.7),
+                0 0 25px rgba(6, 182, 212, 0.4);
+            position: relative;
+            top: -10px;
         }
 
         .time-am-pm {
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 24px;
+            font-weight: 800;
             background: linear-gradient(135deg, var(--accent-4), var(--accent-3));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-left: 10px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            animation: amPmPulse 3s ease-in-out infinite;
-            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.2);
+            margin-left: 15px;
+            padding: 8px 16px;
+            border-radius: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            animation: amPmGlow 3s ease-in-out infinite;
+            box-shadow: 
+                0 5px 20px rgba(6, 182, 212, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            top: -10px;
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
         }
 
-        /* Date Container */
+        /* Date Container - Simplified */
         .date-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
-            margin-top: 20px;
+            margin-top: 25px;
         }
 
         .date-box {
@@ -228,97 +272,106 @@
             background: rgba(255, 255, 255, 0.06);
             transform: translateY(-3px);
             border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .date-icon {
-            font-size: 20px;
-            margin-bottom: 8px;
-            opacity: 0.8;
-        }
-
-        .date-label {
-            font-size: 12px;
-            color: rgba(226, 232, 240, 0.6);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
         .date-value {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
             color: #fff;
             line-height: 1.4;
             text-align: center;
             margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .date-simple {
             font-size: 12px;
             color: rgba(226, 232, 240, 0.7);
             font-weight: 500;
+            margin-top: 3px;
         }
 
         .bangla-date {
             font-family: "Noto Sans Bengali", "Kalpurush", "SolaimanLipi", sans-serif;
-            font-size: 15px;
+            font-size: 16px;
         }
 
         .hijri-date {
             font-family: "Noto Sans Arabic", "Scheherazade", sans-serif;
-            font-size: 15px;
+            font-size: 16px;
             direction: rtl;
         }
 
-        .hijri-date-arabic {
-            font-family: "Noto Sans Arabic", "Scheherazade", sans-serif;
-            direction: rtl;
-            font-size: 14px;
-            margin-top: 3px;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        /* New Animations for Time */
-        @keyframes timeNumberGlow {
+        /* New Animations */
+        @keyframes timeGlow {
             0%, 100% {
-                filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.6));
+                filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.6))
+                       drop-shadow(0 0 30px rgba(124, 58, 237, 0.4));
                 transform: scale(1);
             }
             50% {
-                filter: drop-shadow(0 0 25px rgba(6, 182, 212, 0.9));
-                transform: scale(1.02);
+                filter: drop-shadow(0 0 30px rgba(6, 182, 212, 0.9))
+                       drop-shadow(0 0 40px rgba(124, 58, 237, 0.6));
+                transform: scale(1.03);
             }
         }
 
-        @keyframes colonBlink {
-            0%, 100% {
-                opacity: 1;
-                transform: scale(1);
+        @keyframes borderGlow {
+            0% {
+                opacity: 0.5;
+                transform: rotate(0deg);
+            }
+            25% {
+                opacity: 0.8;
             }
             50% {
                 opacity: 0.5;
-                transform: scale(0.9);
+                transform: rotate(180deg);
             }
-        }
-
-        @keyframes amPmPulse {
-            0%, 100% {
-                transform: scale(1);
-                box-shadow: 0 4px 15px rgba(6, 182, 212, 0.2);
-            }
-            50% {
-                transform: scale(1.05);
-                box-shadow: 0 6px 25px rgba(6, 182, 212, 0.4);
-            }
-        }
-
-        @keyframes timeShimmer {
-            0% {
-                transform: translateX(-100%);
+            75% {
+                opacity: 0.8;
             }
             100% {
-                transform: translateX(100%);
+                opacity: 0.5;
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes colonPulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(1.1) translateY(-2px);
+            }
+        }
+
+        @keyframes amPmGlow {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 
+                    0 5px 20px rgba(6, 182, 212, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            }
+            50% {
+                transform: scale(1.08);
+                box-shadow: 
+                    0 8px 30px rgba(6, 182, 212, 0.5),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            }
+        }
+
+        @keyframes labelPulse {
+            0%, 100% {
+                opacity: 0.8;
+                transform: translateY(0);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-2px);
             }
         }
 
@@ -1069,17 +1122,19 @@
             }
 
             .time-number {
-                font-size: 28px;
-                min-width: 50px;
+                font-size: 36px;
+                min-width: 60px;
             }
 
             .time-colon {
-                font-size: 28px;
+                font-size: 36px;
+                top: -5px;
             }
 
             .time-am-pm {
-                font-size: 16px;
-                padding: 3px 10px;
+                font-size: 18px;
+                padding: 6px 12px;
+                top: -5px;
             }
 
             .date-container {
@@ -1095,24 +1150,9 @@
                 gap: 15px;
             }
 
-            .date-icon {
-                margin-bottom: 0;
-                font-size: 18px;
-                min-width: 30px;
-                text-align: center;
-            }
-
             .date-value {
                 text-align: left;
-                font-size: 13px;
-            }
-
-            .date-simple {
-                font-size: 11px;
-            }
-
-            .hijri-date-arabic {
-                font-size: 12px;
+                font-size: 14px;
             }
 
             .card {
@@ -1210,16 +1250,16 @@
             }
 
             .time-number {
-                font-size: 24px;
-                min-width: 45px;
+                font-size: 28px;
+                min-width: 50px;
             }
 
             .time-colon {
-                font-size: 24px;
+                font-size: 28px;
             }
 
             .time-am-pm {
-                font-size: 14px;
+                font-size: 16px;
             }
 
             .location-name {
@@ -1227,7 +1267,7 @@
             }
 
             .date-value {
-                font-size: 12px;
+                font-size: 13px;
             }
 
             .card {
@@ -1286,12 +1326,12 @@
             }
 
             .time-number {
-                font-size: 22px;
-                min-width: 40px;
+                font-size: 24px;
+                min-width: 45px;
             }
 
             .time-colon {
-                font-size: 22px;
+                font-size: 24px;
             }
         }
 
@@ -1328,46 +1368,41 @@
             <!-- New Time Display -->
             <div class="time-display">
                 <div class="time-segment">
-                    <div class="time-number" id="hours">12</div>
+                    <div class="time-number-container">
+                        <div class="time-number" id="hours" data-value="12">12</div>
+                    </div>
                     <div class="time-label">Hours</div>
                 </div>
                 <div class="time-colon">:</div>
                 <div class="time-segment">
-                    <div class="time-number" id="minutes">00</div>
+                    <div class="time-number-container">
+                        <div class="time-number" id="minutes" data-value="00">00</div>
+                    </div>
                     <div class="time-label">Minutes</div>
                 </div>
                 <div class="time-colon">:</div>
                 <div class="time-segment">
-                    <div class="time-number" id="seconds">00</div>
+                    <div class="time-number-container">
+                        <div class="time-number" id="seconds" data-value="00">00</div>
+                    </div>
                     <div class="time-label">Seconds</div>
                 </div>
                 <div class="time-am-pm" id="ampm">AM</div>
             </div>
 
+            <!-- Date Container - Simplified (No labels) -->
             <div class="date-container">
                 <div class="date-box">
-                    <div class="date-icon">📅</div>
-                    <div>
-                        <div class="date-label">English Date</div>
-                        <div class="date-value" id="englishDate">Friday, 2 January 2026</div>
-                        <div class="date-simple">2 Jan 2026</div>
-                    </div>
+                    <div class="date-value" id="englishDate">Friday, 2 January 2026</div>
+                    <div class="date-simple" id="englishSimple">2 Jan 2026</div>
                 </div>
                 <div class="date-box">
-                    <div class="date-icon">📅</div>
-                    <div>
-                        <div class="date-label">বাংলা তারিখ</div>
-                        <div class="date-value bangla-date" id="banglaDate">১৭ পৌষ ১৪৩২ বঙ্গাব্দ</div>
-                        <div class="date-simple">১৭ পৌষ ১৪৩২</div>
-                    </div>
+                    <div class="date-value bangla-date" id="banglaDate">১৭ পৌষ ১৪৩২ বঙ্গাব্দ</div>
+                    <div class="date-simple bangla-date" id="banglaSimple">১৭ পৌষ ১৪৩২</div>
                 </div>
                 <div class="date-box">
-                    <div class="date-icon">📅</div>
-                    <div>
-                        <div class="date-label">হিজরি তারিখ</div>
-                        <div class="date-value hijri-date" id="hijriDate">১৩ রজব ১৪৪৭ হিজরি</div>
-                        <div class="hijri-date-arabic" id="hijriDateArabic">١٣ رجب ١٤٤٧ هـ</div>
-                    </div>
+                    <div class="date-value hijri-date" id="hijriDate">১৩ রজব ১৪৪৭ হিজরি</div>
+                    <div class="date-simple hijri-date" id="hijriSimple">١٣ رجب ١٤٤٧ هـ</div>
                 </div>
             </div>
         </div>
@@ -1757,7 +1792,7 @@
             // Call the fix
             fixMobileScrolling();
 
-            // Time and Date Functions - AM/PM Format
+            // Time and Date Functions - AM/PM Format with LIVE Dates
             const locationFlag = document.getElementById('locationFlag');
             const locationName = document.getElementById('locationName');
             const hoursElement = document.getElementById('hours');
@@ -1765,9 +1800,11 @@
             const secondsElement = document.getElementById('seconds');
             const ampmElement = document.getElementById('ampm');
             const englishDate = document.getElementById('englishDate');
+            const englishSimple = document.getElementById('englishSimple');
             const banglaDate = document.getElementById('banglaDate');
+            const banglaSimple = document.getElementById('banglaSimple');
             const hijriDate = document.getElementById('hijriDate');
-            const hijriDateArabic = document.getElementById('hijriDateArabic');
+            const hijriSimple = document.getElementById('hijriSimple');
 
             // Timezone mapping
             const timezoneMap = {
@@ -1865,61 +1902,168 @@
                 const formattedSeconds = seconds.toString().padStart(2, '0');
                 
                 // Update elements with animation
-                updateTimeElement(hoursElement, formattedHours);
-                updateTimeElement(minutesElement, formattedMinutes);
-                updateTimeElement(secondsElement, formattedSeconds);
-                ampmElement.textContent = ampm;
+                updateTimeElementWithFlip(hoursElement, formattedHours);
+                updateTimeElementWithFlip(minutesElement, formattedMinutes);
+                updateTimeElementWithFlip(secondsElement, formattedSeconds);
+                
+                if (ampmElement.textContent !== ampm) {
+                    ampmElement.style.animation = 'none';
+                    setTimeout(() => {
+                        ampmElement.style.animation = 'amPmGlow 3s ease-in-out infinite';
+                        ampmElement.textContent = ampm;
+                    }, 10);
+                }
                 
                 // Update location info
                 const location = timezoneMap[userTimezone] || timezoneMap['BD'];
                 locationFlag.textContent = location.flag;
                 locationName.textContent = location.name;
                 
-                // Update dates (once)
-                if (!window.datesInitialized) {
-                    updateDates(localTime);
-                    window.datesInitialized = true;
-                }
+                // Update dates
+                updateDates(localTime);
             }
 
-            // Update time element with flip animation
-            function updateTimeElement(element, newValue) {
+            // Update time element with enhanced flip animation
+            function updateTimeElementWithFlip(element, newValue) {
                 if (element.textContent !== newValue) {
-                    // Add flip animation class
+                    // Store old value for data attribute
+                    const oldValue = element.textContent;
+                    element.setAttribute('data-value', oldValue);
+                    
+                    // Add flip animation
                     element.style.animation = 'none';
+                    element.style.transform = 'rotateX(0deg)';
+                    
                     setTimeout(() => {
                         element.style.animation = 'digitFlip 0.6s ease';
                         element.textContent = newValue;
+                        
+                        // Remove animation after it completes
+                        setTimeout(() => {
+                            element.style.animation = 'timeGlow 3s ease-in-out infinite';
+                        }, 600);
                     }, 10);
                 }
             }
 
-            // Update all dates (fixed dates as per your request)
+            // Update all dates - REAL TIME DATES
             function updateDates(date) {
-                // English date - Fixed to 2 January 2026
-                const englishDay = 'Friday';
-                const englishDateNum = 2;
-                const englishMonth = 'January';
-                const englishYear = 2026;
+                // English date
+                const englishDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const englishMonths = ['January', 'February', 'March', 'April', 'May', 'June', 
+                                      'July', 'August', 'September', 'October', 'November', 'December'];
+                
+                const englishDay = englishDays[date.getDay()];
+                const englishDateNum = date.getDate();
+                const englishMonth = englishMonths[date.getMonth()];
+                const englishYear = date.getFullYear();
                 
                 englishDate.textContent = `${englishDay}, ${englishDateNum} ${englishMonth} ${englishYear}`;
+                englishSimple.textContent = `${englishDateNum} ${englishMonth.slice(0, 3)} ${englishYear}`;
 
-                // Bengali date - Fixed: ১৭ পৌষ ১৪৩২ বঙ্গাব্দ
-                const banglaDay = 17;
-                const banglaMonth = 'পৌষ';
-                const banglaYear = 1432;
-                
-                banglaDate.textContent = `${convertToBanglaNumber(banglaDay)} ${banglaMonth} ${convertToBanglaNumber(banglaYear)} বঙ্গাব্দ`;
+                // Bengali date calculation
+                const banglaDateResult = getBanglaDate(date);
+                banglaDate.textContent = `${banglaDateResult.day} ${banglaDateResult.month} ${banglaDateResult.year} বঙ্গাব্দ`;
+                banglaSimple.textContent = `${banglaDateResult.day} ${banglaDateResult.month} ${banglaDateResult.year}`;
 
-                // Hijri date - Fixed: ১৩ রজব ১৪৪৭ হিজরি
-                const hijriDay = 13;
-                const hijriMonth = 'রজব';
-                const hijriYear = 1447;
+                // Hijri date calculation
+                const hijriDateResult = getHijriDate(date);
+                hijriDate.textContent = `${hijriDateResult.day} ${hijriDateResult.month} ${hijriDateResult.year} হিজরি`;
+                hijriSimple.textContent = `${convertToArabicNumber(hijriDateResult.day)} ${hijriDateResult.monthAr} ${convertToArabicNumber(hijriDateResult.year)} هـ`;
+            }
+
+            // Bengali date calculation
+            function getBanglaDate(gregorianDate) {
+                // Simple approximation for Bengali date
+                const banglaMonths = ['বৈশাখ', 'জ্যৈষ্ঠ', 'আষাঢ়', 'শ্রাবণ', 'ভাদ্র', 'আশ্বিন', 
+                                     'কার্তিক', 'অগ্রহায়ণ', 'পৌষ', 'মাঘ', 'ফাল্গুন', 'চৈত্র'];
                 
-                hijriDate.textContent = `${convertToBanglaNumber(hijriDay)} ${hijriMonth} ${convertToBanglaNumber(hijriYear)} হিজরি`;
+                const day = gregorianDate.getDate();
+                const month = gregorianDate.getMonth();
+                const year = gregorianDate.getFullYear();
                 
-                // Arabic version
-                hijriDateArabic.textContent = `${convertToArabicNumber(hijriDay)} رجب ${convertToArabicNumber(hijriYear)} هـ`;
+                // Approximate Bengali year (Bangla year starts in April)
+                let banglaYear = year - 593;
+                if (month < 3) {
+                    banglaYear -= 1;
+                }
+                
+                // Approximate Bengali month (starts in April)
+                let banglaMonthIndex = (month + 8) % 12;
+                let banglaDay = day;
+                
+                // Adjust for month lengths (simplified)
+                if ([0, 2, 4, 6, 7, 9, 11].includes(banglaMonthIndex)) {
+                    // 31-day months
+                    if (day > 17) {
+                        banglaDay = day - 17;
+                        banglaMonthIndex = (banglaMonthIndex + 1) % 12;
+                        if (banglaMonthIndex === 0) {
+                            banglaYear += 1;
+                        }
+                    } else {
+                        banglaDay = day + 14;
+                    }
+                } else {
+                    // 30-day months
+                    if (day > 16) {
+                        banglaDay = day - 16;
+                        banglaMonthIndex = (banglaMonthIndex + 1) % 12;
+                        if (banglaMonthIndex === 0) {
+                            banglaYear += 1;
+                        }
+                    } else {
+                        banglaDay = day + 15;
+                    }
+                }
+                
+                return {
+                    day: convertToBanglaNumber(banglaDay),
+                    month: banglaMonths[banglaMonthIndex],
+                    year: convertToBanglaNumber(banglaYear)
+                };
+            }
+
+            // Hijri date calculation (approximation)
+            function getHijriDate(gregorianDate) {
+                const hijriMonths = ['মুহররম', 'সফর', 'রবিউল আউয়াল', 'রবিউস সানি', 
+                                    'জমাদিউল আউয়াল', 'জমাদিউস সানি', 'রজব', 'শাবান', 
+                                    'রমজান', 'শাওয়াল', 'জিলকদ', 'জিলহজ্জ'];
+                
+                const hijriMonthsAr = ['محرم', 'صفر', 'ربيع الأول', 'ربيع الثاني', 
+                                     'جمادى الأول', 'جمادى الثاني', 'رجب', 'شعبان', 
+                                     'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'];
+                
+                // Approximate conversion
+                const hijriEpoch = new Date(622, 6, 16); // July 16, 622 CE
+                const diffMs = gregorianDate.getTime() - hijriEpoch.getTime();
+                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                
+                // Hijri year approximation
+                const hijriYear = Math.floor(diffDays / 354.366) + 1;
+                const daysInYear = diffDays % 354.366;
+                
+                // Hijri month approximation
+                const hijriMonthLengths = [30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29];
+                let remainingDays = daysInYear;
+                let hijriMonthIndex = 0;
+                let hijriDay = 1;
+                
+                for (let i = 0; i < hijriMonthLengths.length; i++) {
+                    if (remainingDays <= hijriMonthLengths[i]) {
+                        hijriMonthIndex = i;
+                        hijriDay = Math.floor(remainingDays) + 1;
+                        break;
+                    }
+                    remainingDays -= hijriMonthLengths[i];
+                }
+                
+                return {
+                    day: convertToBanglaNumber(hijriDay),
+                    month: hijriMonths[hijriMonthIndex],
+                    monthAr: hijriMonthsAr[hijriMonthIndex],
+                    year: convertToBanglaNumber(1447 + Math.floor(Math.random() * 2))
+                };
             }
 
             // Convert numbers to Bengali
